@@ -645,11 +645,13 @@ A request has three fields. `pattern` selects the handler, `data` is what the ha
 { "pattern": "sum", "data": [1, 2], "id": "b7e1c0" }
 ```
 
-The reply repeats the `id` and carries either a `response` or an `err`:
+The reply repeats the `id` and carries either a `response` or an `err`. A successful reply also sets `isDisposed`, which is what tells a Nest client that the request is over:
 
 ```json
-{ "id": "b7e1c0", "response": 3 }
+{ "id": "b7e1c0", "response": 3, "isDisposed": true }
 ```
+
+Without `isDisposed` the value still reaches the caller, but `send()` never completes: `lastValueFrom()` and anything else waiting for the observable to close hangs. The Nest server always sets it.
 
 ```json
 { "id": "b7e1c0", "err": { "message": "Division by zero", "status": "error" } }
@@ -661,7 +663,7 @@ A packet without an `id` is dispatched as an event: the handler runs and nothing
 { "pattern": "user_created", "data": { "id": 42 } }
 ```
 
-A reply that arrives with a different `id`, or with none, matches no request, and the caller keeps waiting until the request times out. A `pattern` can also be an object instead of a string, which Nest matches by its keys and values, with the limits that [message and event patterns](/microservices/basics#message-and-event-patterns) lists.
+A reply that arrives with a different `id`, or with none, matches no request, and the caller keeps waiting. `send()` has no default timeout, so it waits forever unless the caller pipes it through the `timeout()` operator. A `pattern` can also be an object instead of a string, which Nest matches by its keys and values, with the limits that [message and event patterns](/microservices/basics#message-and-event-patterns) lists.
 
 The TCP transport writes neither packet as bare JSON. `JsonSocket`, the socket the server and the client share, puts the length of the JSON text first, then a `#`, then the text itself:
 
