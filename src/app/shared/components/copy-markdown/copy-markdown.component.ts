@@ -86,7 +86,7 @@ export class CopyMarkdownComponent implements OnInit, OnDestroy {
     const base =
       provider === 'claude'
         ? 'https://claude.ai/new?q='
-        : 'https://chat.openai.com/?q=';
+        : 'https://chatgpt.com/?q=';
     window.open(`${base}${prompt}`, '_blank', 'noopener,noreferrer');
   }
 

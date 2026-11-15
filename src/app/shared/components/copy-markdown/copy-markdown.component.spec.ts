@@ -134,7 +134,7 @@ describe('CopyMarkdownComponent', () => {
     fixture.componentInstance.openIn('chatgpt');
 
     expect(open).toHaveBeenCalledWith(
-      `https://chat.openai.com/?q=${encodeURIComponent(
+      `https://chatgpt.com/?q=${encodeURIComponent(
         `Read from ${location.origin}/controllers.md so I can ask questions about it.`,
       )}`,
       '_blank',
