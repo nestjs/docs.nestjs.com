@@ -170,7 +170,7 @@ return new Observable<MessageEvent>(subscriber => {
 
 #### Slow clients
 
-An `Observable` can't be paused, so events wait in memory for a client that isn't reading them. Once more than 4 million characters of event data (`data` plus `comment`) are waiting for a client whose stream is backed up, Nest logs a warning and drops the connection as if the client had disconnected, which also unsubscribes from the `Observable`. An `EventSource` then reconnects, sending the ID of the last event it received.
+An `Observable` can't be paused, so events wait in memory for a client that isn't reading them. Once more than 4 million characters of event data are waiting for a client whose stream is backed up, Nest logs a warning and drops the connection as if the client had disconnected, which also unsubscribes from the `Observable`. An `EventSource` then reconnects, sending the ID of the last event it received. An event counts for the length of its `data`, `comment`, `type` and `id`, and for at least 16 characters, whatever it carries.
 
 For a route that streams bulk data faster than its clients read, raise the limit with the `maxPendingDataLength` option, or set it to `0` or `Infinity` to lift it:
 
@@ -180,6 +180,8 @@ logs(): Observable<MessageEvent> {
   // ...
 }
 ```
+
+A value that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets the default.
 
 #### Example
 

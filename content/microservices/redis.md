@@ -63,6 +63,10 @@ The `options` property is specific to the chosen transporter. The <strong>Redis<
     <td>Enables Redis wildcard subscriptions, instructing the transporter to use <code>psubscribe</code>/<code>pmessage</code> under the hood (default: <code>false</code>)</td>
   </tr>
   <tr>
+    <td><code>maxWildcardChannelLength</code></td>
+    <td>With <code>wildcards</code>, the maximum length (in characters) of the channel that a request matched by a wildcard pattern may be published to. A request on a longer channel is not answered, and an error is logged. A value that isn't a number, such as the <code>NaN</code> that <code>Number()</code> makes of an unset environment variable, gets the default. Set to <code>0</code> to disable (default: <code>1024</code>)</td>
+  </tr>
+  <tr>
     <td><code>gracefulShutdown</code></td>
     <td>Enables graceful shutdown. When enabled, the server first unsubscribes from its channels, then waits for the requests and events being handled before closing its connections (default: <code>false</code>)</td>
   </tr>

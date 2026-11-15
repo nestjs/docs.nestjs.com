@@ -108,13 +108,45 @@ const wsAdapter = new WsAdapter(app, {
 
 Alternatively, you can set the message parser after creating the adapter with the `setMessageParser()` method.
 
-When the gateways share the application's HTTP server, other `upgrade` listeners can serve their own paths on that server, for example [GraphQL subscriptions](/graphql/subscriptions). The `WsAdapter` leaves an upgrade request for a path that none of its gateways serves to those listeners, and closes the connection if none of them has answered the handshake within a second. When it is the only `upgrade` listener, it closes such a request right away. If another listener answers late, for example after authenticating the request, raise the delay with the `unclaimedUpgradeTimeout` option (in milliseconds), or set it to `0` to leave such connections to the other listeners:
+When the gateways share the application's HTTP server, other `upgrade` listeners can serve their own paths on that server, for example [GraphQL subscriptions](/graphql/subscriptions). The `WsAdapter` leaves an upgrade request for a path that none of its gateways serves to those listeners, and closes the connection if none of them has answered the handshake within a second. When it is the only `upgrade` listener, it closes such a request right away. If another listener answers late, for example after authenticating the request, raise the delay with the `unclaimedUpgradeTimeout` option (in milliseconds), or set it to `0` to leave such connections to the other listeners. A value that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets the default. To wait five seconds:
 
 ```typescript
 const wsAdapter = new WsAdapter(app, {
   unclaimedUpgradeTimeout: 5000,
 });
 ```
+
+#### Limits
+
+Both built-in adapters limit how many messages of a client are handled at the same time, 1000 by default: the `IoAdapter` counts each event separately, the `WsAdapter` all of a client's messages together. Later messages wait for their turn. Change the limit with the `maxConcurrentMessages` option, or set it to `Infinity` to lift it (with `0`, no message is handled).
+
+The `IoAdapter` also limits the messages that wait: a client with more than 10000 messages of one event waiting is disconnected, and a warning is logged. Change this with the `maxWaitingMessages` option, or set it to `Infinity` to lift it.
+
+```typescript
+app.useWebSocketAdapter(
+  new IoAdapter(app, {
+    maxConcurrentMessages: 100,
+    maxWaitingMessages: 1000,
+  }),
+);
+```
+
+The `WsAdapter` takes two more limits:
+
+- `maxPayload`: the largest message, in bytes, that a client may send (default: 1 MiB; before NestJS v12.5, the `ws` default of 100 MiB applied). A client that sends a larger one is disconnected with the close code `1009`. The `maxPayload` option of a gateway takes precedence. Set it to `0` to lift the limit.
+- `maxSendBufferSize`: how many bytes may be queued for a client that doesn't read what it is sent before it is disconnected (default: 128 MiB). Set it to `0` to lift the limit.
+
+```typescript
+app.useWebSocketAdapter(
+  new WsAdapter(app, {
+    maxPayload: 10 * 1024 * 1024,
+  }),
+);
+```
+
+A limit that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets its default.
+
+The `IoAdapter`, and so any class that extends it, also disconnects a client whose message refers to the same binary value (a `Buffer`, an `ArrayBuffer` or a view of one, or a `Blob`) more than once, and logs a warning. Socket.IO clients don't send such messages.
 
 #### Advanced (custom adapter)
 

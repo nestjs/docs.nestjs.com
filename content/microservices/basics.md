@@ -71,11 +71,11 @@ The second argument of the `createMicroservice()` method is an `options` object 
 <table>
   <tr>
     <td><code>host</code></td>
-    <td>Connection hostname</td>
+    <td>Connection hostname (default: <code>'localhost'</code>). Starting with NestJS v12.5, an empty value (<code>undefined</code>, <code>null</code> or <code>''</code>) means <code>'localhost'</code> as well, so a server that other hosts connect to, e.g. one running in a container, has to set <code>'0.0.0.0'</code> or <code>'::'</code></td>
   </tr>
   <tr>
     <td><code>port</code></td>
-    <td>Connection port</td>
+    <td>Connection port (default: <code>3000</code>)</td>
   </tr>
   <tr>
     <td><code>retryAttempts</code></td>
@@ -103,7 +103,7 @@ The second argument of the `createMicroservice()` method is an `options` object 
   </tr>
   <tr>
     <td><code>maxBufferSize</code></td>
-    <td>Maximum size of the buffer for incoming messages, in characters (default: <code>(512 * 1024 * 1024) / 4</code>)</td>
+    <td>Maximum length of a single incoming packet, in characters (default: <code>16 * 1024 * 1024</code>). A packet declaring a greater length is rejected before any of it is buffered, and the connection is dropped. Starting with NestJS v12.5, it applies to each packet, and its default was lowered from <code>128 * 1024 * 1024</code>. A client applies its own <code>maxBufferSize</code> to the replies it receives</td>
   </tr>
   <tr>
     <td><code>incompleteMessageTimeout</code></td>
@@ -121,11 +121,19 @@ The second argument of the `createMicroservice()` method is an `options` object 
     <td><code>drainTimeout</code></td>
     <td>How long (ms) the responses queued for a peer may go without any of them being written out before the connection is dropped. Set to <code>0</code> to disable (default: <code>30000</code>)</td>
   </tr>
+  <tr>
+    <td><code>maxConcurrentMessages</code></td>
+    <td>How many messages of a single peer may be handled at the same time. A message counts until its handler, and the stream it returned, have settled. Later messages wait, and once more than <code>maxBufferSize</code> characters are waiting, reading from the peer is suspended. If none of the pending messages settles for <code>drainTimeout</code> after that, the connection is dropped. Set to <code>0</code> to disable (default: <code>1000</code>)</td>
+  </tr>
 </table>
+
+A `maxBufferSize`, `incompleteMessageTimeout`, `messageReceiveTimeout`, `maxSendBufferSize`, `drainTimeout` or `maxConcurrentMessages` that isn't a number, such as the `NaN` that `Number()` makes of an unset environment variable, gets its default.
 
 #### Message and Event Patterns
 
 Microservices recognize both messages and events by **patterns**. A pattern is a plain value, e.g., a literal object or a string. Patterns are automatically serialized and sent over the network along with the data portion of a message. This way, message senders and consumers can coordinate which requests are consumed by which handlers.
+
+Nest matches an object pattern to its handler by its keys and values, within fixed limits: at most 5 levels of nesting, 20 keys per object (or items per array), keys of up to 256 characters, string values of up to 4096 characters, and 100 keys in the whole pattern. A part of a pattern beyond these limits, or the whole pattern past 100 keys, is replaced with a marker such as `[TOO_MANY_KEYS]` before it's matched, so keep the patterns of your handlers within them. A pattern that arrives as JSON text longer than 1 MiB is matched as a plain string, without being parsed.
 
 #### Request-response
 
