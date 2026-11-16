@@ -639,7 +639,7 @@ await bootstrap();
 
 Most microservice setups talk to at least one system that knows nothing about Nest: a gateway already in production, a worker written in another language, a queue that other services also consume. The packets that travel over the TCP and Redis transports have a fixed shape, so that system can call a handler and answer a client without the `@nestjs/microservices` package.
 
-A request has three fields. `pattern` selects the handler, `data` is what the handler receives, and `id` ties the reply to its request:
+A request has three fields. `pattern` selects the handler (over Redis, the channel does, as described below), `data` is what the handler receives, and `id` ties the reply to its request. The `id` is a number or a string of at most 256 characters: a request with any other `id` gets no reply, and the server logs an error.
 
 ```json
 { "pattern": "sum", "data": [1, 2], "id": "b7e1c0" }
@@ -651,11 +651,15 @@ The reply repeats the `id` and carries either a `response` or an `err`. A succes
 { "id": "b7e1c0", "response": 3, "isDisposed": true }
 ```
 
-Without `isDisposed` the value still reaches the caller, but `send()` never completes: `lastValueFrom()` and anything else waiting for the observable to close hangs. The Nest server always sets it.
+Without `isDisposed` the value still reaches the caller, but `send()` never completes: `lastValueFrom()` and anything else waiting for the observable to close hangs. When a handler returns a stream, the Nest server sends one reply for each value it emits, and sets `isDisposed` on the last of them or, when the stream completes after its last value has been sent, in a reply of its own without a `response`.
+
+A failed request gets an `err` instead, which ends the request whether `isDisposed` is set or not:
 
 ```json
 { "id": "b7e1c0", "err": { "message": "Division by zero", "status": "error" } }
 ```
+
+Leave any other field out of a reply. A Nest client takes a packet with a field it doesn't expect for a payload that isn't a Nest reply, and the whole packet becomes the response.
 
 A packet without an `id` is dispatched as an event: the handler runs and nothing travels back. That is the shape `emit()` sends:
 
@@ -663,7 +667,7 @@ A packet without an `id` is dispatched as an event: the handler runs and nothing
 { "pattern": "user_created", "data": { "id": 42 } }
 ```
 
-A reply that arrives with a different `id`, or with none, matches no request, and the caller keeps waiting. `send()` has no default timeout, so it waits forever unless the caller pipes it through the `timeout()` operator. A `pattern` can also be an object instead of a string, which Nest matches by its keys and values, with the limits that [message and event patterns](/microservices/basics#message-and-event-patterns) lists.
+A reply that arrives with a different `id`, or with none, matches no request, and the caller keeps waiting. `send()` has no default timeout: unless the caller pipes it through the `timeout()` operator (see [Handling timeouts](/microservices/basics#handling-timeouts)), it waits until the connection closes, and then fails with a `Connection closed` error. A `pattern` can also be an object instead of a string, which Nest matches by its keys and values, with the limits that [message and event patterns](/microservices/basics#message-and-event-patterns) lists. Over TCP, a Nest client sends such a pattern as an object in a request, but as a string, its route, in an event, where `{{ '{' }} cmd: 'sum' {{ '}' }}` arrives as `{{ '{' }}"cmd":"sum"{{ '}' }}`. A server that is not Nest should accept both forms.
 
 The TCP transport writes neither packet as bare JSON. `JsonSocket`, the socket the server and the client share, puts the length of the JSON text first, then a `#`, then the text itself:
 
@@ -678,4 +682,6 @@ const socket = connect({ host: 'localhost', port: 3000 }, () => {
 
 That length counts the UTF-16 code units of the JSON text, which is what `String#length` returns in JavaScript, not its bytes. A peer that writes a byte count desynchronizes on any payload with a non-ASCII character, such as an accented letter, and one that counts Unicode code points, as `len()` does in Python, desynchronizes on characters outside the basic plane, such as emoji.
 
-Metadata follows the same table as everywhere else: it travels inside the packet over TCP and Redis, and as headers over the other transports, as [sending metadata with every message](/microservices/basics#sending-metadata-with-every-message) describes.
+The Redis transport publishes the packets as plain JSON text, and there the channel a packet is published on selects the handler, not its `pattern` field. A request or event for the `sum` pattern is published on the `sum` channel, and the replies to a request on the `sum.reply` channel. An object pattern uses its route as the channel name, such as `{{ '{' }}"cmd":"sum"{{ '}' }}`.
+
+Over TCP and Redis, the metadata a client attaches with `setOnDispatchHook()` travels in the packet's `metadata` field, a record of string values. The other transports carry it as headers, as [sending metadata with every message](/microservices/basics#sending-metadata-with-every-message) describes.
