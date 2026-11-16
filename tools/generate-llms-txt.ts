@@ -172,7 +172,6 @@ import {
   Body,
   Controller,
   Get,
-  Module,
   Post,
   StandardSchemaValidationPipe,
 } from '@nestjs/common';
@@ -199,17 +198,16 @@ class TodosController {
   }
 }
 
-@Module({ controllers: [TodosController] })
-class AppModule {}
-
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create({ controllers: [TodosController] });
   app.useGlobalPipes(new StandardSchemaValidationPipe());
   await app.listen(process.env.PORT ?? 3000);
 }
 
 void bootstrap();
 \`\`\`
+
+The object passed to \`NestFactory.create()\` is the root module's metadata, so \`imports\` and \`providers\` go there too. Write a \`@Module()\` class instead when the root module needs middleware, or for \`nest generate\` to register what it creates: [Modules](${SITE}/modules.md).
 `;
 
 const sections = NAV_ITEMS.map(renderSection).filter(Boolean).join('\n');
