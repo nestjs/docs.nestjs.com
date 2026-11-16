@@ -46,17 +46,19 @@ The `options` object is specific to the chosen transporter. The <strong>NATS</st
   </tr>
   <tr>
     <td><code>gracefulShutdown</code></td>
-    <td>Enables graceful shutdown. When enabled, the server first unsubscribes from all subjects, then waits for <code>gracePeriod</code> before closing the connection. Default is <code>false</code>.</td>
+    <td>Enables graceful shutdown. When enabled, the server first unsubscribes from all subjects, then waits for the requests and events being handled before closing the connection. Default is <code>false</code>.</td>
   </tr>
   <tr>
     <td><code>gracePeriod</code></td>
-    <td>Time in milliseconds to wait after unsubscribing from all subjects when <code>gracefulShutdown</code> is enabled. Default is <code>10000</code> ms.</td>
+    <td>Longest time in milliseconds to wait for the requests and events being handled when <code>gracefulShutdown</code> is enabled. The server closes sooner when they are done before that. Default is <code>10000</code> ms.</td>
   </tr>
   <tr>
     <td><code>headers</code></td>
     <td>Headers added to every message a client sends (see <a href="/microservices/nats#record-builders">record builders</a>).</td>
   </tr>
 </table>
+
+> info **Hint** A handler that returns a stream which never completes is still being handled, so closing the server then takes the whole `gracePeriod`.
 
 #### Client
 

@@ -26,6 +26,8 @@ The `onModuleDestroy()`, `beforeApplicationShutdown()`, and `onApplicationShutdo
 
 \* For these events, if you're not calling `app.close()` explicitly, you must opt in to make them work with system signals such as `SIGTERM`. See [Application shutdown](/fundamentals/lifecycle-events#application-shutdown) below.
 
+> info **Hint** A microservice transporter with the `gracefulShutdown` option (see [Redis](/microservices/redis#options) and [NATS](/microservices/nats#options)) lets the requests and events being handled finish before `onApplicationShutdown()` is called.
+
 > warning **Warning** The lifecycle hooks listed above are not triggered for **request-scoped** classes. Request-scoped classes are not tied to the application lifecycle, and their lifespan is unpredictable. They are created exclusively for each request and garbage-collected after the response is sent.
 
 > info **Hint** Nest calls `onModuleInit()` and `onApplicationBootstrap()` module by module, ordered by each module's distance from the root module in the import graph: the most deeply imported modules (and global modules) go first, and the root module goes last. Each module's hooks are awaited before Nest moves on to the next module. The shutdown hooks run in the reverse order.
