@@ -437,13 +437,13 @@ logger.assertLogged({ level: 'warn', context: 'PaymentsService', message: /retry
 logger.assertNotLogged({ level: 'error' });
 ```
 
-`assertLogged()` returns the first matching entry, and `assertNotLogged()` throws if any entry matches. Both throw a plain `Error` that lists the captured entries, so they work with any test runner. To query the entries yourself, use `entries`, `find()` and `filter()`, and call `clear()` to reset the logger between tests.
+`assertLogged()` returns the first matching entry, and `assertNotLogged()` throws if any entry matches. Both throw a plain `Error` that lists the entries (the captured ones for `assertLogged()`, the matching ones for `assertNotLogged()`), so they work with any test runner. To query the entries yourself, use `entries`, `find()` and `filter()`, and call `clear()` to reset the logger between tests.
 
 A matcher is either a predicate function or an object whose criteria must all match:
 
 - `level`: the log level.
 - `context`: a string matches the context exactly, a `RegExp` is tested against it.
-- `message`: a string matches when the message contains it, a `RegExp` is tested against it. Only string messages match.
+- `message`: a string matches when the message contains it, a `RegExp` is tested against it. Only string messages match (an `Error` logged as the message counts, through its message).
 - `params`: matches when each listed key is deeply equal to the one in the object passed to the logger.
 
 Each entry has the `level`, `message`, `context`, `params`, the `error` passed to the call (if any), the `stack` and the raw `args`.
