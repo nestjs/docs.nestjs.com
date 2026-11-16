@@ -23,6 +23,10 @@
   z-index: 1;
   display: inline-flex;
   align-items: stretch;
+  // One outline around both buttons: with one each, the translucent colour
+  // is painted twice where they meet and the divider stands out.
+  border-radius: var(--radius-btn);
+  box-shadow: inset 0 0 0 1px var(--border-color-strong);
 }
 
 .copy-markdown,
@@ -32,6 +36,7 @@
   align-items: center;
   font-size: 12px;
   border-radius: 0;
+  box-shadow: none;
 
   &:focus-visible {
     outline: 2px solid var(--primary-3dp);
@@ -58,11 +63,22 @@
 }
 
 .copy-markdown-toggle {
+  position: relative;
   justify-content: center;
   padding: 6px 4px;
-  margin-left: -1px;
   border-top-right-radius: var(--radius-btn);
   border-bottom-right-radius: var(--radius-btn);
+
+  // The divider stops short of the outline, so no pixel is painted twice.
+  &::before {
+    content: '';
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    left: 0;
+    width: 1px;
+    background-color: var(--border-color-strong);
+  }
 }
 
 .copy-markdown-menu {
