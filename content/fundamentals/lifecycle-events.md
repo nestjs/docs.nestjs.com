@@ -26,7 +26,7 @@ The `onModuleDestroy()`, `beforeApplicationShutdown()`, and `onApplicationShutdo
 
 \* For these events, if you're not calling `app.close()` explicitly, you must opt in to make them work with system signals such as `SIGTERM`. See [Application shutdown](/fundamentals/lifecycle-events#application-shutdown) below.
 
-> info **Hint** A microservice transporter with the `gracefulShutdown` option (see [Redis](/microservices/redis#options) and [NATS](/microservices/nats#options)) lets the requests and events being handled finish before `onApplicationShutdown()` is called.
+> info **Hint** A microservice transporter with the `gracefulShutdown` option (see [TCP](/microservices/basics#getting-started), [Redis](/microservices/redis#options), [NATS](/microservices/nats#options), [MQTT](/microservices/mqtt#options), and [RabbitMQ](/microservices/rabbitmq#options)) lets the requests and events being handled finish before `onApplicationShutdown()` is called.
 
 > warning **Warning** The lifecycle hooks listed above are not triggered for **request-scoped** classes. Request-scoped classes are not tied to the application lifecycle, and their lifespan is unpredictable. They are created exclusively for each request and garbage-collected after the response is sent.
 

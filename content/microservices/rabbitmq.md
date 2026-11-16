@@ -122,7 +122,17 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
     <td><code>maxMessageSize</code></td>
     <td>Maximum size of a message body, in bytes. The server logs and skips a larger message without decoding it (it is negatively acknowledged without requeue when <code>noAck</code> is <code>false</code>, and a request gets an error reply), and the client fails a request whose reply is larger. Set it to <code>Infinity</code> to lift the limit. A value that isn't a number, such as the <code>NaN</code> that <code>Number()</code> makes of an unset environment variable, gets the default. Defaults to <code>16777216</code> (16 MiB)</td>
   </tr>
+  <tr>
+    <td><code>gracefulShutdown</code></td>
+    <td>Enables graceful shutdown. When enabled, closing the server first cancels its consumer, then waits for the requests and events being handled before it closes its channel and its connection. Applies only to the consumer configuration. Defaults to <code>false</code></td>
+  </tr>
+  <tr>
+    <td><code>gracePeriod</code></td>
+    <td>Longest time in milliseconds to wait for the requests and events being handled when <code>gracefulShutdown</code> is enabled. The server closes sooner when they are done before that. Applies only to the consumer configuration. Defaults to <code>10000</code></td>
+  </tr>
 </table>
+
+> info **Hint** A handler that returns a stream which never completes is still being handled, so closing the server then takes the whole `gracePeriod`. With `noAck` set to `false`, the broker requeues the messages that are still unacknowledged when the channel closes, so a message whose handler outlasts the `gracePeriod` is delivered again.
 
 #### Client
 
