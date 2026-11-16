@@ -40,6 +40,7 @@
               { "glob": "**/*.md", "input": "src/md", "output": "/" }
             ],
             "styles": [
+              "node_modules/@angular/cdk/overlay-prebuilt.css",
               "src/styles.scss"
             ],
             "browser": "src/main.ts",

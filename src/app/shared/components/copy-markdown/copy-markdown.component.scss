@@ -16,21 +16,32 @@
   }
 }
 
-.copy-markdown {
-  @include utils.btn-secondary();
+.copy-markdown-group {
   position: absolute;
   top: 26px;
   right: 0;
   z-index: 1;
   display: inline-flex;
+  align-items: stretch;
+  // One outline around both buttons: with one each, the translucent colour
+  // is painted twice where they meet and the divider stands out.
+  border-radius: var(--radius-btn);
+  box-shadow: inset 0 0 0 1px var(--border-color-strong);
+}
+
+.copy-markdown,
+.copy-markdown-toggle {
+  @include utils.btn-secondary();
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 6px 10px;
   font-size: 12px;
+  border-radius: 0;
+  box-shadow: none;
 
   &:focus-visible {
     outline: 2px solid var(--primary-3dp);
     outline-offset: 2px;
+    z-index: 1;
   }
 
   mat-icon {
@@ -38,8 +49,97 @@
     height: 16px;
     font-size: 16px;
   }
+}
+
+.copy-markdown {
+  gap: 6px;
+  padding: 6px 10px;
+  border-top-left-radius: var(--radius-btn);
+  border-bottom-left-radius: var(--radius-btn);
 
   &.copied {
     color: var(--primary-3dp);
+  }
+}
+
+.copy-markdown-toggle {
+  position: relative;
+  justify-content: center;
+  padding: 6px 4px;
+  border-top-right-radius: var(--radius-btn);
+  border-bottom-right-radius: var(--radius-btn);
+
+  // The divider stops short of the outline, so no pixel is painted twice.
+  &::before {
+    content: '';
+    position: absolute;
+    top: 1px;
+    bottom: 1px;
+    left: 0;
+    width: 1px;
+    background-color: var(--border-color-strong);
+  }
+}
+
+.copy-markdown-menu {
+  min-width: 260px;
+  padding: 4px;
+  background-color: var(--background-1dp);
+  border-radius: 8px;
+  box-shadow:
+    inset 0 0 0 1px var(--border-color-strong),
+    0 8px 24px rgb(0 0 0 / 18%);
+
+  .menu-item {
+    box-sizing: border-box;
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border: 0;
+    border-radius: 6px;
+    background: none;
+    text-align: left;
+    text-decoration: none;
+    color: var(--color-1dp);
+    cursor: pointer;
+
+    &:hover {
+      background-color: var(--hover-surface);
+    }
+
+    &:focus {
+      background-color: var(--hover-surface);
+      outline: 2px solid var(--primary-3dp);
+      outline-offset: -2px;
+    }
+
+    mat-icon,
+    .menu-item-icon {
+      flex: none;
+      width: 18px;
+      height: 18px;
+      font-size: 18px;
+      margin-top: 1px;
+    }
+  }
+
+  .menu-item-text {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+  }
+
+  .menu-item-label {
+    font-size: 13px;
+    font-weight: 500;
+    line-height: 1.3;
+  }
+
+  .menu-item-hint {
+    font-size: 11px;
+    line-height: 1.3;
+    @include utils.opacity(0.6);
   }
 }

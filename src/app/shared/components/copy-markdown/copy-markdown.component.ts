@@ -6,6 +6,7 @@ import {
   OnDestroy,
   OnInit,
 } from '@angular/core';
+import { CdkMenu, CdkMenuItem, CdkMenuTrigger } from '@angular/cdk/menu';
 import { MatIcon } from '@angular/material/icon';
 import { NavigationEnd, Router } from '@angular/router';
 import { Subscription } from 'rxjs';
@@ -19,7 +20,7 @@ import { flattenNavItems, normalizeUrl } from '../../nav/nav-sequence';
   styleUrls: ['./copy-markdown.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
-  imports: [MatIcon],
+  imports: [MatIcon, CdkMenu, CdkMenuItem, CdkMenuTrigger],
 })
 export class CopyMarkdownComponent implements OnInit, OnDestroy {
   public markdownUrl: string | null = null;
@@ -72,6 +73,21 @@ export class CopyMarkdownComponent implements OnInit, OnDestroy {
       this.revertTimeout = null;
       this.cd.markForCheck();
     }, 2000);
+  }
+
+  public openIn(provider: 'claude' | 'chatgpt'): void {
+    if (!this.markdownUrl) {
+      return;
+    }
+    const url = new URL(this.markdownUrl, window.location.origin).toString();
+    const prompt = encodeURIComponent(
+      `Read from ${url} so I can ask questions about it.`,
+    );
+    const base =
+      provider === 'claude'
+        ? 'https://claude.ai/new?q='
+        : 'https://chatgpt.com/?q=';
+    window.open(`${base}${prompt}`, '_blank', 'noopener,noreferrer');
   }
 
   private update(url: string): void {
