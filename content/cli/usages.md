@@ -106,6 +106,8 @@ $ nest g resource users
 
 This writes `src/users/` and adds `UsersModule` to the imports in `src/main.ts`. Spec files are left out while `package.json` doesn't list `@nestjs/testing`: install it, or pass `--spec`, to get them. When `src/main.ts` gets long, move the module to `src/app.module.ts` and export it, and `nest generate` registers things there instead.
 
+`nest generate` looks for a `@Module()` class. If you replaced `AppModule` with metadata passed to `NestFactory.create()` (see [Root module from metadata](/modules#root-module-from-metadata)), it still writes the files, but warns that it found no module and registers nothing.
+
 The other options to `nest new` apply, with these differences:
 
 - `--language js` is refused. JavaScript needs Babel and its own entry file to run decorators, so the project wouldn't stay one file.

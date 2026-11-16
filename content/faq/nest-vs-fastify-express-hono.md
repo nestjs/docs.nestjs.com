@@ -72,6 +72,19 @@ await bootstrap();
 
 It stays the same application as it grows. `nest g resource users` adds a module, and when `src/main.ts` gets long, you move the root module to its own file. See [One-file projects](/cli/usages#one-file-projects).
 
+The module class is optional too. Pass its metadata to `NestFactory.create()` and drop the `AppModule` declaration:
+
+```typescript
+@@filename(src/main)
+const app = await NestFactory.create({
+  controllers: [AppController],
+  providers: [AppService],
+});
+await app.listen(process.env.PORT ?? 3000);
+```
+
+See [Root module from metadata](/modules#root-module-from-metadata) for when to bring the class back.
+
 Fastify, Express and Hono start with fewer lines, which stays an advantage while the application stays small. As it grows, where authentication lives, how its parts share services, and how tests replace dependencies become yours to design. Nest decides those up front.
 
 #### Performance
