@@ -37,6 +37,10 @@ const app = await NestFactory.createMicroservice(AppModule, {
 
 The `options` object is specific to the chosen transporter. The <strong>MQTT</strong> transporter exposes the [MQTT.js client options](https://github.com/mqttjs/MQTT.js/#mqttclientstreambuilder-options), as well as the `url`, `subscribeOptions` (see [Quality of Service](#quality-of-service-qos)), and `userProperties` (see [record builders](#record-builders)) properties. On the server, the `maxConnectionAttempts` property limits the number of attempts to establish the initial connection (default: `-1`, i.e., unlimited). The limit doesn't apply to reconnections after the server has connected.
 
+Also on the server, the `gracefulShutdown` option enables graceful shutdown: when the server closes, it first unsubscribes from its topics, then waits for the requests and events being handled before ending its connection (default: `false`). The `gracePeriod` option sets the longest time to wait, in milliseconds (default: `10000`). With a persistent session (`clean: false`, plus a `sessionExpiryInterval` on MQTT 5), unsubscribing removes the subscriptions from the session, so QoS 1 and 2 messages published to a non-shared subscription while the instance restarts are not queued for it.
+
+> info **Hint** A handler that returns a stream which never completes is still being handled, so closing the server then takes the whole `gracePeriod`.
+
 #### Client
 
 As with other microservice transporters, you have <a href="/microservices/basics#client-producer-class">several options</a> for creating an MQTT `ClientProxy` instance.
