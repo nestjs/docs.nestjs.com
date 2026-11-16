@@ -61,7 +61,7 @@ Sentry.init({
 ```typescript
 @@filename(main)
 // This import comes before everything else
-import './instrument';
+import './instrument.js';
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module.js';
 ```
