@@ -17,6 +17,27 @@ The `@Module()` decorator takes a single object with properties that describe th
 
 A module **encapsulates** its providers by default: you can inject only providers that are part of the current module or that are explicitly exported by an imported module. A module's exported providers form its public interface, or API.
 
+#### Root module from metadata
+
+A small application can skip the root module class and pass its metadata straight to `NestFactory.create()`:
+
+```typescript
+@@filename(main)
+import { NestFactory } from '@nestjs/core';
+import { CatsController } from './cats/cats.controller.js';
+import { CatsService } from './cats/cats.service.js';
+
+const app = await NestFactory.create({
+  controllers: [CatsController],
+  providers: [CatsService],
+});
+await app.listen(process.env.PORT ?? 3000);
+```
+
+Nest applies `@Module()` to a class it creates, named `AppModule`, so the object takes the same properties as the decorator, `imports` included, and an unknown property fails at startup the same way. `NestFactory.createApplicationContext()` and `NestFactory.createMicroservice()` accept it too.
+
+Write the class yourself when the root module needs [middleware](/middleware) (its `configure()` method) or [lifecycle hooks](/fundamentals/lifecycle-events) of its own, when you want to refer to it, as in `app.select(AppModule)`, or when `nest generate` should register what it creates in it.
+
 #### Feature modules
 
 In our example, `CatsController` and `CatsService` are closely related and serve the same application domain, so it makes sense to group them into a feature module. A feature module organizes the code for a specific feature, which keeps boundaries clear. This becomes more important as the application or team grows, and it aligns with the [SOLID](https://en.wikipedia.org/wiki/SOLID) principles.
