@@ -39,7 +39,7 @@ Import `McpModule` in the root module. `name` and `version` identify the server 
 @@filename(app.module)
 import { Module } from '@nestjs/common';
 import { McpModule } from '@nestjs/mcp';
-import { OrdersModule } from './orders/orders.module';
+import { OrdersModule } from './orders/orders.module.js';
 
 @Module({
   imports: [
@@ -61,7 +61,7 @@ Start the application as usual:
 ```typescript
 @@filename(main)
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module';
+import { AppModule } from './app.module.js';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);

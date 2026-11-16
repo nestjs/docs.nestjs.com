@@ -35,7 +35,7 @@ Import `AiModule` in the root module, with the models the application uses, by n
 import { anthropic } from '@ai-sdk/anthropic';
 import { Module } from '@nestjs/common';
 import { AiModule } from '@nestjs/ai';
-import { SupportModule } from './support/support.module';
+import { SupportModule } from './support/support.module.js';
 
 @Module({
   imports: [
@@ -259,8 +259,8 @@ The providers then become data rather than dependencies: keep their base URLs, A
 import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { Module } from '@nestjs/common';
 import { AiModule } from '@nestjs/ai';
-import { ProvidersModule } from './providers/providers.module';
-import { ProvidersService } from './providers/providers.service';
+import { ProvidersModule } from './providers/providers.module.js';
+import { ProvidersService } from './providers/providers.service.js';
 
 @Module({
   imports: [

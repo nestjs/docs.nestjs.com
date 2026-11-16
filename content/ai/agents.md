@@ -215,12 +215,12 @@ Import `AiWorkflowsModule` in the module of your workflows. The application impo
 @@filename(refunds/refunds.module)
 import { Module } from '@nestjs/common';
 import { AiWorkflowsModule } from '@nestjs/ai/workflows';
-import { OrdersModule } from '../orders/orders.module';
-import { PaymentsModule } from '../payments/payments.module';
-import { ApprovalsController } from './approvals.controller';
-import { RefundRequest } from './refund-request.workflow';
-import { RefundTools } from './refund.tools';
-import { RefundsService } from './refunds.service';
+import { OrdersModule } from '../orders/orders.module.js';
+import { PaymentsModule } from '../payments/payments.module.js';
+import { ApprovalsController } from './approvals.controller.js';
+import { RefundRequest } from './refund-request.workflow.js';
+import { RefundTools } from './refund.tools.js';
+import { RefundsService } from './refunds.service.js';
 
 @Module({
   imports: [AiWorkflowsModule, OrdersModule, PaymentsModule],
@@ -267,7 +267,7 @@ Start it as any workflow, with an id from the ticket, which makes starting it ag
 @@filename(refunds/refunds.service)
 import { Injectable } from '@nestjs/common';
 import { WorkflowClient } from '@nestjs/workflows';
-import { RefundRequest } from './refund-request.workflow';
+import { RefundRequest } from './refund-request.workflow.js';
 
 @Injectable()
 export class RefundsService {
@@ -322,8 +322,8 @@ An agent function call runs at least once: a process that dies while it runs mak
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { AgentFunction, type AgentFunctionContext } from '@nestjs/ai';
 import * as z from 'zod';
-import { OrdersService } from '../orders/orders.service';
-import { PaymentsService } from '../payments/payments.service';
+import { OrdersService } from '../orders/orders.service.js';
+import { PaymentsService } from '../payments/payments.service.js';
 
 @Injectable()
 export class RefundTools {
