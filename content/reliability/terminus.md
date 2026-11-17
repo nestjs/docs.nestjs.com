@@ -224,11 +224,11 @@ this.http.pingCheck('billing', 'https://billing.example.com/health', {
 });
 ```
 
-The client throws on a `4xx` or `5xx` response. To check such a response with `verify`, set `throwOnHttpError` to `false`:
+The client throws on a `4xx` or `5xx` response, and by default retries some of them, such as a `503`, within the timeout of the check. To check such a response with `verify`, set `throwOnHttpError` and `retry` to `false`:
 
 ```typescript
 this.http.pingCheck('billing', 'https://billing.example.com/health', {
-  fetch: (url, init) => this.httpClient.request(url, { ...init, throwOnHttpError: false }),
+  fetch: (url, init) => this.httpClient.request(url, { ...init, throwOnHttpError: false, retry: false }),
   verify: (res) => res.status === 503,
 });
 ```
@@ -636,13 +636,13 @@ Like `up()` and `down()`, `degraded()` accepts either an object with additional 
 
 #### Configuring a check
 
-Every check built with `attempt()` returns a `HealthCheckAttempt`. This includes your custom indicators as well as the built-in indicators. Before the attempt is executed, you can configure it by chaining the methods below. The order in which you chain them doesn't matter.
+Every check built with `attempt()` returns a `HealthCheckAttempt`. This includes your custom indicators as well as the built-in indicators, except the deprecated `HttpHealthIndicator`. Before the attempt is executed, you can configure it by chaining the methods below. The order in which you chain them doesn't matter.
 
 Every time value takes milliseconds or a string such as `'200ms'`, `'2s'` or `'15m'`.
 
 ##### Timeouts
 
-`withTimeout()` limits the time the attempt can take. Once the time is up, the indicator is marked as `'down'` and the `AbortSignal` passed to your function is aborted. Pass that `signal` to the underlying operation so that it is canceled as well, rather than lingering in the background.
+`withTimeout()` limits the time the attempt can take. Once the time is up, the indicator is marked as `'down'` and the `AbortSignal` that your function receives as the `signal` property of its argument is aborted. Pass that `signal` to the underlying operation, for example to `fetch()`, so that it is canceled as well, rather than lingering in the background.
 
 ```typescript
 @@filename(health.controller)
@@ -675,7 +675,7 @@ If the queue from the custom indicator doesn't answer within one second, the hea
 }
 ```
 
-> warning **Warning** The `timeout` option of the built-in indicators (e.g., `this.db.pingCheck('database', {{ '{' }} timeout: 1500 {{ '}' }})`) is deprecated. Chain `.withTimeout()` on the returned attempt instead.
+> warning **Warning** The `timeout` option of the built-in database, microservice, and gRPC indicators (e.g., `this.db.pingCheck('database', {{ '{' }} timeout: 1500 {{ '}' }})`) is deprecated. Chain `.withTimeout()` on the returned attempt instead.
 
 ##### Caching
 
@@ -949,7 +949,7 @@ await build({
 
 With webpack or Rspack, use the `externals` option or the `IgnorePlugin`. Rollup, Rolldown, and Vite keep packages they can't resolve external by default.
 
-The `@nestjs/swagger` package is the exception: Terminus loads it with `require()`, which only webpack follows. With other bundlers, keep `@nestjs/swagger` external, or the health check endpoints are missing in the [Swagger documentation](#swagger-documentation).
+The `@nestjs/swagger` package is the exception: Terminus loads it with `require()`, which only webpack follows. With other bundlers, keep `@nestjs/swagger` external, or the health check endpoints are missing in the [Swagger documentation](#swagger-documentation). They are also missing in a CommonJS bundle built with esbuild, its default output for `platform: 'node'`, because Terminus can't load the package there.
 
 #### Testing
 
