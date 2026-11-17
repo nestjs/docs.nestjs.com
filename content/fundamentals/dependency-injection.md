@@ -206,7 +206,7 @@ export class CatsRepository {
 
 > info **Hint** The `@Inject()` decorator is imported from the `@nestjs/common` package.
 
-`@Inject()` isn't limited to constructor parameters — it can also be applied directly to a class property. See [property-based injection](/providers#property-based-injection) for when that's useful.
+`@Inject()` isn't limited to constructor parameters: you can also apply it to a class property. See [property-based injection](/providers#property-based-injection) for when that's useful.
 
 The examples above use the string `'CONNECTION'` directly for illustration. For clean code organization, define tokens in a separate file, such as `constants.ts`, and import them where needed, as you would with symbols or enums.
 
