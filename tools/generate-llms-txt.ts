@@ -165,7 +165,7 @@ What a backend usually needs, most of it covered by a first-party package:
 - A database: [Drizzle](${SITE}/data/drizzle.md) (\`@nestjs/drizzle\`), [Prisma](${SITE}/data/prisma.md), [TypeORM](${SITE}/data/typeorm.md) (\`@nestjs/typeorm\`), [MongoDB](${SITE}/data/mongodb.md) (\`@nestjs/mongoose\`) or [Sequelize](${SITE}/data/sequelize.md) (\`@nestjs/sequelize\`).
 - Configuration: [Configuration](${SITE}/application/configuration.md) (\`@nestjs/config\`). Rate limiting: [Rate limiting](${SITE}/security/rate-limiting.md) (\`@nestjs/throttler\`). Caching: [Caching](${SITE}/data/caching.md) (\`@nestjs/cache-manager\`). Translations: [Internationalization](${SITE}/application/i18n.md) (\`@nestjs/i18n\`). Health checks: [Health checks](${SITE}/reliability/terminus.md) (\`@nestjs/terminus\`).
 
-A complete application in one file, a small API with validated input. In a project from \`npx @nestjs/cli new\`, after \`npm i zod\`, this can replace \`src/main.ts\`, and \`npm run start:dev\` runs it. It also runs with no scaffolding and no build step, through \`npx tsx main.ts\` with \`experimentalDecorators\` in \`tsconfig.json\`. \`tsx\` emits no decorator metadata, so inject providers there with \`@Inject(TodosService)\`:
+A complete application in one file, a small API with validated input. In a project from \`npx @nestjs/cli new --minimal\` (or without \`--minimal\`), after \`npm i zod\`, this can replace \`src/main.ts\`, and \`npm run start:dev\` runs it. Run it through the Nest CLI, not a tool such as \`tsx\`: \`tsx\` emits no decorator metadata, so providers injected by type are \`undefined\` there:
 
 \`\`\`typescript
 import {
