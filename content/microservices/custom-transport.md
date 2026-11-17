@@ -143,7 +143,7 @@ async listen(callback: () => void) {
 
 An event handler has no response stream, so an error thrown inside one has nowhere to go. Nest logs it instead, but only after your exception filters run. If one of your filters matches the exception, that filter is the only report.
 
-Some transporters await the event stream themselves and hand the failure to their client library, which reports it. `ServerKafka` does this: `kafkajs` logs the rejection, so a second report from Nest would duplicate it. Set `propagatesEventHandlerErrors` to `true` in that case:
+Some transporters await the event stream themselves and hand the failure to their client library, which reports it. `ServerKafka` does this: its Kafka client logs the rejection, so a second report from Nest would duplicate it. Set `propagatesEventHandlerErrors` to `true` in that case:
 
 ```typescript
 class GoogleCloudPubSubServer
