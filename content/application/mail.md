@@ -390,53 +390,48 @@ A delivery slot, a booking or a meeting is easier to keep when it lands in the c
 $ npm i --save ical-generator
 ```
 
-A provider writes the event, and the mail class passes it on. The provider builds the calendar with `ical-generator`, and `toString()` gives the iCalendar text, with its line breaks and folded lines:
-
-```typescript
-@@filename(notifications/delivery-calendar)
-import { Injectable } from '@nestjs/common';
-import ical, { ICalAttendeeRole, ICalCalendarMethod, ICalEventStatus } from 'ical-generator';
-
-export interface DeliverySlot {
-  start: Date;
-  end: Date;
-  /** Starts at 0, and goes up each time the slot is moved */
-  revision: number;
-}
-
-@Injectable()
-export class DeliveryCalendar {
-  invite(order: Order, customer: Customer, slot: DeliverySlot, method = ICalCalendarMethod.REQUEST): string {
-    const calendar = ical({ prodId: '//Example Shop//Orders//EN', method });
-    calendar.createEvent({
-      // The same id for every version of this event, so a calendar replaces it instead of adding another
-      id: `delivery-${order.id}@shop.example.com`,
-      sequence: slot.revision,
-      start: slot.start,
-      end: slot.end,
-      summary: `Delivery of order #${order.number}`,
-      status: method === ICalCalendarMethod.CANCEL ? ICalEventStatus.CANCELLED : ICalEventStatus.CONFIRMED,
-      organizer: { name: 'Example Shop', email: 'orders@shop.example.com' },
-      attendees: [{ name: customer.name, email: customer.email, rsvp: true, role: ICalAttendeeRole.REQ }],
-    });
-    return calendar.toString();
-  }
-}
-```
-
-The mail class returns it as `calendar`, next to the body, from `render()`. `ICalCalendarMethod` is the library's enum of the iTIP methods, and its values are the strings `calendar.method` takes:
+The mail class builds the event with `ical-generator` in `render()`, and returns the calendar's `toString()`, the iCalendar text with its line breaks and folded lines, as `calendar`:
 
 ```typescript
 @@filename(notifications/delivery-slot.mail)
-@Injectable()
-export class DeliverySlotMail implements Mailable<DeliverySlotBooked> {
-  constructor(private readonly calendar: DeliveryCalendar) {}
+import { Injectable } from '@nestjs/common';
+import { html, type Mailable } from '@nestjs/mail';
+import ical, { ICalAttendeeRole, ICalCalendarMethod, ICalEventStatus } from 'ical-generator';
 
-  render({ order, customer, slot }: DeliverySlotBooked) {
+export interface DeliverySlotChange {
+  order: Order;
+  customer: Customer;
+  start: Date;
+  end: Date;
+  /** Starts at 0, and goes up each time the slot is moved or cancelled */
+  revision: number;
+  cancelled?: boolean;
+}
+
+@Injectable()
+export class DeliverySlotMail implements Mailable<DeliverySlotChange> {
+  render({ order, customer, start, end, revision, cancelled = false }: DeliverySlotChange) {
+    const calendar = ical({
+      prodId: '//Example Shop//Orders//EN',
+      method: cancelled ? ICalCalendarMethod.CANCEL : ICalCalendarMethod.REQUEST,
+    });
+    calendar.createEvent({
+      // The same id for every version of this event, so a calendar replaces it instead of adding another
+      id: `delivery-${order.id}@shop.example.com`,
+      sequence: revision,
+      start,
+      end,
+      summary: `Delivery of order #${order.number}`,
+      status: cancelled ? ICalEventStatus.CANCELLED : ICalEventStatus.CONFIRMED,
+      organizer: { name: 'Example Shop', email: 'orders@shop.example.com' },
+      attendees: [{ name: customer.name, email: customer.email, rsvp: true, role: ICalAttendeeRole.REQ }],
+    });
+
     return {
-      subject: `Delivery of order #${order.number}`,
-      html: html`<p>Hi ${customer.name}, your order #${order.number} is on its way. Add the delivery to your calendar.</p>`,
-      calendar: { content: this.calendar.invite(order, customer, slot), method: 'REQUEST' },
+      subject: cancelled ? `Delivery of order #${order.number} cancelled` : `Delivery of order #${order.number}`,
+      html: html`<p>Hi ${customer.name}, ${cancelled ? 'the delivery was cancelled.' : 'your order is on its way. Add the delivery to your calendar.'}</p>`,
+      // The method comes from the METHOD that ical-generator wrote into the calendar
+      calendar: { content: calendar.toString() },
     };
   }
 }
@@ -452,12 +447,19 @@ export class DeliverySlotMail implements Mailable<DeliverySlotBooked> {
 
 A calendar that disagrees with itself is refused with a `MailMessageError`, before anything is sent: a mail client drops an invitation whose method doesn't match, and tells nobody. The mailer writes the event into the message twice, the way nodemailer's `icalEvent` does, which mail clients have long been tested against: as a `text/calendar` part with its method, last in the `multipart/alternative` next to the text and the HTML, where Gmail looks for it, and as an attached `.ics` file, for clients that only read attachments. Some clients list the first one as an attachment too, without a name.
 
-To move the delivery, send a new invitation with the same `UID` (the event's `id`) and a higher `SEQUENCE` (its `sequence`), here `slot.revision` going up. A calendar that already holds the event updates it. To cancel it, send the same `UID` with a higher `SEQUENCE` and `METHOD:CANCEL`, which is why `invite()` takes the method. A mail class of its own for the cancellation calls `invite(order, customer, slot, ICalCalendarMethod.CANCEL)` and returns `method: 'CANCEL'`. The move looks like this:
+To move the delivery, send the mail again with the same `UID` (the event's `id`) and a higher `SEQUENCE` (its `sequence`), here `revision` going up. A calendar that already holds the event updates it. To cancel it, send it once more with a higher `SEQUENCE` and `METHOD:CANCEL`, which the mail does when `cancelled` is set:
 
 ```typescript
+// Moved to a new time
 await this.mailer.send(DeliverySlotMail, {
   to: customer.email,
-  data: { order, customer, slot: { ...slot, revision: slot.revision + 1 } },
+  data: { order, customer, start: newStart, end: newEnd, revision: 1 },
+});
+
+// Cancelled
+await this.mailer.send(DeliverySlotMail, {
+  to: customer.email,
+  data: { order, customer, start: newStart, end: newEnd, revision: 2, cancelled: true },
 });
 ```
 
