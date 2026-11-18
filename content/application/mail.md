@@ -384,10 +384,19 @@ export class NotificationsModule {}
 
 #### Send a calendar invitation
 
-A delivery slot, a booking or a meeting is easier to keep when it lands in the customer's calendar. Give the message a `calendar`: an iCalendar object (RFC 5545) that your application builds, and the mailer sends it the way mail clients look for an invitation, so mail clients show the event with its accept and decline buttons. `@nestjs/mail` has no dependencies, so it doesn't generate the event. Build it with a library such as `ical-generator` or `ics`, or write it yourself. The example below writes it by hand, to stay free of dependencies. A library also folds long lines, which the example doesn't:
+A delivery slot, a booking or a meeting is easier to keep when it lands in the customer's calendar. Give the message a `calendar`: an iCalendar object (RFC 5545) that your application builds, and the mailer sends it the way mail clients look for an invitation, so they show the event with its accept and decline buttons. `@nestjs/mail` has no dependencies, so it doesn't generate the event. [`ical-generator`](https://github.com/sebbo2002/ical-generator) does, and is what the example uses:
+
+```bash
+$ npm i --save ical-generator
+```
+
+A provider writes the event, and the mail class passes it on. The provider builds the calendar with `ical-generator`, and `toString()` gives the iCalendar text, with its line breaks and folded lines:
 
 ```typescript
 @@filename(notifications/delivery-calendar)
+import { Injectable } from '@nestjs/common';
+import ical, { ICalAttendeeRole, ICalCalendarMethod, ICalEventStatus } from 'ical-generator';
+
 export interface DeliverySlot {
   start: Date;
   end: Date;
@@ -397,31 +406,25 @@ export interface DeliverySlot {
 
 @Injectable()
 export class DeliveryCalendar {
-  invite(order: Order, customer: Customer, slot: DeliverySlot, method: 'REQUEST' | 'CANCEL' = 'REQUEST'): string {
-    const stamp = (date: Date) => date.toISOString().replace(/[-:]/g, '').replace(/\.\d{3}/, '');
-    return [
-      'BEGIN:VCALENDAR',
-      'VERSION:2.0',
-      'PRODID:-//Example Shop//Orders//EN',
-      `METHOD:${method}`,
-      'BEGIN:VEVENT',
-      // The same UID for every version of this event, so a calendar replaces it instead of adding another
-      `UID:delivery-${order.id}@shop.example.com`,
-      `SEQUENCE:${slot.revision}`,
-      `DTSTAMP:${stamp(new Date())}`,
-      `DTSTART:${stamp(slot.start)}`,
-      `DTEND:${stamp(slot.end)}`,
-      `SUMMARY:Delivery of order #${order.number}`,
-      'ORGANIZER;CN=Example Shop:mailto:orders@shop.example.com',
-      `ATTENDEE;CN=${customer.name};RSVP=TRUE:mailto:${customer.email}`,
-      'END:VEVENT',
-      'END:VCALENDAR',
-    ].join('\r\n');
+  invite(order: Order, customer: Customer, slot: DeliverySlot, method = ICalCalendarMethod.REQUEST): string {
+    const calendar = ical({ prodId: '//Example Shop//Orders//EN', method });
+    calendar.createEvent({
+      // The same id for every version of this event, so a calendar replaces it instead of adding another
+      id: `delivery-${order.id}@shop.example.com`,
+      sequence: slot.revision,
+      start: slot.start,
+      end: slot.end,
+      summary: `Delivery of order #${order.number}`,
+      status: method === ICalCalendarMethod.CANCEL ? ICalEventStatus.CANCELLED : ICalEventStatus.CONFIRMED,
+      organizer: { name: 'Example Shop', email: 'orders@shop.example.com' },
+      attendees: [{ name: customer.name, email: customer.email, rsvp: true, role: ICalAttendeeRole.REQ }],
+    });
+    return calendar.toString();
   }
 }
 ```
 
-The mail class returns it as `calendar`, next to the body, from `render()`:
+The mail class returns it as `calendar`, next to the body, from `render()`. `ICalCalendarMethod` is the library's enum of the iTIP methods, and its values are the strings `calendar.method` takes:
 
 ```typescript
 @@filename(notifications/delivery-slot.mail)
@@ -449,7 +452,7 @@ export class DeliverySlotMail implements Mailable<DeliverySlotBooked> {
 
 A calendar that disagrees with itself is refused with a `MailMessageError`, before anything is sent: a mail client drops an invitation whose method doesn't match, and tells nobody. The mailer writes the event into the message twice, the way nodemailer's `icalEvent` does, which mail clients have long been tested against: as a `text/calendar` part with its method, last in the `multipart/alternative` next to the text and the HTML, where Gmail looks for it, and as an attached `.ics` file, for clients that only read attachments. Some clients list the first one as an attachment too, without a name.
 
-To move the delivery, send a new invitation with the same `UID` and a higher `SEQUENCE`, here `slot.revision` going up. A calendar that already holds the event updates it. To cancel it, send the same `UID` with a higher `SEQUENCE` and `METHOD:CANCEL`, which is why `invite()` takes the method. A mail class of its own for the cancellation calls `invite(order, customer, slot, 'CANCEL')` and returns `method: 'CANCEL'`. The move looks like this:
+To move the delivery, send a new invitation with the same `UID` (the event's `id`) and a higher `SEQUENCE` (its `sequence`), here `slot.revision` going up. A calendar that already holds the event updates it. To cancel it, send the same `UID` with a higher `SEQUENCE` and `METHOD:CANCEL`, which is why `invite()` takes the method. A mail class of its own for the cancellation calls `invite(order, customer, slot, ICalCalendarMethod.CANCEL)` and returns `method: 'CANCEL'`. The move looks like this:
 
 ```typescript
 await this.mailer.send(DeliverySlotMail, {
