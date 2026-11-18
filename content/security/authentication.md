@@ -1072,6 +1072,25 @@ export class TokensController {
 
 The `amr` claim records how the user signed in, and [two-factor authentication](/security/authentication#add-two-factor-authentication) relies on it. `issue()` stores the `claims` with the refresh-token family, and `refresh()` puts them into every access token it mints, so refreshed tokens describe the same sign-in. Keep facts that can change, such as roles, out of `claims`: they would stay in the tokens for as long as the family lives. `validate()` loads the current user on every request instead.
 
+Some claims describe the session rather than the user, such as the workspace a multi-tenant app is working in. To change one, pass `refresh()` a `claims` function. It receives a copy of the family's claims and the user's ID, and returns the claims for the new access token and for every later refresh of the family. It can be async, and it can throw to refuse the change, which leaves the refresh token unspent:
+
+```typescript
+@Post('workspace')
+@HttpCode(200)
+switchWorkspace(@Body() { refreshToken, workspaceId }: SwitchWorkspaceDto) {
+  return this.tokenService.refresh(refreshToken, {
+    claims: async (claims, userId) => {
+      if (!(await this.workspacesService.isMember(userId, workspaceId))) {
+        throw new ForbiddenException();
+      }
+      return { ...claims, workspace: workspaceId };
+    },
+  });
+}
+```
+
+The service ignores `amr`, `auth_time` and the registered JWT claims (`sub`, `iss`, `exp` and the rest) in what the function returns: `amr` and `auth_time` keep their values from the sign-in, and the service sets the others as on any refresh, so a switch can't change the user or add a second factor. Like two refreshes of the same token, a switch and a refresh sent at the same time count as a reuse, so the client should wait for one to finish before it starts the other.
+
 A service that signs short-lived access tokens and has its clients sign in again can turn refresh tokens off. With `refreshToken` set to `false`, `issue()` returns `accessToken` and `expiresIn` alone, and stores nothing, so the application needs no `RefreshTokenStore`. The token endpoint's response has no refresh token: clients sign in again when the access token expires. `refresh()` and `revoke()` throw, saying refresh tokens are disabled, and `revokeAll()` does nothing. The second factor and the `amr` claim work as before. Declare `refreshTokens: false` on `AuthenticationTypes` too, so `issue()` is typed to return an `AccessTokenResult` rather than a `TokenPair`:
 
 ```typescript
