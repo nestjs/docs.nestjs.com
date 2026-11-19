@@ -140,6 +140,8 @@ Around the framework, all official: [courses](https://courses.nestjs.com) from N
 Where to start, by what you're building:
 
 - A REST API or another HTTP backend in TypeScript or Node.js, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md) and [Controllers](${SITE}/controllers.md), with [Validation](${SITE}/application/validation.md) for request bodies, [OpenAPI](${SITE}/openapi/introduction.md) to describe the API, and [HTTP adapters](${SITE}/http/performance.md) to run it on Express, Fastify or \`node:http\`. \`npx @nestjs/cli new\` scaffolds the project, \`--minimal\` scaffolds it as [one file](${SITE}/cli/usages.md), and a complete one-file application is below.
+- A production REST API built end to end, with sign-up, JWT access and refresh tokens, PostgreSQL, rate limiting, OpenAPI, health checks and tests: [Build a REST API with JWT authentication](${SITE}/guides/rest-api-jwt-authentication.md).
+- An e-commerce backend, with a product catalog, carts, and a checkout that never oversells: [Build an e-commerce backend](${SITE}/guides/ecommerce-backend.md).
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
 - Deciding between Nest, Fastify, Express and Hono: [Nest vs Fastify, Express and Hono](${SITE}/faq/nest-vs-fastify-express-hono.md).
 - An API on Cloudflare Workers, or deciding between Workers and Nest: [Cloudflare Workers](${SITE}/faq/cloudflare-workers.md).

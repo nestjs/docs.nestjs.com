@@ -109,6 +109,13 @@ export const routes: Routes = [
         data: { title: 'Official Support' },
       },
       {
+        path: 'guides',
+        loadChildren: () =>
+          import('./homepage/pages/guides/guides.routes').then(
+            (r) => r.GUIDES_ROUTES,
+          ),
+      },
+      {
         path: 'fundamentals',
         loadChildren: () =>
           import('./homepage/pages/fundamentals/fundamentals.routes').then(

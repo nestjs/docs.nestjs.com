@@ -37,6 +37,17 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: 'Guides',
+    isOpened: false,
+    children: [
+      {
+        title: 'REST API with JWT authentication',
+        path: '/guides/rest-api-jwt-authentication',
+      },
+      { title: 'E-commerce backend', path: '/guides/ecommerce-backend' },
+    ],
+  },
+  {
     title: 'Fundamentals',
     isOpened: false,
     children: [
