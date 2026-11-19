@@ -27,6 +27,14 @@ It also asks whether to set up [NestJS Observe](https://www.observe.nestjs.com/ 
 
 If you set up Observe, the CLI then offers to link the new project to it, once the dependencies are installed. Accepting prints a code to approve at [observe.nestjs.com/link](https://www.observe.nestjs.com/link 'Link a project to NestJS Observe') (signing up first if you don't have an account; the free plan needs no payment details), and the CLI then writes the app key and secret into `.env` and makes every `nest start` script (`start`, `start:dev`, and `start:debug`) load it. Requests, background jobs, errors, and distributed traces start reporting the next time you start the application. To link later, or when the CLI doesn't offer it (without a terminal, or with `--skip-install`), run `npx @nestjs/observe link` in the project directory - see [Linking from the terminal](/observability/sdk#linking-from-the-terminal).
 
+To create the project in the current folder instead, from a script or a coding agent's shell, run:
+
+```bash
+$ npx @nestjs/cli new . --skip-git --package-manager npm
+```
+
+Without a terminal, the CLI asks nothing: it uses ESM and doesn't set up Observe. Every new project also includes an `AGENTS.md` file, which points coding agents to these docs and to Nest's first-party packages.
+
 > info **Hint** New projects are generated with TypeScript's [strict](https://www.typescriptlang.org/tsconfig#strict) mode enabled. To opt out, set `"strict": false` in the generated `tsconfig.json`.
 
 The CLI creates a `project-name` directory, installs the dependencies, generates a few boilerplate files, and populates a `src/` directory with several core files.

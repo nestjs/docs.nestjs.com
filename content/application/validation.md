@@ -218,6 +218,8 @@ export class FindOneParams {
 }
 ```
 
+> warning **Warning** `@IsOptional()` skips a property's other validators when its value is `null`, not only when it's `undefined`. A body such as `{{ '{' }}"title": null{{ '}' }}` passes validation, and the `null` can reach your database. For a property that may be left out but must not be `null`, use `@ValidateIf((_, value) => value !== undefined)` in place of `@IsOptional()`, together with the property's other validators.
+
 #### Disable detailed errors
 
 Error messages explain what was wrong with a request, but some production environments prefer not to expose them. To disable detailed errors, pass an options object to the `ValidationPipe`:
@@ -328,6 +330,8 @@ The `PartialType()` function returns a type (class) with all the properties of t
 ```typescript
 export class UpdateCatDto extends PartialType(CreateCatDto) {}
 ```
+
+> info **Hint** Like `@IsOptional()`, `PartialType()` skips validation for `null` as well as `undefined`. To validate `null` and skip only `undefined`, pass `{{ '{' }} skipNullProperties: false {{ '}' }}` as the second argument.
 
 The `PickType()` function constructs a type from a subset of the input type's properties:
 
