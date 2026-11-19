@@ -23,7 +23,7 @@ await app.listen(process.env.PORT ?? 3000);
 
 #### Default allowed origins
 
-Without an `origin` option (`enableCors()`, `enableCors({})`, or `cors: true`), every adapter answers requests from any origin with `Access-Control-Allow-Origin: *`. Any website can then call your API from a visitor's browser and read the responses. The browser won't share responses to requests that carry cookies or HTTP authentication, but the requests come from the visitor's network, so an API that trusts its network location, such as an intranet service or one behind an IP allowlist, can be read from any site.
+Without an `origin` option, as with `enableCors()` or `cors: true`, every adapter answers requests from any origin with `Access-Control-Allow-Origin: *`. Any website can then call your API from a visitor's browser and read the responses. The browser won't share responses to requests that carry cookies or HTTP authentication, but the requests come from the visitor's network, so an API that trusts its network location, such as an intranet service or one behind an IP allowlist, can be read from any site.
 
 To accept requests only from your own frontends, list their origins:
 
