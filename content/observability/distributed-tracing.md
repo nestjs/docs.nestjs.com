@@ -28,7 +28,7 @@ export class OrdersService {
 }
 ```
 
-It reads from the same context store as `getAttribute()`/`setAttribute()`, but unlike those it doesn't throw outside a traced context. It returns `null` instead, so code that forwards a trace id from startup hooks or other untraced paths doesn't need a `try`/`catch`. If your code can run outside a trace, check for `null` before setting a header.
+It reads from the same context store as `getAttribute()`/`setAttribute()`, and returns `null` outside a traced context. If your code can run outside a trace, such as a startup hook, check for `null` before setting a header.
 
 #### HTTP to HTTP
 

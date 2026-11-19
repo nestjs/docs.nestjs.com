@@ -13,7 +13,7 @@ export class CatsService {
 }
 ```
 
-`ObserveModule.forRoot()` registers a global module that exports `TracerService`, so you can inject it in any module without importing `ObserveModule` again. (`forRootAsync()` is global too, unless you pass `global: false`.) Every method reads the trace from the ambient async context, so calling one outside of a request, job, or other instrumented operation throws: there is no trace to attach to. This is deliberate, because a silently dropped span is harder to notice than an error. The exceptions are `currentTraceId()`, which returns `null` instead, and [custom metrics](#custom-metrics), which aren't tied to a trace.
+`ObserveModule.forRoot()` registers a global module that exports `TracerService`, so you can inject it in any module without importing `ObserveModule` again. (`forRootAsync()` is global too, unless you pass `global: false`.) Every method reads the trace from the ambient async context. Outside a request, job, or other instrumented operation there is no trace to attach to, so nothing is recorded: `createSpan()` runs its callback untraced, `activeSpan()` resolves to a span that records nothing, `setAttribute()` does nothing, `getAttribute()` returns `undefined`, `captureError()` records nothing and logs a warning once, and `currentTraceId()` returns `null`. Before SDK 0.3.27, these calls threw. [Custom metrics](#custom-metrics) aren't tied to a trace and work anywhere.
 
 #### Creating spans
 
@@ -40,7 +40,7 @@ const span = await this.tracerService.activeSpan();
 span.addTags({ cacheHit: 'false' });
 ```
 
-It rejects if no span is active for the current trace.
+If no span is active, it resolves to a span that records nothing, so tags added to it are dropped.
 
 <figure><img src="https://www.observe.nestjs.com/docs/sdk/spans.webp" alt="Spans" /></figure>
 
@@ -73,9 +73,9 @@ this.tracerService.setAttribute('tenantId', tenant.id);
 const tenantId = this.tracerService.getAttribute('tenantId');
 ```
 
-`getAttribute()` returns `undefined` for a key that was never set. Both throw when called outside a traced context.
+`getAttribute()` returns `undefined` for a key that was never set, and outside a traced context, where `setAttribute()` does nothing. An attribute set in a guard, an interceptor, or any other traced call stays for the rest of the request.
 
-The trace id lives in the same store, so `getAttribute(traceIdKey)` retrieves the current trace id, e.g., to correlate with an external system or to [propagate it to another service](/observability/distributed-tracing). `currentTraceId()` is a shorthand for that lookup with one deliberate difference: it returns `null` outside a traced context instead of throwing, because forwarding a trace id downstream can legitimately happen when there is no trace yet.
+The trace id lives in the same store, so `getAttribute(traceIdKey)` retrieves the current trace id, e.g., to correlate with an external system or to [propagate it to another service](/observability/distributed-tracing). `currentTraceId()` is a shorthand for that lookup, and returns `null` outside a traced context.
 
 To type the store, pass its shape as `TracerService`'s first type argument. Keys and values are then checked against it, including nested paths:
 
@@ -95,7 +95,7 @@ export class CheckoutService {
 }
 ```
 
-> info **Hint** `ObserveModule` also exports the `AsyncLocalStorage` instance that holds the trace context. `setAttribute()`/`getAttribute()` are the supported way to reach it; inject the store directly only if you need something they don't expose. If you already use the pattern described in the [Async local storage](/recipes/async-local-storage) recipe, this store can replace your hand-rolled one.
+> info **Hint** `ObserveModule` also exports the `AsyncLocalStorage` instance that holds the trace context, under the `AsyncLocalStorage` class. Each operation's store is a `Map` you can read and write directly; `setAttribute()`/`getAttribute()` are the typed way in. If you already use the pattern described in the [Async local storage](/recipes/async-local-storage) recipe, this store can replace your hand-rolled one: keep your values in its `Map`, and leave opening the store to the SDK, since `run()` or `enterWith()` with a store of your own replaces the operation's. If you keep a store of your own as well, provide it under a token of your own rather than the `AsyncLocalStorage` class.
 
 #### Custom metrics
 
