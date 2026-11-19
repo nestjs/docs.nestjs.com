@@ -21,6 +21,20 @@ const app = await NestFactory.create(AppModule, { cors: true });
 await app.listen(process.env.PORT ?? 3000);
 ```
 
+#### Default allowed origins
+
+Without an `origin` option, as with `enableCors()` or `cors: true`, every adapter answers requests from any origin with `Access-Control-Allow-Origin: *`. Any website can then call your API from a visitor's browser and read the responses. The browser won't share responses to requests that carry cookies or HTTP authentication, but the requests come from the visitor's network, so an API that trusts its network location, such as an intranet service or one behind an IP allowlist, can be read from any site.
+
+To accept requests only from your own frontends, list their origins:
+
+```typescript
+app.enableCors({
+  origin: ['https://app.example.com', 'https://admin.example.com'],
+});
+```
+
+> warning **Warning** Don't combine `origin: true` with `credentials: true`. `origin: true` echoes back the request's `Origin` header, so any website could send authenticated requests on behalf of a signed-in user and read the responses.
+
 #### Default allowed methods
 
 The two packages do not share the same defaults, so `enableCors()` with no options does not advertise the same `Access-Control-Allow-Methods` on both platforms. The Express [cors](https://github.com/expressjs/cors) package answers `GET,HEAD,PUT,PATCH,POST,DELETE`, while [@fastify/cors](https://github.com/fastify/fastify-cors) answers only the [CORS-safelisted methods](https://fetch.spec.whatwg.org/#methods): `GET,HEAD,POST`.
