@@ -239,7 +239,7 @@ export class LoggerMiddleware {
 This differs from Express in a few ways that matter when porting middleware:
 
 - The raw `res` has no Express helpers such as `res.status()` or `res.json()`, so calling them throws a `TypeError` and the request fails with a `500` response. To reject a request, throw an exception (for example, `throw new UnauthorizedException()`), and the [exceptions layer](/exception-filters) turns it into the matching response.
-- Middleware runs before Fastify parses the request body and resolves route parameters, so `req.body` and `req.params` are `undefined` inside it. Checks that depend on them, such as verifying a signed body, belong in a [guard](/guards), which runs after both are available.
+- Middleware runs before Fastify parses the request body, and the raw `req` doesn't carry the route parameters, so `req.body` and `req.params` are `undefined` inside it. Checks that depend on them, such as verifying a signed body, belong in a [guard](/guards), which runs after both are available.
 
 > info **Hint** Guards, interceptors, and exception filters get Fastify's `FastifyRequest` and `FastifyReply` wrappers from `switchToHttp()`, not the raw objects that middleware receives. Use `reply.status()` and `reply.send()` there, or `reply.raw` for the underlying Node.js response.
 
