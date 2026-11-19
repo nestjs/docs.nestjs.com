@@ -1046,7 +1046,7 @@ Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#pr
 
 #### What's next
 
-- Take payments, and mark orders paid from the provider's webhook: [Webhooks](/http/webhooks).
+- Take payments, and mark orders paid from the provider's webhook: [Accept payments with webhooks](/guides/payments-webhooks).
 - Send order confirmations, outside the request: [Mail](/application/mail) and [Queues](/application/queues). To send an event only once the order's transaction has committed, use the [transactional outbox](/reliability/outbox).
 - Let customers see per-order permissions, or give staff finer roles: [Authorization](/security/authorization).
 - See slow checkouts and lock waits in production, request by request: [Observability](/observability/overview).

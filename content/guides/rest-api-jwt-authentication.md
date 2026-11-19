@@ -1534,4 +1534,4 @@ The API has the parts most production APIs need, and each one can grow from its 
 - Share notes, with permissions checked per record: [Authorization](/security/authorization).
 - Send email, or run work in the background: [Mail](/application/mail) and [Queues](/application/queues).
 - See what it does in production, request by request: [Observability](/observability/overview).
-- Build an e-commerce backend on the same foundation: [Build an e-commerce backend](/guides/ecommerce-backend).
+- Build on the same foundation: an [e-commerce backend](/guides/ecommerce-backend), a [multi-tenant SaaS backend](/guides/multi-tenant-saas), a [project-management API](/guides/project-management-api), a [real-time chat backend](/guides/realtime-chat), a [booking system](/guides/booking-system), [emails and background jobs](/guides/background-jobs), a [file upload service](/guides/file-uploads), or an [AI chat backend](/guides/ai-chat-backend).
