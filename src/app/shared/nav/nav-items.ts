@@ -337,6 +337,8 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Async local storage', path: '/recipes/async-local-storage' },
       { title: 'Socket activation', path: '/recipes/socket-activation' },
       { title: 'Migrating from Express', path: '/recipes/express-migration' },
+      { title: 'Coming from Spring Boot', path: '/recipes/spring-boot' },
+      { title: 'Coming from ASP.NET Core', path: '/recipes/aspnet-core' },
     ],
   },
   {

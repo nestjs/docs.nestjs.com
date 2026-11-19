@@ -14,6 +14,8 @@ import { SwcComponent } from './swc/swc.component';
 import { PassportComponent } from './passport/passport.component';
 import { SocketActivationComponent } from './socket-activation/socket-activation.component';
 import { ExpressMigrationComponent } from './express-migration/express-migration.component';
+import { SpringBootComponent } from './spring-boot/spring-boot.component';
+import { AspnetCoreComponent } from './aspnet-core/aspnet-core.component';
 import { movedTo, splitInto } from '../../../shared/utils/moved-page-redirect';
 import { PRISMA_SECTIONS } from '../data/prisma-sections';
 
@@ -109,5 +111,15 @@ export const RECIPES_ROUTES: Routes = [
     path: 'express-migration',
     component: ExpressMigrationComponent,
     data: { title: 'Migrating from Express' },
+  },
+  {
+    path: 'spring-boot',
+    component: SpringBootComponent,
+    data: { title: 'Coming from Spring Boot' },
+  },
+  {
+    path: 'aspnet-core',
+    component: AspnetCoreComponent,
+    data: { title: 'Coming from ASP.NET Core' },
   },
 ];
