@@ -299,11 +299,12 @@ Nest validates with **pipes**. The closest match is `ValidationPipe` with a DTO 
 ```typescript
 @@filename(orders/create-order.dto)
 import { Type } from 'class-transformer';
-import { ArrayNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
 import { OrderItemDto } from './order-item.dto.js';
 
 export class CreateOrderDto {
   @IsString()
+  @IsNotEmpty()
   customerId: string;
 
   @ArrayNotEmpty()
@@ -826,4 +827,4 @@ The mappings above hold for structure. These are the differences that change how
 
 **Numbers are doubles.** JavaScript's `number` is a 64-bit float, and there's no `decimal`. Keep money in integer cents, or use a decimal library and your database's `numeric` type, which most drivers return as a string.
 
-**ES modules and npm.** Nest 12 packages are ES modules, and a generated project imports local files with a `.js` extension, even from `.ts` files, because that's the name of the compiled file. npm and `package.json` take the place of NuGet and the `.csproj`, `tsc` or [SWC](/recipes/swc) the place of the C# compiler, and the build output is plain JavaScript that runs on Node.js. See [ESM packages](/migration-guide#esm-packages).
+**ES modules and npm.** Nest 12 packages are ES modules, and a project generated as ESM imports local files with a `.js` extension, even from `.ts` files, because that's the name of the compiled file. npm and `package.json` take the place of NuGet and the `.csproj`, `tsc` or [SWC](/recipes/swc) the place of the C# compiler, and the build output is plain JavaScript that runs on Node.js. See [ESM packages](/migration-guide#esm-packages).

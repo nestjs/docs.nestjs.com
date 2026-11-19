@@ -305,11 +305,12 @@ Nest validates with **pipes**. The closest match is `ValidationPipe` with a DTO 
 ```typescript
 @@filename(orders/create-order.dto)
 import { Type } from 'class-transformer';
-import { ArrayNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
+import { ArrayNotEmpty, IsNotEmpty, IsOptional, IsString, MaxLength, ValidateNested } from 'class-validator';
 import { OrderItemDto } from './order-item.dto.js';
 
 export class CreateOrderDto {
   @IsString()
+  @IsNotEmpty()
   customerId: string;
 
   @ArrayNotEmpty()
@@ -441,7 +442,7 @@ export class TimingInterceptor implements NestInterceptor {
 }
 ```
 
-Interceptors wrap route handlers (and message and event handlers in microservices and gateways), not arbitrary methods. There's no general-purpose AOP: no `@Transactional`, `@Cacheable` or `@Retryable` on a method of any bean. For those, Nest packages offer decorators on handlers, such as `CacheInterceptor` in [Caching](/data/caching) and `@Retry()` in [Resilience](/reliability/resilience), or an explicit call in the service, as in [Transactions](/recipes/spring-boot#data-access) below.
+Interceptors wrap route handlers (and message and event handlers in microservices and gateways), not arbitrary methods. There's no general-purpose AOP: no `@Transactional`, `@Cacheable` or `@Retryable` on a method of any bean. Nest packages cover those cases on route handlers, such as `CacheInterceptor` in [Caching](/data/caching) and `@Retry()` in [Resilience](/reliability/resilience), and with an explicit API inside services, such as Resilience's policy objects and the transaction callback in [Data access](/recipes/spring-boot#data-access) below.
 
 #### Security
 
@@ -806,6 +807,6 @@ The mappings above hold for structure. These are the differences that change how
 
 **Numbers are doubles.** JavaScript's `number` is a 64-bit float, and there's no `BigDecimal`. Keep money in integer cents, or use a decimal library and your database's `numeric` type, which most drivers return as a string.
 
-**ES modules and npm.** Nest 12 packages are ES modules, and a generated project imports local files with a `.js` extension, even from `.ts` files, because that's the name of the compiled file. npm and `package.json` take the place of Maven or Gradle, `tsc` or [SWC](/recipes/swc) the place of `javac`, and the build output is plain JavaScript that runs on Node.js, with no JVM to tune. See [ESM packages](/migration-guide#esm-packages).
+**ES modules and npm.** Nest 12 packages are ES modules, and a project generated as ESM imports local files with a `.js` extension, even from `.ts` files, because that's the name of the compiled file. npm and `package.json` take the place of Maven or Gradle, `tsc` or [SWC](/recipes/swc) the place of `javac`, and the build output is plain JavaScript that runs on Node.js, with no JVM to tune. See [ESM packages](/migration-guide#esm-packages).
 
 **Fewer decisions are made for you by the classpath.** Nothing is configured because a package is installed. Each module you use is imported and configured in code, so what an application does at startup can be read from its modules.
