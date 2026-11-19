@@ -437,7 +437,7 @@ export class DeliverySlotMail implements Mailable<DeliverySlotChange> {
 }
 ```
 
-`calendar` is also an option of a message written inline, `mailer.send({ to, subject, html, calendar })`, and a template-based mail returns it beside `template` and `context`. It takes:
+`calendar` is also an option of a message written inline and passed to `mailer.send()`, and a template-based mail returns it beside `template` and `context`. It takes:
 
 | Field | Description |
 | --- | --- |
