@@ -24,16 +24,39 @@ These are the endpoints, and the section that adds each one:
 
 #### Start from the JWT API
 
-Create a project as in the [first two sections](/guides/rest-api-jwt-authentication#start-with-one-file) of the JWT guide, with the same dependencies, and take its sign-in, health checks and test setup as they are, from the [finished guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts):
-
-- `src/config.ts`, `src/main.ts` and `drizzle.config.ts`
-- everything under `src/auth/`, `src/users/` and `src/health/`
-- `vitest.config.e2e.ts`
-
-Leave out `src/notes/`, and rename the notes to the shop where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Then add the authorization package:
+Create the project, and install everything this guide uses. These are the JWT guide's packages plus `@nestjs/authorization`:
 
 ```bash
-$ npm i --save @nestjs/authorization
+$ npm i -g @nestjs/cli
+$ nest new shop-api --minimal
+$ cd shop-api
+$ npm uninstall @nestjs/platform-express @types/express
+$ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-orm@rc pg @nestjs/authentication @nestjs/authorization @nestjs/throttler @nestjs/swagger @nestjs/terminus
+$ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
+```
+
+Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+
+- `src/config.ts`, `src/main.ts`, `drizzle.config.ts` and `vitest.config.e2e.ts`
+- everything under `src/auth/`, `src/users/` and `src/health/`
+- `test/refresh-token.store.e2e-spec.ts`
+
+Leave out `src/notes/` and the JWT guide's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the shop where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
+
+```json
+"test:e2e": "vitest run --config ./vitest.config.e2e.ts"
+```
+
+Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT guide, with a database of the shop's own:
+
+```bash
+$ docker run -d --name shop-db -e POSTGRES_PASSWORD=shop -e POSTGRES_DB=shop -p 5432:5432 postgres:17
+```
+
+```bash
+DATABASE_URL=postgres://postgres:shop@localhost:5432/shop
+# Generate with: openssl rand -base64 32
+JWT_SECRET=
 ```
 
 Customers and staff use the same sign-in, so a user now has a role:
@@ -820,11 +843,9 @@ export class OrdersModule {}
 
 #### Try it
 
-Start a database for the shop, put its URL and a `JWT_SECRET` in `.env` as in the JWT guide, apply the migration, and start the application:
+Start the application:
 
 ```bash
-$ docker run -d --name shop-db -e POSTGRES_PASSWORD=shop -e POSTGRES_DB=shop -p 5432:5432 postgres:17
-$ npx drizzle-kit migrate
 $ npm run start:dev
 ```
 
@@ -1020,6 +1041,7 @@ Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#pr
 - **Take payment with an idempotency key.** A checkout is safe to retry because the cart is gone after the first one. A payment isn't: a retried charge charges twice. The provider's API takes a key; send the order's id. To make your own payment endpoint safe to retry, see [Idempotency keys](/reliability/idempotency).
 - **Never trust a price from the client.** The order's prices come from the `products` table at the moment of checkout. A client that sends a price or a total is ignored by construction here; keep it that way when you add discounts.
 - **Keep deactivating products instead of deleting them.** Order items refer to them.
+- **Watch checkout in production.** Lock waits on a popular product show up as slow checkouts, not as errors. [NestJS Observe](/observability/overview) records every request with a trace of its spans, SQL statements included, and p95 latency per route, so a checkout that slows down under a sale is visible before customers complain.
 - **Give staff accounts a second factor.** A staff token can rewrite the catalog's prices. See [Add two-factor authentication](/security/authentication#add-two-factor-authentication), and require it on staff routes with `@Authenticate()`.
 
 #### What's next

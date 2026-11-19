@@ -1521,6 +1521,7 @@ $ TEST_DATABASE_URL=postgres://postgres:notes@localhost:5432/notes_test npm run 
 - **Use shared storage for the throttler** once you run more than one instance, and pass `trustProxy` to `NodeAdapter` behind a load balancer.
 - **Size the servers for scrypt.** Each hash at the default cost uses 128 MiB, on the libuv thread pool (four threads unless you set `UV_THREADPOOL_SIZE`). Sign-in bursts queue behind each other; the throttler bounds them.
 - **Point the platform's probes at the health checks**: liveness at `/health/live`, readiness at `/health/ready`. Shutdown hooks are on, so a deploy's `SIGTERM` closes the server and the pool before the process exits.
+- **See what the API does in production.** [NestJS Observe](/observability/overview) instruments the application through the `instrument` option of `NestFactory.create()`: requests per route with their latency and failure rate, a trace of each one, and unhandled errors grouped into defects, with an email when a new one appears. `npx @nestjs/observe link` sets it up.
 - **Decide what a password reset or a stolen device ends.** `TokenService.revokeAll()` revokes every refresh token of a user, and access tokens that were already issued expire within 15 minutes.
 
 The [authentication chapter's checklist](/security/authentication#production-checklist) covers the rest, for when the API adds sessions for a web app, email verification or two-factor authentication.
