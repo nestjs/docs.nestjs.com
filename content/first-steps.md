@@ -21,7 +21,7 @@ $ npm i -g @nestjs/cli
 $ nest new project-name
 ```
 
-The CLI asks which module system to use: ESM (the default), which uses Vitest as the test runner, or CommonJS, which uses Jest.
+The CLI asks which module system to use: ESM (the default), which uses Vitest as the test runner, or CommonJS, which uses Jest. Pass `--type esm` or `--type cjs` to choose without being asked.
 
 It also asks whether to set up [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe'), the official observability platform for Nest. If you answer yes, the generated project includes the `@nestjs/observe` SDK, already wired into `AppModule` and `NestFactory.create()`. In an interactive terminal, the prompt defaults to yes; in non-interactive environments, such as CI, it is skipped and Observe is not added. Pass `--observe` or `--no-observe` to skip the prompt either way. See the [Observability](/observability/overview) chapter for what Observe covers.
 
