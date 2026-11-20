@@ -289,10 +289,8 @@ The authorization guard **denies by default**: a route runs only if it declares 
 import { Controller, Get } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import type { User } from './user.js';
 
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller('me')
 export class MeController {
@@ -406,7 +404,7 @@ The read routes are `@Public()`, and the write routes check the policy before th
 import { Body, Controller, Get, Param, Patch, Post, Query } from '@nestjs/common';
 import { Public } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiSecurity } from '@nestjs/swagger';
 import { z } from 'zod';
 import { ProductPolicy } from './product.policy.js';
 import {
@@ -426,25 +424,25 @@ export class ProductsController {
   constructor(private readonly productsService: ProductsService) {}
 
   @Public()
+  @ApiSecurity({})
   @Get()
   findAll(@Query({ schema: listProductsQuerySchema }) query: ListProductsQuery) {
     return this.productsService.findAll(query);
   }
 
   @Public()
+  @ApiSecurity({})
   @Get(':id')
   findOne(@Param('id', productId) id: string) {
     return this.productsService.findOne(id);
   }
 
-  @ApiBearerAuth()
   @Can(ProductPolicy, 'manage')
   @Post()
   create(@Body({ schema: createProductSchema }) dto: CreateProductDto) {
     return this.productsService.create(dto);
   }
 
-  @ApiBearerAuth()
   @Can(ProductPolicy, 'manage')
   @Patch(':id')
   update(@Param('id', productId) id: string, @Body({ schema: updateProductSchema }) dto: UpdateProductDto) {
@@ -569,7 +567,6 @@ Every signed-in user has a cart, so the controller declares `@Can.Anyone()`, and
 import { Body, Controller, Delete, Get, Param, Put } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { setQuantitySchema, type SetQuantityDto } from './cart.schemas.js';
 import { CartService } from './cart.service.js';
@@ -577,7 +574,6 @@ import { CartService } from './cart.service.js';
 const productId = { schema: z.uuid() };
 
 // Every signed-in customer has a cart, and only sees their own.
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller('cart')
 export class CartController {
@@ -786,14 +782,12 @@ The controller checks that policy on the ship route. The other routes are for an
 import { Controller, Get, HttpCode, Param, Post } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { OrderPolicy } from './order.policy.js';
 import { OrdersService } from './orders.service.js';
 
 const orderId = { schema: z.uuid() };
 
-@ApiBearerAuth()
 @Controller('orders')
 export class OrdersController {
   constructor(private readonly ordersService: OrdersService) {}

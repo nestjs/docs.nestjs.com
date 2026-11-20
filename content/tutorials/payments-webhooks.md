@@ -211,13 +211,11 @@ The call to the provider happens outside any database transaction. A transaction
 import { Controller, HttpCode, Param, Post } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { PaymentsService } from './payments.service.js';
 
 const orderId = { schema: z.uuid() };
 
-@ApiBearerAuth()
 @Controller('orders')
 export class PaymentsController {
   constructor(private readonly paymentsService: PaymentsService) {}
@@ -392,6 +390,7 @@ The controller:
 import { Controller, HttpCode, Logger, Post } from '@nestjs/common';
 import { Public } from '@nestjs/authentication';
 import { InjectDrizzle } from '@nestjs/drizzle';
+import { ApiSecurity } from '@nestjs/swagger';
 import { SkipThrottle } from '@nestjs/throttler';
 import { IncomingWebhook, VerifyWebhook } from '@nestjs/webhooks';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -404,6 +403,7 @@ const orderId = z.uuid();
 // The signature authenticates the provider, not a token. And a provider
 // delivers in bursts, from a few addresses: the per-IP limit would refuse them.
 @Public()
+@ApiSecurity({})
 @SkipThrottle()
 @Controller('webhooks/payments')
 export class PaymentWebhooksController {

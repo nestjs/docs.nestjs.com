@@ -671,7 +671,6 @@ The controller:
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Req, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import type { NodeRequest } from '@nestjs/platform-node';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { ChatThrottlerGuard } from './chat-throttler.guard.js';
 import {
@@ -685,7 +684,6 @@ import { ConversationsService } from './conversations.service.js';
 
 const conversationId = { schema: z.uuid() };
 
-@ApiBearerAuth()
 @Controller('conversations')
 export class ChatController {
   constructor(

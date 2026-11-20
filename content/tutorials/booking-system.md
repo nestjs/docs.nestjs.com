@@ -304,10 +304,8 @@ The authorization guard **denies by default**: a route runs only if it declares 
 import { Controller, Get } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import type { User } from './user.js';
 
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller('me')
 export class MeController {
@@ -427,7 +425,7 @@ Resources are deactivated rather than deleted, since bookings refer to them. The
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { Public } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
+import { ApiSecurity } from '@nestjs/swagger';
 import { z } from 'zod';
 import { ResourcePolicy } from './resource.policy.js';
 import {
@@ -445,25 +443,25 @@ export class ResourcesController {
   constructor(private readonly resourcesService: ResourcesService) {}
 
   @Public()
+  @ApiSecurity({})
   @Get()
   findAll() {
     return this.resourcesService.findAll();
   }
 
   @Public()
+  @ApiSecurity({})
   @Get(':id')
   findOne(@Param('id', resourceId) id: string) {
     return this.resourcesService.findOne(id);
   }
 
-  @ApiBearerAuth()
   @Can(ResourcePolicy, 'manage')
   @Post()
   create(@Body({ schema: createResourceSchema }) dto: CreateResourceDto) {
     return this.resourcesService.create(dto);
   }
 
-  @ApiBearerAuth()
   @Can(ResourcePolicy, 'manage')
   @Patch(':id')
   update(@Param('id', resourceId) id: string, @Body({ schema: updateResourceSchema }) dto: UpdateResourceDto) {
@@ -633,7 +631,6 @@ Every signed-in user can book, and sees only their own bookings:
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { createBookingSchema, type CreateBookingDto } from './bookings.schemas.js';
 import { BookingsService } from './bookings.service.js';
@@ -641,7 +638,6 @@ import { BookingsService } from './bookings.service.js';
 const bookingId = { schema: z.uuid() };
 
 // Any signed-in user books, and sees only their own bookings.
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller('bookings')
 export class BookingsController {
@@ -753,6 +749,7 @@ import {
 // ...
 
   @Public()
+  @ApiSecurity({})
   @Get(':id/availability')
   async availability(
     @Param('id', resourceId) id: string,

@@ -635,7 +635,6 @@ Creating rooms, adding members and reading the history are ordinary requests, an
 @@filename(src/chat/rooms.controller)
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, Query } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { ChatGateway } from './chat.gateway.js';
 import {
@@ -651,7 +650,6 @@ import { RoomsService } from './rooms.service.js';
 
 const roomId = { schema: z.uuid() };
 
-@ApiBearerAuth()
 @Controller('rooms')
 export class RoomsController {
   constructor(

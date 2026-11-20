@@ -345,7 +345,7 @@ import {
 import { CurrentUser } from '@nestjs/authentication';
 import { FileInterceptor, type NodeRequest, type NodeResponse } from '@nestjs/platform-node';
 import { uploadToDisk, type StoredUpload } from '@nestjs/storage';
-import { ApiBearerAuth, ApiBody, ApiConsumes } from '@nestjs/swagger';
+import { ApiBody, ApiConsumes } from '@nestjs/swagger';
 import { z } from 'zod';
 import type { User } from '../users/user.js';
 import { FILE_TYPES, MAX_FILE_SIZE } from './file-rules.js';
@@ -354,7 +354,6 @@ import { FilesService } from './files.service.js';
 
 const fileId = { schema: z.uuid() };
 
-@ApiBearerAuth()
 @Controller('files')
 export class FilesController {
   constructor(private readonly filesService: FilesService) {}
@@ -558,10 +557,8 @@ A client that knows the usage can warn before an upload is refused:
 @@filename(src/files/storage-usage.controller)
 import { Controller, Get } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { FilesService } from './files.service.js';
 
-@ApiBearerAuth()
 @Controller('me/storage')
 export class StorageUsageController {
   constructor(private readonly filesService: FilesService) {}
@@ -621,12 +618,14 @@ import { Controller, Get, Req, Res } from '@nestjs/common';
 import { Public } from '@nestjs/authentication';
 import type { NodeRequest, NodeResponse } from '@nestjs/platform-node';
 import { serveSignedUrl, StorageDisk } from '@nestjs/storage';
+import { ApiSecurity } from '@nestjs/swagger';
 
 /**
  * Serves the local disk's signed links. They carry their own permission, so the route is
  * public. With S3, the links point at the bucket, and this route answers 404.
  */
 @Public()
+@ApiSecurity({})
 @Controller('downloads')
 export class DownloadsController {
   constructor(private readonly disk: StorageDisk) {}

@@ -332,7 +332,6 @@ export class AppModule {}
 import { Can } from '@nestjs/authorization';
 // ...
 
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller('me')
 export class MeController {
@@ -511,7 +510,6 @@ Every route checks permissions in the service, so the controller declares `@Can.
 import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import type { User } from '../users/user.js';
 import { addMemberSchema, createProjectSchema, type AddMemberDto, type CreateProjectDto } from './projects.schemas.js';
@@ -520,7 +518,6 @@ import { ProjectsService } from './projects.service.js';
 const projectId = { schema: z.uuid() };
 
 // Every route checks the caller's membership in the service.
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller('projects')
 export class ProjectsController {
@@ -843,7 +840,6 @@ The query's `WHERE` and `ORDER BY` match an index, so PostgreSQL reads one page 
 import { Body, Controller, Get, HttpCode, Param, Patch, Post, Query } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import type { User } from '../users/user.js';
 import {
@@ -861,7 +857,6 @@ import { TasksService } from './tasks.service.js';
 const uuid = { schema: z.uuid() };
 
 // Every route checks the caller's permissions in the service, against the task.
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller()
 export class TasksController {
@@ -1004,7 +999,6 @@ The order of the checks in `update()` decides the status code: someone outside t
 import { Body, Controller, Get, Param, Patch, Post } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import type { User } from '../users/user.js';
 import { commentSchema, type CommentDto } from './tasks.schemas.js';
@@ -1012,7 +1006,6 @@ import { CommentsService } from './comments.service.js';
 
 const uuid = { schema: z.uuid() };
 
-@ApiBearerAuth()
 @Can.Anyone()
 @Controller()
 export class CommentsController {
@@ -1154,12 +1147,10 @@ The controller puts that guard in front of the stream:
 @@filename(src/activity/activity.controller)
 import { Controller, Param, Sse, UseGuards, type MessageEvent } from '@nestjs/common';
 import { Can } from '@nestjs/authorization';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import type { Observable } from 'rxjs';
 import { ActivityService } from './activity.service.js';
 import { ProjectMemberGuard } from './project-member.guard.js';
 
-@ApiBearerAuth()
 @Can.Anyone()
 @UseGuards(ProjectMemberGuard)
 @Controller('projects/:projectId/events')

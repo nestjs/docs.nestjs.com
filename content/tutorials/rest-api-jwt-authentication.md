@@ -1225,7 +1225,7 @@ Retry-After-account: 900
 $ npm i --save @nestjs/swagger
 ```
 
-Build the document and serve Swagger UI from `main.ts`:
+Build the document and serve Swagger UI from `main.ts`. `addSecurityRequirements('bearer')` declares that every operation needs the bearer token, which is how the API behaves: the authentication guard is global, and only the routes marked `@Public()` skip it:
 
 ```typescript
 @@filename(src/main)
@@ -1235,25 +1235,31 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
 app.enableShutdownHooks();
 
-const document = new DocumentBuilder().setTitle('Notes API').setVersion('1.0').addBearerAuth().build();
+const document = new DocumentBuilder()
+  .setTitle('Notes API')
+  .setVersion('1.0')
+  .addBearerAuth()
+  .addSecurityRequirements('bearer')
+  .build();
 SwaggerModule.setup('docs', app, () => SwaggerModule.createDocument(app, document));
 ```
 
-Mark the controllers that need a token with `@ApiBearerAuth()`, so Swagger UI sends the token you enter under **Authorize**:
+Swagger doesn't know about `@Public()`, so mark the public routes for it too. `@ApiSecurity()` with an empty requirement tells OpenAPI that an operation needs no authentication, and Swagger UI shows no lock next to it:
 
 ```typescript
-@@filename(src/notes/notes.controller)
-import { ApiBearerAuth } from '@nestjs/swagger';
+@@filename(src/auth/auth.controller)
+import { ApiSecurity } from '@nestjs/swagger';
 // ...
 
-@ApiBearerAuth()
-@Controller('notes')
-export class NotesController {
+@Public()
+@ApiSecurity({})
+@Controller('auth')
+export class AuthController {
   // ...
 }
 ```
 
-Do the same on `MeController`. Swagger UI is at `http://localhost:3000/docs`, and the document at `http://localhost:3000/docs-json`. The `POST /notes` body there is the Zod schema, converted:
+Swagger UI is at `http://localhost:3000/docs`, and the document at `http://localhost:3000/docs-json`. Enter a token under **Authorize**, and Swagger UI sends it with every request that needs one. The `POST /notes` body there is the Zod schema, converted:
 
 ```json
 {
@@ -1308,11 +1314,13 @@ The controller exposes the two checks, public and outside the rate limit:
 @@filename(src/health/health.controller)
 import { Controller, Get } from '@nestjs/common';
 import { Public } from '@nestjs/authentication';
+import { ApiSecurity } from '@nestjs/swagger';
 import { HealthCheck, HealthCheckService } from '@nestjs/terminus';
 import { SkipThrottle } from '@nestjs/throttler';
 import { DatabaseHealthIndicator } from './database.health.js';
 
 @Public()
+@ApiSecurity({})
 @SkipThrottle()
 @Controller('health')
 export class HealthController {

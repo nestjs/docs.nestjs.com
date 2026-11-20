@@ -488,13 +488,11 @@ export class OrganizationsService {
 @@filename(src/organizations/organizations.controller)
 import { Body, Controller, Get, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentMembership, MinRole, type Membership } from './membership.js';
 import { OrganizationGuard } from './organization.guard.js';
 import { createOrganizationSchema, type CreateOrganizationDto } from './organizations.schemas.js';
 import { OrganizationsService } from './organizations.service.js';
 
-@ApiBearerAuth()
 @Controller('orgs')
 export class OrganizationsController {
   constructor(private readonly organizationsService: OrganizationsService) {}
@@ -605,7 +603,6 @@ The controller takes the organization's id from the membership the guard loaded:
 ```typescript
 @@filename(src/projects/projects.controller)
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { CurrentMembership, MinRole, type Membership } from '../organizations/membership.js';
 import { OrganizationGuard } from '../organizations/organization.guard.js';
@@ -615,7 +612,6 @@ import { ProjectsService } from './projects.service.js';
 const projectId = { schema: z.uuid() };
 
 // Every member reads and creates projects; only admins and owners delete them.
-@ApiBearerAuth()
 @UseGuards(OrganizationGuard)
 @Controller('orgs/:orgId/projects')
 export class ProjectsController {
@@ -825,7 +821,6 @@ Its methods no longer take the id, so the controller stops passing it:
 @@filename(src/projects/projects.controller)
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { MinRole } from '../organizations/membership.js';
 import { OrganizationGuard } from '../organizations/organization.guard.js';
@@ -836,7 +831,6 @@ const projectId = { schema: z.uuid() };
 
 // Durable too, through ProjectsService: one instance per organization.
 // Every member reads and creates projects; only admins and owners delete them.
-@ApiBearerAuth()
 @UseGuards(OrganizationGuard)
 @Controller('orgs/:orgId/projects')
 export class ProjectsController {
@@ -1044,7 +1038,6 @@ export class MembersService {
 ```typescript
 @@filename(src/organizations/members.controller)
 import { Body, Controller, Delete, Get, HttpCode, Param, Patch, UseGuards } from '@nestjs/common';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { z } from 'zod';
 import { CurrentMembership, MinRole, type Membership } from './membership.js';
 import { MembersService } from './members.service.js';
@@ -1053,7 +1046,6 @@ import { changeRoleSchema, type ChangeRoleDto } from './organizations.schemas.js
 
 const userId = { schema: z.uuid() };
 
-@ApiBearerAuth()
 @UseGuards(OrganizationGuard)
 @Controller('orgs/:orgId/members')
 export class MembersController {
@@ -1281,7 +1273,6 @@ Inviting takes an admin. Accepting takes any signed-in user, so its route is out
 @@filename(src/invitations/invitations.controller)
 import { Body, Controller, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { CurrentUser } from '@nestjs/authentication';
-import { ApiBearerAuth } from '@nestjs/swagger';
 import { CurrentMembership, MinRole, type Membership } from '../organizations/membership.js';
 import { OrganizationGuard } from '../organizations/organization.guard.js';
 import type { User } from '../users/user.js';
@@ -1293,7 +1284,6 @@ import {
 } from './invitations.schemas.js';
 import { InvitationsService } from './invitations.service.js';
 
-@ApiBearerAuth()
 @Controller()
 export class InvitationsController {
   constructor(private readonly invitationsService: InvitationsService) {}
