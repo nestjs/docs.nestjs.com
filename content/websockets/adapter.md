@@ -116,6 +116,21 @@ const wsAdapter = new WsAdapter(app, {
 });
 ```
 
+When the application closes (`app.close()`, or a system signal once [shutdown hooks](/fundamentals/lifecycle-events#application-shutdown) are enabled), the `WsAdapter` disconnects every client at once, so the replies to messages still being handled are lost.
+
+With the `gracefulShutdown` option, it lets that work finish first. It stops taking new connections (an upgrade request to a gateway on the application's HTTP server gets a `503` response) and new messages from connected clients. Once the messages a client sent have been handled and their replies sent, it closes the client's connection with the close code `1001` ("Going Away"). The `gracePeriod` option sets the longest time this may take, in milliseconds (default: `10000`); clients still connected after that are disconnected, and a warning is logged. A handler that returns a stream which never completes is still being handled, so its client is only disconnected then.
+
+```typescript
+app.useWebSocketAdapter(
+  new WsAdapter(app, {
+    gracefulShutdown: true,
+    gracePeriod: 30000,
+  }),
+);
+```
+
+> info **Hint** In an application created with `NestFactory.create()`, the gateways close after the `onModuleDestroy()` and `beforeApplicationShutdown()` hooks have run, and before `onApplicationShutdown()` is called. Release what the message handlers use, such as a database connection, in `onApplicationShutdown()`.
+
 #### Limits
 
 Both built-in adapters limit how many messages of a client are handled at the same time, 1000 by default: the `IoAdapter` counts each event separately, the `WsAdapter` all of a client's messages together. Later messages wait for their turn. Change the limit with the `maxConcurrentMessages` option, or set it to `Infinity` to lift it (with `0`, no message is handled).
