@@ -2,6 +2,8 @@
 
 Most of the concepts discussed elsewhere in this documentation, such as dependency injection, decorators, exception filters, pipes, guards, and interceptors, apply equally to gateways. Wherever possible, Nest abstracts implementation details so that the same components can run across HTTP-based platforms, WebSockets, and microservices. This section covers the aspects of Nest that are specific to WebSockets.
 
+> info **Hint** For a complete chat backend with authenticated sockets, rooms and message history, follow [Build a real-time chat backend in Node.js](/tutorials/realtime-chat).
+
 In Nest, a gateway is a class annotated with the `@WebSocketGateway()` decorator. Gateways are platform-agnostic, so they work with any WebSockets library once an adapter exists for it. Nest supports two WebSocket platforms out of the box: [socket.io](https://github.com/socketio/socket.io) and [ws](https://github.com/websockets/ws). Choose the one that best suits your needs. You can also build your own adapter by following the [adapters guide](/websockets/adapter).
 
 <figure><img class="illustrative-image" src="/assets/Gateways_1.png" /></figure>

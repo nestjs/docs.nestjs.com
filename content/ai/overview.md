@@ -2,6 +2,8 @@
 
 `@nestjs/ai` brings language models into a Nest application: models registered by name and injected, calls with timeouts, retries and fallback models, answers validated by a schema, and the methods of your providers as agent functions, which the model calls as tools.
 
+> info **Hint** For a complete chatbot backend that streams answers and calls the application's own data as tools, follow [Build an AI chat backend in Node.js](/tutorials/ai-chat-backend).
+
 The online store for cat food and supplies gets a hundred support emails a day, and its customers would rather ask the website about their orders than write one. Both are jobs for a language model, inside the order API: sort an email and draft a reply, or answer a customer in a chat with what the API knows about their orders.
 
 The package builds on the [AI SDK](https://ai-sdk.dev) (`ai`) and its provider packages, so any model they support works: Claude, GPT, Gemini, Mistral, or a model behind a gateway. Model calls run on the policies of [`@nestjs/resilience`](/reliability/resilience). You write an agent function, a method with `@AgentFunction()`, and the model is offered it as a tool: every call of one goes through the guards, interceptors, pipes and exception filters your routes use, as the user the model acts for.

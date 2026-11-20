@@ -192,6 +192,26 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
+    title: 'Tutorials',
+    isOpened: false,
+    children: [
+      { title: 'Overview', path: '/tutorials/overview' },
+      {
+        title: 'REST API with JWT authentication',
+        path: '/tutorials/rest-api-jwt-authentication',
+      },
+      { title: 'E-commerce backend', path: '/tutorials/ecommerce-backend' },
+      { title: 'Multi-tenant SaaS backend', path: '/tutorials/multi-tenant-saas' },
+      { title: 'Project-management API', path: '/tutorials/project-management-api' },
+      { title: 'Real-time chat backend', path: '/tutorials/realtime-chat' },
+      { title: 'Booking system', path: '/tutorials/booking-system' },
+      { title: 'Emails and background jobs', path: '/tutorials/background-jobs' },
+      { title: 'File upload service', path: '/tutorials/file-uploads' },
+      { title: 'Payments with webhooks', path: '/tutorials/payments-webhooks' },
+      { title: 'AI chat backend', path: '/tutorials/ai-chat-backend' },
+    ],
+  },
+  {
     title: 'GraphQL',
     isOpened: false,
     children: [

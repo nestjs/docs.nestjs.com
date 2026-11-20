@@ -2,6 +2,8 @@
 
 Server-Sent Events (SSE) is a server push technology that enables a client to receive automatic updates from a server over an HTTP connection. Each notification is sent as a block of text terminated by a pair of newlines (see [Server-sent events on MDN](https://developer.mozilla.org/en-US/docs/Web/API/Server-sent_events) to learn more).
 
+> info **Hint** For Server-Sent Events in a complete application, streaming each user only the updates of their own projects, follow [Build a project-management API in Node.js](/tutorials/project-management-api).
+
 #### Usage
 
 To enable Server-Sent Events on a route (a route registered within a **controller class**), annotate the route handler with the `@Sse()` decorator.
