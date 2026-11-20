@@ -32,7 +32,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 export class AppModule {}
 ```
 
-> warning **Warning** Don't use `synchronize: true` in production; otherwise, you can lose production data.
+> warning **Warning** Don't use `synchronize: true` in production; otherwise, you can lose production data. Turning it off there, for example with `synchronize: process.env.NODE_ENV !== 'production'`, isn't enough on its own: production then gets no tables at all. Create its schema with [migrations](/data/typeorm#migrations) instead.
 
 The `forRoot()` method accepts all the configuration properties supported by the TypeORM [`DataSource` constructor](https://typeorm.io/docs/data-source/data-source-options#common-data-source-options). It also accepts the following extra properties:
 
@@ -488,6 +488,20 @@ export class UsersModule {}
 #### Migrations
 
 [Migrations](https://typeorm.io/docs/advanced-topics/migrations/) provide a way to incrementally update the database schema to keep it in sync with the application's data model while preserving existing data in the database. To generate, run, and revert migrations, TypeORM provides a dedicated [CLI](https://typeorm.io/docs/advanced-topics/migrations/#creating-a-new-migration).
+
+To apply pending migrations when the application starts, point `migrations` at the compiled migration files and set `migrationsRun`, with `synchronize` off:
+
+```typescript
+TypeOrmModule.forRoot({
+  // ...connection options
+  entities: [User],
+  migrations: ['dist/migrations/*.js'],
+  migrationsRun: true,
+  synchronize: false,
+}),
+```
+
+Alternatively, run them with the TypeORM CLI (`typeorm migration:run`) as a deployment step before the new version starts.
 
 Migration classes are separate from the Nest application source code, and TypeORM manages their lifecycle. Therefore, you can't use dependency injection or other Nest-specific features in migrations. To learn more, see the [migrations guide](https://typeorm.io/docs/advanced-topics/migrations/) in the TypeORM documentation.
 
