@@ -328,7 +328,6 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Passport (auth)', path: '/recipes/passport' },
       { title: 'Hot reload', path: '/recipes/hot-reload' },
       { title: 'Router module', path: '/recipes/router-module' },
-      { title: 'Migrating from Fastify', path: '/recipes/fastify-migration' },
       { title: 'CQRS', path: '/recipes/cqrs' },
       { title: 'Serve static', path: '/recipes/serve-static' },
       { title: 'Next.js', path: '/recipes/nextjs' },
@@ -336,7 +335,10 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Commander', path: '/recipes/nest-commander' },
       { title: 'Async local storage', path: '/recipes/async-local-storage' },
       { title: 'Socket activation', path: '/recipes/socket-activation' },
+      { title: 'Migrating from Fastify', path: '/recipes/fastify-migration' },
       { title: 'Migrating from Express', path: '/recipes/express-migration' },
+      { title: 'Coming from Spring Boot', path: '/recipes/spring-boot' },
+      { title: 'Coming from ASP.NET Core', path: '/recipes/aspnet-core' },
     ],
   },
   {

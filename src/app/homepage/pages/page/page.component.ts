@@ -19,6 +19,8 @@ import 'prismjs/components/prism-graphql';
 import 'prismjs/components/prism-json';
 import 'prismjs/components/prism-yaml';
 import 'prismjs/components/prism-bash';
+import 'prismjs/components/prism-java';
+import 'prismjs/components/prism-csharp';
 
 /** Roughly what a search result shows before it cuts the snippet off. */
 const DESCRIPTION_MAX_LENGTH = 160;
