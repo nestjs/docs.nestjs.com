@@ -83,6 +83,12 @@ export const envSchema = z
     DATABASE_URL: z.url(),
     // Signs the access tokens: at least 32 bytes.
     JWT_SECRET: z.string().min(32),
+    // The browser origins allowed to call the API, comma-separated. None by default.
+    CORS_ORIGINS: z
+      .string()
+      .default('')
+      .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean))
+      .pipe(z.array(z.url())),
     // An Anthropic model id, or `fake` for a scripted model that needs no API key.
     AI_MODEL: z.string().min(1).default('claude-opus-5-5'),
     ANTHROPIC_API_KEY: z.string().min(1).optional(),

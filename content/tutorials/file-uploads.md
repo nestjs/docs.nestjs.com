@@ -169,6 +169,12 @@ export const envSchema = z
     DATABASE_URL: z.url(),
     // Signs the access tokens: at least 32 bytes.
     JWT_SECRET: z.string().min(32),
+    // The browser origins allowed to call the API, comma-separated. None by default.
+    CORS_ORIGINS: z
+      .string()
+      .default('')
+      .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean))
+      .pipe(z.array(z.url())),
     // Where clients reach the API: local download links point here.
     APP_URL: z.url().default('http://localhost:3000'),
     // 'local' in development, 's3' in production (AWS S3, Cloudflare R2, MinIO...).

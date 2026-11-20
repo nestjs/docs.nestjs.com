@@ -56,6 +56,12 @@ export const envSchema = z.object({
   DATABASE_URL: z.url(),
   // Signs the access tokens: at least 32 bytes.
   JWT_SECRET: z.string().min(32),
+  // The browser origins allowed to call the API, comma-separated. None by default.
+  CORS_ORIGINS: z
+    .string()
+    .default('')
+    .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean))
+    .pipe(z.array(z.url())),
   // The payment provider's API, and the key it gave you.
   PAYMENTS_API_URL: z.url(),
   PAYMENTS_API_KEY: z.string().min(1),
@@ -274,8 +280,13 @@ When the customer has paid, or the card was declined, the provider sends a webho
 ```typescript
 @@filename(src/main)
 // ...
-// rawBody: webhooks are verified on the bytes the provider signed, not on a re-serialized body.
-const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), { rawBody: true });
+const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  // Webhooks are verified on the bytes the provider signed, not on a re-serialized body.
+  rawBody: true,
+  logger: new ConsoleLogger({
+    // ...
+  }),
+});
 // ...
 ```
 
