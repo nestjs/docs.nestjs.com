@@ -16,6 +16,8 @@ To start building Kafka-based microservices, first install the required package:
 $ npm i --save kafkajs
 ```
 
+> info **Hint** The transporter can also run on [`@platformatic/kafka`](https://github.com/platformatic/kafka), a maintained Kafka client, instead of `kafkajs`. See [Running on Platformatic Kafka](#running-on-platformatic-kafka).
+
 #### Overview
 
 As with other Nest microservice transport layer implementations, you select the Kafka transporter using the `transport` property of the options object passed to the `createMicroservice()` method, along with an optional `options` property, as shown below:
@@ -48,6 +50,10 @@ const app = await NestFactory.createMicroservice(AppModule, {
 The `options` property is specific to the chosen transporter. The <strong>Kafka</strong> transporter exposes the following properties.
 
 <table>
+  <tr>
+    <td><code>driver</code></td>
+    <td>The client library to run on (<code>string</code>): <code>'kafkajs'</code> (the default) or <code>'platformatic'</code> (see <a href="/microservices/kafka#running-on-platformatic-kafka">Running on Platformatic Kafka</a>)</td>
+  </tr>
   <tr>
     <td><code>client</code></td>
     <td>Client configuration options (see the
@@ -240,7 +246,7 @@ Nest doesn't answer a request whose `kafka_correlationId` header is longer than 
 
 #### Outgoing
 
-Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method.
+Nest serializes outgoing Kafka messages before publishing events or sending messages. Serialization applies to the arguments passed to the `ClientKafkaProxy` `emit()` and `send()` methods, and to the values returned from a `@MessagePattern()` method. It "stringifies" values that are not strings or buffers by using `JSON.stringify()` or the `toString()` prototype method. A `bigint`, such as an offset or a timestamp of a received message, is written as a decimal string.
 
 ```typescript
 @@filename(heroes.controller)
@@ -377,6 +383,8 @@ interface IncomingMessage {
   headers: Record<string, any>;
 }
 ```
+
+On [Platformatic Kafka](#running-on-platformatic-kafka), type the context as `KafkaContext<'platformatic'>`: the message's `offset` and `timestamp` are `bigint` values, and it has a `leaderEpoch` instead of `size` and `attributes`.
 
 If your handler takes a long time to process each message, consider using the `heartbeat` callback. To retrieve the `heartbeat` function, use the `getHeartbeat()` method of the `KafkaContext`, as follows:
 
@@ -727,6 +735,8 @@ const app = await NestFactory.createMicroservice(AppModule, {
 });
 ```
 
+On [Platformatic Kafka](#running-on-platformatic-kafka), `run` takes `autoCommit` as well, and the consumer is the `@platformatic/kafka` one: commit with `consumer.commit({{ '{' }} offsets: [{{ '{' }} topic, partition, offset: offset + 1n, leaderEpoch {{ '}' }}] {{ '}' }})`, where `offset` and `leaderEpoch` come from `context.getMessage()`.
+
 #### Instance status updates
 
 To get real-time updates on the connection and the state of the underlying driver instance, subscribe to the `status` stream. This stream provides status updates specific to the chosen driver. For the Kafka driver, the `status` stream emits `connected`, `disconnected`, `rebalancing`, `crashed`, and `stopped` events.
@@ -758,3 +768,83 @@ To do so, use the `producer` and `consumer` properties exposed by the `ClientKaf
 const producer = this.client.producer;
 const consumer = this.client.consumer;
 ```
+
+#### Running on Platformatic Kafka
+
+[`@platformatic/kafka`](https://github.com/platformatic/kafka) is a Kafka client written in TypeScript and maintained by Platformatic. It requires Node.js 22.22 or newer. `kafkajs` remains the default: to run the transporter on `@platformatic/kafka`, install it and set the `driver` option to `'platformatic'` on every Kafka server and client you switch. Type the options as `KafkaOptions<'platformatic'>` to get its option types:
+
+```bash
+$ npm i --save @platformatic/kafka
+```
+
+```typescript
+@@filename(main)
+const app = await NestFactory.createMicroservice<KafkaOptions<'platformatic'>>(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    driver: 'platformatic',
+    client: {
+      bootstrapBrokers: ['localhost:9092'],
+    },
+  },
+});
+@@switch
+const app = await NestFactory.createMicroservice(AppModule, {
+  transport: Transport.KAFKA,
+  options: {
+    driver: 'platformatic',
+    client: {
+      bootstrapBrokers: ['localhost:9092'],
+    },
+  },
+});
+```
+
+`ClientsModule` and `@Client()` type their options as those of `kafkajs`, so register a Platformatic Kafka client as a provider, and inject it as a `ClientKafkaProxy<'platformatic'>`:
+
+```typescript
+@@filename(app.module)
+@Module({
+  providers: [
+    {
+      provide: 'HERO_SERVICE',
+      useFactory: () =>
+        new ClientKafka({
+          driver: 'platformatic',
+          client: {
+            bootstrapBrokers: ['localhost:9092'],
+          },
+        }),
+    },
+  ],
+})
+export class AppModule {}
+@@switch
+@Module({
+  providers: [
+    {
+      provide: 'HERO_SERVICE',
+      useFactory: () =>
+        new ClientKafka({
+          driver: 'platformatic',
+          client: {
+            bootstrapBrokers: ['localhost:9092'],
+          },
+        }),
+    },
+  ],
+})
+export class AppModule {}
+```
+
+The `client`, `consumer`, and `producer` options take the options of the [base client](https://github.com/platformatic/kafka/blob/main/docs/base.md), the [consumer](https://github.com/platformatic/kafka/blob/main/docs/consumer.md), and the [producer](https://github.com/platformatic/kafka/blob/main/docs/producer.md) of `@platformatic/kafka`, and `send` takes its send options. Nest sets `clientId` and `groupId` with the `-server` or `-client` suffix, as on `kafkajs` (see [Naming conventions](#naming-conventions)). The consumer starts from the committed offsets. For a partition without one, it starts from the latest offset: set `subscribe: {{ '{' }} fallbackMode: 'earliest' {{ '}' }}` where you would set `fromBeginning: true` on `kafkajs`.
+
+Services on `kafkajs` and on `@platformatic/kafka` can share topics and consumer groups, so you can switch one service at a time. Once you have switched, review the following:
+
+- **Offsets and timestamps** are `bigint` values in `context.getMessage()`. `JSON.stringify()` rejects a `bigint`, so an HTTP handler that returns one fails: return only what the response needs, converted with `toString()`.
+- **Consumer and producer**: `context.getConsumer()`, `context.getProducer()`, the `consumer` and `producer` properties of `ClientKafkaProxy`, and `unwrap()` give the `Consumer` and `Producer` of `@platformatic/kafka`. Use `KafkaContext<'platformatic'>` and `ClientKafkaProxy<'platformatic'>` to type them. `emit()` resolves to what its producer's `send()` resolves to.
+- **Retries**: Nest commits the offset of a message once its handler has settled. When a handler fails, Nest consumes from the committed offsets again, after a delay that doubles from 300 ms up to 30 seconds, so the message is delivered again. The `retry` options of `kafkajs` don't apply.
+- **Heartbeats**: `@platformatic/kafka` sends them in the background, so the function `getHeartbeat()` returns does nothing.
+- **Logging**: `logCreator` and `logLevel` are options of `kafkajs` only. Nest logs the failures of the consumer itself.
+
+`@platformatic/kafka`'s [migration guide](https://github.com/platformatic/kafka/blob/main/migration/README.md) covers the remaining differences of the client itself.
