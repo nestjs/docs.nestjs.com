@@ -9,6 +9,7 @@ By the end, the API will:
 - Invite people by email with [`@nestjs/mail`](/application/mail), through links that work once, and only for the address they were sent to.
 - Change roles and remove members with conditional statements, so an organization never loses its last owner, even when two owners step down at the same moment.
 - Record every change to an organization's members and invitations, and every deleted project, in an audit log, in the same transaction as the change.
+- Build the projects' service once per organization, in a durable DI sub-tree, with the organization's id fixed when it's created.
 - Prove the tenant boundary and the last-owner rule in tests against PostgreSQL.
 
 It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
@@ -48,11 +49,13 @@ Leave out `src/notes/` and the JWT tutorial's `drizzle/` folder: this applicatio
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial, with a database of the application's own:
+Start a PostgreSQL server with a database of the application's own:
 
 ```bash
 $ docker run -d --name saas-db -e POSTGRES_PASSWORD=saas -e POSTGRES_DB=saas -p 5432:5432 postgres:17
 ```
+
+Add its URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial:
 
 ```bash
 DATABASE_URL=postgres://postgres:saas@localhost:5432/saas
@@ -79,12 +82,12 @@ export const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 ```
 
-The root module is the JWT tutorial's, with this tutorial's feature modules and the mail module, which [Invite members by email](/tutorials/multi-tenant-saas#invite-members-by-email) explains:
+The root module is the JWT tutorial's, with this tutorial's feature modules, the mail module, which [Invite members by email](/tutorials/multi-tenant-saas#invite-members-by-email) explains, and a strategy for durable providers, which [Give each organization its own DI sub-tree](/tutorials/multi-tenant-saas#give-each-organization-its-own-di-sub-tree) explains:
 
 ```typescript
 @@filename(src/app.module)
-import { Module, StandardSchemaValidationPipe } from '@nestjs/common';
-import { APP_GUARD, APP_PIPE } from '@nestjs/core';
+import { Module, StandardSchemaValidationPipe, type OnModuleInit } from '@nestjs/common';
+import { APP_GUARD, APP_PIPE, ContextIdFactory } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { DrizzleModule } from '@nestjs/drizzle';
@@ -98,6 +101,7 @@ import { HealthModule } from './health/health.module.js';
 import { InvitationsModule } from './invitations/invitations.module.js';
 import { OrganizationsModule } from './organizations/organizations.module.js';
 import { ProjectsModule } from './projects/projects.module.js';
+import { OrganizationContextIdStrategy } from './tenancy/organization-context-id.strategy.js';
 import { UsersModule } from './users/users.module.js';
 
 @Module({
@@ -151,7 +155,12 @@ import { UsersModule } from './users/users.module.js';
     { provide: APP_GUARD, useClass: ThrottlerGuard },
   ],
 })
-export class AppModule {}
+export class AppModule implements OnModuleInit {
+  onModuleInit() {
+    // Before the first request: one DI sub-tree per organization, for durable providers.
+    ContextIdFactory.apply(new OrganizationContextIdStrategy());
+  }
+}
 ```
 
 #### Design the schema
@@ -321,6 +330,8 @@ export const CurrentMembership = createParamDecorator(
 );
 ```
 
+The guard looks up the membership for the route's `:orgId`, checks the role the route asks for, and leaves the membership on the request:
+
 ```typescript
 @@filename(src/organizations/organization.guard)
 import { CanActivate, ExecutionContext, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
@@ -400,6 +411,8 @@ export async function audit(tx: Pick<NodePgDatabase, 'insert'>, entry: AuditEntr
 }
 ```
 
+Creating an organization takes a name, and changing a member's role takes the new role:
+
 ```typescript
 @@filename(src/organizations/organizations.schemas)
 import { z } from 'zod';
@@ -414,6 +427,8 @@ export const changeRoleSchema = z.object({
 });
 export type ChangeRoleDto = z.infer<typeof changeRoleSchema>;
 ```
+
+The service creates organizations, lists the signed-in user's, and reads an organization's audit log:
 
 ```typescript
 @@filename(src/organizations/organizations.service)
@@ -507,7 +522,7 @@ export class OrganizationsController {
 
 #### Scope every query to the organization
 
-Projects belong to an organization. Every query in the service takes the organization's id, and puts it in the `WHERE` clause next to the project's id:
+Projects belong to an organization. A new project takes a name and an optional description:
 
 ```typescript
 @@filename(src/projects/projects.schemas)
@@ -519,6 +534,8 @@ export const createProjectSchema = z.object({
 });
 export type CreateProjectDto = z.infer<typeof createProjectSchema>;
 ```
+
+Every query in the service takes the organization's id, and puts it in the `WHERE` clause next to the project's id:
 
 ```typescript
 @@filename(src/projects/projects.service)
@@ -583,6 +600,8 @@ function notFound(): never {
 }
 ```
 
+The controller takes the organization's id from the membership the guard loaded:
+
 ```typescript
 @@filename(src/projects/projects.controller)
 import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
@@ -626,6 +645,8 @@ export class ProjectsController {
 }
 ```
 
+Register the controller and the service in the projects module:
+
 ```typescript
 @@filename(src/projects/projects.module)
 import { Module } from '@nestjs/common';
@@ -644,7 +665,228 @@ The two checks protect different things, and each one needs the other:
 - **The guard** checks that the user belongs to the organization in the URL.
 - **The `WHERE` clause** checks that the project belongs to that organization. Without it, a member of Acme could read Globex's project through `/orgs/<Acme's id>/projects/<Globex's project id>`: the guard would let them in, since they belong to Acme, and the query would find the project by its id alone.
 
-The organization id comes from the membership the guard loaded, not from the URL, so the handlers can't use an id the guard didn't check. Another tenant's project is a 404, like one that doesn't exist. Deleting a project needs an admin, and writes an audit entry in the same transaction as the `DELETE`.
+The organization id comes from the membership the guard loaded, not from the URL, so the handlers can't use an id the guard didn't check. The next section moves the id into the service itself. Another tenant's project is a 404, like one that doesn't exist. Deleting a project needs an admin, and writes an audit entry in the same transaction as the `DELETE`.
+
+#### Give each organization its own DI sub-tree
+
+`ProjectsService` is a singleton, and every one of its methods takes the organization's id. Nest can also build a provider for one organization, with the id fixed when it's created: a [durable provider](/fundamentals/provider-scopes#durable-providers). A request-scoped provider is built again for every request. A durable one is built once per group of requests, here once per organization, and reused for the group's later requests. A **context id strategy** tells Nest which group a request belongs to:
+
+```typescript
+@@filename(src/tenancy/organization-context-id.strategy)
+import { ContextIdFactory, type ContextId, type ContextIdResolver, type ContextIdStrategy } from '@nestjs/core';
+import { z } from 'zod';
+
+/** What durable providers get as `REQUEST`: only what the strategy puts here. */
+export interface OrganizationPayload {
+  orgId: string | null;
+}
+
+const uuid = z.uuid();
+
+/** One DI sub-tree per organization, for the requests of `/orgs/:orgId/...`. */
+export class OrganizationContextIdStrategy implements ContextIdStrategy {
+  // Least recently used first.
+  private readonly trees = new Map<string, { contextId: ContextId; payload: OrganizationPayload }>();
+
+  constructor(private readonly maxTrees = 1_000) {}
+
+  attach(contextId: ContextId, request: { params?: { orgId?: string } }): ContextIdResolver {
+    // Runs before every guard, authentication included: this is still the client's input.
+    const orgId = request.params?.orgId?.toLowerCase();
+    if (!orgId || !uuid.safeParse(orgId).success) {
+      // No organization: this request's own sub-tree, durable providers included.
+      return { resolve: () => contextId, payload: { orgId: null } };
+    }
+    let tree = this.trees.get(orgId);
+    if (tree) {
+      this.trees.delete(orgId); // set again below, as the most recently used
+    } else {
+      tree = { contextId: ContextIdFactory.create(), payload: { orgId } };
+    }
+    this.trees.set(orgId, tree);
+    if (this.trees.size > this.maxTrees) {
+      // Forget the least recently used organization: its instances can be garbage-collected.
+      this.trees.delete(this.trees.keys().next().value!);
+    }
+    const durable = tree.contextId;
+    return { resolve: (info) => (info.isTreeDurable ? durable : contextId), payload: tree.payload };
+  }
+}
+```
+
+- **`attach()` reads `request.params.orgId`.** On the Node adapter, the route's parameters are already set when it runs: logging `request.params` from `attach()` showed the `orgId` of every `/orgs/:orgId/projects` request.
+- **It runs before every guard, authentication included**, so the id is still the client's input. Only a UUID gets a tree of its own. Anything else gets the request's own context id, so nothing durable is shared or kept for it.
+- **The number of trees is capped.** The example in the chapter keeps a `Map` that grows with every new id, and anyone, signed in or not, can send made-up UUIDs. Past `maxTrees`, the strategy forgets the organization it used least recently. Nest keeps a provider's instances in a `WeakMap` keyed by the context id object (`InstanceWrapper` in `@nestjs/core`), so a forgotten organization's instances can be garbage-collected once its last request has finished. In a run with `--expose-gc` and a cap of two, the evicted organization's instance was collected, and its next request built a new one.
+- **The payload is what durable providers get as `REQUEST`**, and it holds only what the strategy puts there: the organization's id. The signed-in user isn't in it, and neither is anything else from the request.
+- **Only requests that reach a request-scoped controller call `attach()`.** The routes under `/auth`, `/me` and `/orgs` (without an id) are served by singletons, and never do.
+
+Register the strategy once, before the first request. `AppModule` does it in `onModuleInit()`, so the end-to-end tests, which don't run `main.ts`, get it too:
+
+```typescript
+@@filename(src/app.module)
+import { Module, StandardSchemaValidationPipe, type OnModuleInit } from '@nestjs/common';
+import { APP_GUARD, APP_PIPE, ContextIdFactory } from '@nestjs/core';
+import { OrganizationContextIdStrategy } from './tenancy/organization-context-id.strategy.js';
+// ...
+
+@Module({
+  // ...
+})
+export class AppModule implements OnModuleInit {
+  onModuleInit() {
+    // Before the first request: one DI sub-tree per organization, for durable providers.
+    ContextIdFactory.apply(new OrganizationContextIdStrategy());
+  }
+}
+```
+
+`ProjectsService` becomes durable. It injects `REQUEST`, takes the organization's id from it in its constructor, and adds it to every query itself:
+
+```typescript
+@@filename(src/projects/projects.service)
+import { Inject, Injectable, Logger, NotFoundException, Scope } from '@nestjs/common';
+import { REQUEST } from '@nestjs/core';
+import { InjectDrizzle } from '@nestjs/drizzle';
+import { and, desc, eq } from 'drizzle-orm';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { audit } from '../audit/audit.js';
+import { projects, type Project } from '../database/schema.js';
+import type { OrganizationPayload } from '../tenancy/organization-context-id.strategy.js';
+import type { CreateProjectDto } from './projects.schemas.js';
+
+/** One instance per organization, built with its id: no caller can pass another one. */
+@Injectable({ scope: Scope.REQUEST, durable: true })
+export class ProjectsService {
+  private readonly orgId: string;
+
+  constructor(
+    // The strategy's payload, not the HTTP request: this instance serves every request of the organization.
+    @Inject(REQUEST) { orgId }: OrganizationPayload,
+    @InjectDrizzle() private readonly db: NodePgDatabase,
+  ) {
+    // Not a valid organization id: built for this request alone, which the guard would refuse anyway.
+    if (!orgId) {
+      throw new NotFoundException('Organization not found');
+    }
+    this.orgId = orgId;
+    new Logger(ProjectsService.name).log(`Created for organization ${orgId}`);
+  }
+
+  findAll(): Promise<Project[]> {
+    return this.db
+      .select()
+      .from(projects)
+      .where(eq(projects.orgId, this.orgId))
+      .orderBy(desc(projects.createdAt), desc(projects.id))
+      .limit(100);
+  }
+
+  async findOne(id: string): Promise<Project> {
+    const [project] = await this.db.select().from(projects).where(this.inOrg(id));
+    return project ?? notFound();
+  }
+
+  async create(dto: CreateProjectDto): Promise<Project> {
+    const [project] = await this.db
+      .insert(projects)
+      .values({ ...dto, orgId: this.orgId })
+      .returning();
+    return project;
+  }
+
+  remove(actorId: string, id: string): Promise<void> {
+    return this.db.transaction(async (tx) => {
+      const [project] = await tx.delete(projects).where(this.inOrg(id)).returning();
+      if (!project) {
+        notFound();
+      }
+      await audit(tx, {
+        orgId: this.orgId,
+        actorId,
+        action: 'project.deleted',
+        data: { projectId: id, name: project.name },
+      });
+    });
+  }
+
+  private inOrg(id: string) {
+    return and(eq(projects.id, id), eq(projects.orgId, this.orgId));
+  }
+}
+
+function notFound(): never {
+  throw new NotFoundException('Project not found');
+}
+```
+
+Its methods no longer take the id, so the controller stops passing it:
+
+```typescript
+@@filename(src/projects/projects.controller)
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, UseGuards } from '@nestjs/common';
+import { CurrentUser } from '@nestjs/authentication';
+import { ApiBearerAuth } from '@nestjs/swagger';
+import { z } from 'zod';
+import { MinRole } from '../organizations/membership.js';
+import { OrganizationGuard } from '../organizations/organization.guard.js';
+import { createProjectSchema, type CreateProjectDto } from './projects.schemas.js';
+import { ProjectsService } from './projects.service.js';
+
+const projectId = { schema: z.uuid() };
+
+// Durable too, through ProjectsService: one instance per organization.
+// Every member reads and creates projects; only admins and owners delete them.
+@ApiBearerAuth()
+@UseGuards(OrganizationGuard)
+@Controller('orgs/:orgId/projects')
+export class ProjectsController {
+  constructor(private readonly projectsService: ProjectsService) {}
+
+  @Get()
+  findAll() {
+    return this.projectsService.findAll();
+  }
+
+  @Get(':projectId')
+  findOne(@Param('projectId', projectId) id: string) {
+    return this.projectsService.findOne(id);
+  }
+
+  @Post()
+  create(@Body({ schema: createProjectSchema }) dto: CreateProjectDto) {
+    return this.projectsService.create(dto);
+  }
+
+  @MinRole('admin')
+  @Delete(':projectId')
+  @HttpCode(204)
+  remove(@CurrentUser('id') userId: string, @Param('projectId', projectId) id: string) {
+    return this.projectsService.remove(userId, id);
+  }
+}
+```
+
+Restart the application, and list the projects of two organizations six times, interleaved, as a member of both. The `BOB`, `ACME` and `GLOBEX` variables are set as in [Try it](/tutorials/multi-tenant-saas#try-it):
+
+```bash
+$ for org in $ACME $ACME $GLOBEX $ACME $GLOBEX $GLOBEX; do curl -s -o /dev/null -w '%{http_code} ' localhost:3000/orgs/$org/projects -H "$BOB"; done
+200 200 200 200 200 200
+```
+
+The application's log has one line per organization, from each service's constructor at the organization's first request:
+
+```bash
+LOG [ProjectsService] Created for organization dcf74914-8aff-4ea0-938f-8054466e6e4b
+LOG [ProjectsService] Created for organization a679e0ce-fb7c-449e-89d9-644c25f82783
+```
+
+- **Durability bubbles up.** `ProjectsController` depends on a durable provider and on nothing else that's request-scoped, so it's durable too: one instance per organization, built with the service at the organization's first request, as the hint in [Durable providers](/fundamentals/provider-scopes#durable-providers) describes. The other controllers and services stay singletons. A provider that injected a request-scoped provider that isn't durable would make everything that depends on it request-scoped, built for every request.
+- **What it costs.** Every request to the projects routes now runs `attach()` and a `Map` lookup, and the first request of each organization builds its controller and service. A request-scoped service would build both for every request (see [Performance](/fundamentals/provider-scopes#performance)). This tutorial didn't measure the difference.
+- **The constructor runs before the guards.** Nest builds a request-scoped controller and its dependencies before it runs any guard. For an id that isn't a UUID, the constructor throws the 404 the guard would answer. For a well-formed id of an organization that doesn't exist, or a request without a token, the tree is built, and the guards then refuse the request. The cap bounds how many such trees there are.
+- **The tree is a cache, not an authorization boundary.** `OrganizationGuard` still decides whether the caller may use the organization, from the same route parameter the strategy reads. They must read the same one: with a strategy that put every organization in one tree, the tenant test at the end of this tutorial fails, because Bob reads Acme's project through Globex's URL, which his membership of Globex lets him use.
+- **Nothing that belongs to a user or a request goes into a durable provider.** Every request of the organization shares the instance, so a field one request sets is what the next one reads, whoever sends it. Take the user as an argument, as `remove()` takes the actor's id from `@CurrentUser()`, which reads the request being handled even in a durable controller. In a request-scoped provider that isn't durable, `REQUEST` is the HTTP request itself, with the payload's fields assigned to it, but its constructor runs before the guards as well: `request.user` is still empty there, and set by the time a handler calls a method.
+
+With one database, passing the id, as in the previous section, keeps queries just as scoped, and every provider a singleton. A durable tree pays off when each organization needs an object of its own that's worth building once, such as a connection pool to the organization's own database, created in the same constructor.
 
 #### Never lose the last owner
 
@@ -841,6 +1083,8 @@ export class MembersController {
 }
 ```
 
+Register both controllers and both services in the organizations module:
+
 ```typescript
 @@filename(src/organizations/organizations.module)
 import { Module } from '@nestjs/common';
@@ -889,6 +1133,8 @@ export class InvitationMail implements Mailable<InvitationMailData> {
 }
 ```
 
+An invitation names an address and a role, and accepting one takes the token from the link:
+
 ```typescript
 @@filename(src/invitations/invitations.schemas)
 import { z } from 'zod';
@@ -906,6 +1152,8 @@ export const acceptInvitationSchema = z.object({
 });
 export type AcceptInvitationDto = z.infer<typeof acceptInvitationSchema>;
 ```
+
+The service creates the invitation and sends the mail, and spends the token when someone accepts:
 
 ```typescript
 @@filename(src/invitations/invitations.service)
@@ -1070,6 +1318,8 @@ export class InvitationsController {
 }
 ```
 
+Register the controller, the service and the mail class in the invitations module:
+
 ```typescript
 @@filename(src/invitations/invitations.module)
 import { Module } from '@nestjs/common';
@@ -1218,6 +1468,7 @@ The guarantees that matter here are about tenants and races: a member of one org
 ```typescript
 @@filename(test/organizations.e2e-spec)
 import { fileURLToPath } from 'node:url';
+import { Logger } from '@nestjs/common';
 import { PasswordHasher } from '@nestjs/authentication';
 import { getDrizzleToken } from '@nestjs/drizzle';
 import { InMemoryMailTransport, MailTransport } from '@nestjs/mail';
@@ -1300,6 +1551,52 @@ describe.skipIf(!url)('SaaS API (e2e)', () => {
     expect((await ada.send('GET', `/orgs/${acme}/projects/${project.id}`)).json()).toMatchObject({ name: 'Roadmap' });
   });
 
+  /** The organizations a ProjectsService was created for, while `run` ran. */
+  async function projectsServicesCreated(run: () => Promise<unknown>) {
+    const log = vi.spyOn(Logger.prototype, 'log');
+    try {
+      await run();
+      return log.mock.calls.map(([message]) => String(message)).filter((m) => m.startsWith('Created for organization'));
+    } finally {
+      log.mockRestore();
+    }
+  }
+
+  it('builds one ProjectsService per organization, and reuses it', async () => {
+    const ada = await signUp('ada-durable');
+    const initech = await createOrganization(ada, 'Initech');
+
+    const created = await projectsServicesCreated(() =>
+      Promise.all(Array.from({ length: 5 }, () => ada.send('GET', `/orgs/${initech}/projects`))),
+    );
+
+    expect(created).toEqual([`Created for organization ${initech}`]);
+  });
+
+  it("never serves one organization's requests from another's instance", async () => {
+    const ada = await signUp('ada-two-orgs');
+    const [hooli, piedPiper] = await Promise.all([
+      createOrganization(ada, 'Hooli'),
+      createOrganization(ada, 'Pied Piper'),
+    ]);
+
+    // Interleaved, at the same time: five projects in each organization.
+    const created = await projectsServicesCreated(() =>
+      Promise.all(
+        Array.from({ length: 10 }, (_, i) =>
+          ada.send('POST', `/orgs/${i % 2 ? piedPiper : hooli}/projects`, { name: `Project ${i}` }),
+        ),
+      ),
+    );
+
+    expect(created.sort()).toEqual([hooli, piedPiper].sort().map((id) => `Created for organization ${id}`));
+    for (const orgId of [hooli, piedPiper]) {
+      const list = (await ada.send('GET', `/orgs/${orgId}/projects`)).json<{ orgId: string }[]>();
+      expect(list).toHaveLength(5);
+      expect(list.every((project) => project.orgId === orgId)).toBe(true);
+    }
+  });
+
   it('invites by email, with a link that works once, for its recipient only', async () => {
     const ada = await signUp('ada-inviter');
     const carol = await signUp('carol');
@@ -1378,6 +1675,7 @@ describe.skipIf(!url)('SaaS API (e2e)', () => {
 ```
 
 - **The tenant test tries both ways in.** Through Acme's URLs, the guard stops Bob. Through his own organization's URLs, the guard lets him in, and only the `WHERE` clause stands between him and Acme's project.
+- **The durable-provider tests count the services that were created**, by spying on `Logger`: five requests for one organization create one, and ten interleaved requests for two organizations create one for each, while each organization's projects stay its own. Make `ProjectsService` request-scoped but not durable, and both fail, with one service per request.
 - **The race tests run ten races at once**, two requests per organization. In the first, both owners step down; the test then checks the database: one owner left in each, and one audit entry for the one demotion that happened. In the second, Ada removes Bob while Bob demotes Ada, with Carol as a third owner, so only the re-read of the actor's role can stop the second request.
 - **The extra owner memberships are inserted directly**, to set the races up in one statement. Everything the tests check goes through the API.
 
@@ -1388,7 +1686,7 @@ $ docker exec saas-db psql -U postgres -c "CREATE DATABASE saas_test"
 $ TEST_DATABASE_URL=postgres://postgres:saas@localhost:5432/saas_test npm run test:e2e -- --no-file-parallelism
 
  Test Files  2 passed (2)
-      Tests  8 passed (8)
+      Tests  11 passed (11)
 ```
 
 Remove `FOR UPDATE` from `lock()`, and both race tests fail: both owners step down, and nine or ten of the ten organizations are left with no owner. Keep the lock but use the guard's role instead of the one `lock()` reads, and the second test fails: Bob is removed, and Ada is demoted by him anyway.
@@ -1397,7 +1695,7 @@ Remove `FOR UPDATE` from `lock()`, and both race tests fail: both owners step do
 
 Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For a multi-tenant backend in particular:
 
-- **Put every tenant-owned query behind the organization id.** The rule in this tutorial is that the id comes from the membership the guard loaded, and goes into the `WHERE` clause of every statement. Review new queries for it, and keep a test like the tenant test above for every new resource.
+- **Put every tenant-owned query behind the organization id.** The rule in this tutorial is that the id comes from the membership the guard loaded, or from a durable provider built for the route parameter the guard checked, and goes into the `WHERE` clause of every statement. Review new queries for it, and keep a test like the tenant test above for every new resource.
 - **Consider row-level security as a second line of defense.** PostgreSQL can refuse rows of other tenants even to a query that forgot its `WHERE` clause, with a policy on `org_id` that reads a setting your code sets per transaction (`set_config('app.org_id', ..., true)`). Superusers bypass it, and so does the owner of a table unless the table forces it, so the application then connects as a role of its own. See [Row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html).
 - **Rate-limit per tenant after the membership check, not before.** The throttler's guard is global, so it runs before `OrganizationGuard`, and before authentication. A throttler tracker keyed by the `:orgId` of the URL would let anyone, member or not, use up an organization's budget. Count per organization where the membership is known: in the guard, or in a service, with a store shared by all instances.
 - **Send invitations with a real transport, and through the outbox when they must not be lost.** `LogMailTransport` writes the invitation links into the logs; logs are shipped and kept, so it's for development only. See [Send in production](/application/mail#send-in-production) and [Send after the order commits](/application/mail#send-after-the-order-commits).
