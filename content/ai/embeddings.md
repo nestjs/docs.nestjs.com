@@ -95,7 +95,7 @@ To compare two vectors in memory, `cosineSimilarity()` from `ai` takes them and 
 
 #### Embedding settings
 
-A definition gives a model settings of its own, and `embeddingDefaults` applies settings to every embedding call. Each setting comes from the call, else from the model's definition, else from `embeddingDefaults`:
+A definition gives a model settings of its own, and `embeddingDefaults` applies settings to every embedding call. Each setting resolves independently: the call, then the model's definition, then `embeddingDefaults`:
 
 ```typescript
 @@filename(app.module)
