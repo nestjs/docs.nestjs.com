@@ -1,6 +1,6 @@
 ### Build a multi-tenant SaaS backend
 
-This guide builds the backend of a multi-tenant SaaS application: organizations that users create and join, members with the roles owner, admin and member, and projects that belong to one organization and that nobody outside it can see. A multi-tenant backend is ordinary CRUD with one rule that must never break: a request only ever touches the data of its own tenant. This guide spends its time on that rule, and on the few places where getting it right takes more than a `WHERE` clause: invitations, role changes, and the last owner of an organization.
+This tutorial builds the backend of a multi-tenant SaaS application: organizations that users create and join, members with the roles owner, admin and member, and projects that belong to one organization and that nobody outside it can see. A multi-tenant backend is ordinary CRUD with one rule that must never break: a request only ever touches the data of its own tenant. This tutorial spends its time on that rule, and on the few places where getting it right takes more than a `WHERE` clause: invitations, role changes, and the last owner of an organization.
 
 By the end, the API will:
 
@@ -11,21 +11,21 @@ By the end, the API will:
 - Record every change to an organization's members and invitations, and every deleted project, in an audit log, in the same transaction as the change.
 - Prove the tenant boundary and the last-owner rule in tests against PostgreSQL.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This guide doesn't explain those parts again.
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
 
 These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/guides/multi-tenant-saas#start-from-the-jwt-api) |
-| `POST /orgs`, `GET /orgs`, `GET /orgs/:orgId/audit-events` | [Create organizations](/guides/multi-tenant-saas#create-organizations) |
-| `GET /orgs/:orgId/projects`, `POST /orgs/:orgId/projects`, `GET /orgs/:orgId/projects/:projectId`, `DELETE /orgs/:orgId/projects/:projectId` | [Scope every query to the organization](/guides/multi-tenant-saas#scope-every-query-to-the-organization) |
-| `GET /orgs/:orgId/members`, `PATCH /orgs/:orgId/members/:userId`, `DELETE /orgs/:orgId/members/:userId` | [Never lose the last owner](/guides/multi-tenant-saas#never-lose-the-last-owner) |
-| `POST /orgs/:orgId/invitations`, `POST /invitations/accept` | [Invite members by email](/guides/multi-tenant-saas#invite-members-by-email) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/tutorials/multi-tenant-saas#start-from-the-jwt-api) |
+| `POST /orgs`, `GET /orgs`, `GET /orgs/:orgId/audit-events` | [Create organizations](/tutorials/multi-tenant-saas#create-organizations) |
+| `GET /orgs/:orgId/projects`, `POST /orgs/:orgId/projects`, `GET /orgs/:orgId/projects/:projectId`, `DELETE /orgs/:orgId/projects/:projectId` | [Scope every query to the organization](/tutorials/multi-tenant-saas#scope-every-query-to-the-organization) |
+| `GET /orgs/:orgId/members`, `PATCH /orgs/:orgId/members/:userId`, `DELETE /orgs/:orgId/members/:userId` | [Never lose the last owner](/tutorials/multi-tenant-saas#never-lose-the-last-owner) |
+| `POST /orgs/:orgId/invitations`, `POST /invitations/accept` | [Invite members by email](/tutorials/multi-tenant-saas#invite-members-by-email) |
 
 #### Start from the JWT API
 
-Create the project, and install everything this guide uses. These are the JWT guide's packages plus `@nestjs/mail`:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/mail`:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -36,19 +36,19 @@ $ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
 
 - `src/main.ts`, `drizzle.config.ts` and `vitest.config.e2e.ts`
 - everything under `src/auth/`, `src/users/` and `src/health/`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out `src/notes/` and the JWT guide's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the new application where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
+Leave out `src/notes/` and the JWT tutorial's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the new application where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT guide, with a database of the application's own:
+Add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial, with a database of the application's own:
 
 ```bash
 $ docker run -d --name saas-db -e POSTGRES_PASSWORD=saas -e POSTGRES_DB=saas -p 5432:5432 postgres:17
@@ -79,7 +79,7 @@ export const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 ```
 
-The root module is the JWT guide's, with this guide's feature modules and the mail module, which [Invite members by email](/guides/multi-tenant-saas#invite-members-by-email) explains:
+The root module is the JWT tutorial's, with this tutorial's feature modules and the mail module, which [Invite members by email](/tutorials/multi-tenant-saas#invite-members-by-email) explains:
 
 ```typescript
 @@filename(src/app.module)
@@ -156,7 +156,7 @@ export class AppModule {}
 
 #### Design the schema
 
-The whole schema, in one file. The users and refresh tokens are the JWT guide's:
+The whole schema, in one file. The users and refresh tokens are the JWT tutorial's:
 
 ```typescript
 @@filename(src/database/schema)
@@ -280,9 +280,9 @@ export type Project = typeof projects.$inferSelect;
 
 - **A membership is keyed by organization and user.** The guard in the next section looks one up on every request, and that's a primary-key read. A user can't belong to an organization twice.
 - **Every table a tenant owns has an `org_id`, and its index starts with it.** Every query of those tables filters on it, so every query can use the index.
-- **Invitations store a hash of their token**, as the JWT guide's refresh tokens do. Someone who reads the table, or a backup of it, can't accept an invitation with what they find there.
+- **Invitations store a hash of their token**, as the JWT tutorial's refresh tokens do. Someone who reads the table, or a backup of it, can't accept an invitation with what they find there.
 - **The audit log is a table like the others**, written by the same transactions as the changes it records.
-- **Deleting an organization cascades** to its memberships, projects, invitations and audit events. Nothing in this guide deletes one, but when you add it, nothing of the tenant is left behind.
+- **Deleting an organization cascades** to its memberships, projects, invitations and audit events. Nothing in this tutorial deletes one, but when you add it, nothing of the tenant is left behind.
 
 Generate the migration and apply it (see [Migrations](/data/drizzle#migrations)):
 
@@ -375,7 +375,7 @@ const notFound = () => new NotFoundException('Organization not found');
 
 - **The guard runs after authentication.** Nest runs global guards first, so by the time a controller's `@UseGuards()` runs, `@nestjs/authentication` has verified the token and set `request.user`.
 - **The id is validated in the guard.** Guards run before pipes, so the `schema` option of `@Param()` hasn't checked `orgId` yet. Without the check, `/orgs/not-a-uuid/projects` would reach PostgreSQL, which rejects the string for a `uuid` column, and the client would get a 500.
-- **A non-member gets a 404**, the same answer as an organization that doesn't exist, as for other users' notes in the JWT guide. A 403 would confirm that the id belongs to someone.
+- **A non-member gets a 404**, the same answer as an organization that doesn't exist, as for other users' notes in the JWT tutorial. A 403 would confirm that the id belongs to someone.
 - **A member whose role is too low gets a 403.** They know the organization exists; the status tells them that their role, not their sign-in, is the problem.
 - **`getAllAndOverride()` reads the method's `@MinRole()` first, then the class's.** A controller can set a default for its routes, and a route can raise it. Without either, any member gets in.
 
@@ -653,7 +653,7 @@ Owners and admins manage the members. The rules:
 - Admins change the roles of members and admins, and remove them. Only owners make owners, and only owners change or remove an owner.
 - An organization always has at least one owner.
 
-The second rule is the hard one. The obvious version counts the owners, and demotes only if there are two or more. Two owners who step down at the same moment both count two owners, both demotions go ahead, and the organization has none. A conditional `UPDATE` with the count in its `WHERE` clause doesn't help either: the two statements update different rows, so neither waits for the other, and each one's count still sees two owners. A [test](/guides/multi-tenant-saas#test-it) at the end of this guide runs ten such races: without the lock below, nine or ten of the ten organizations ended up with no owner, in every run.
+The second rule is the hard one. The obvious version counts the owners, and demotes only if there are two or more. Two owners who step down at the same moment both count two owners, both demotions go ahead, and the organization has none. A conditional `UPDATE` with the count in its `WHERE` clause doesn't help either: the two statements update different rows, so neither waits for the other, and each one's count still sees two owners. A [test](/tutorials/multi-tenant-saas#test-it) at the end of this tutorial runs ten such races: without the lock below, nine or ten of the ten organizations ended up with no owner, in every run.
 
 The fix is to take the organization's row lock before touching its memberships. Changes to one organization's memberships then run one at a time, and each one sees what the previous one committed:
 
@@ -1084,7 +1084,7 @@ import { InvitationsService } from './invitations.service.js';
 export class InvitationsModule {}
 ```
 
-The request body of `POST /orgs/:orgId/invitations` names an email, so the JWT guide's `account` throttler counts it, per invited address and IP address: an admin can invite one address five times in 15 minutes, which is also a fair limit on how much mail one inbox gets from you.
+The request body of `POST /orgs/:orgId/invitations` names an email, so the JWT tutorial's `account` throttler counts it, per invited address and IP address: an admin can invite one address five times in 15 minutes, which is also a fair limit on how much mail one inbox gets from you.
 
 #### Try it
 
@@ -1094,7 +1094,7 @@ Start the application:
 $ npm run start
 ```
 
-Sign up Ada, Bob and Carol, as in the JWT guide, and keep their access tokens (shortened here and below):
+Sign up Ada, Bob and Carol, as in the JWT tutorial, and keep their access tokens (shortened here and below):
 
 ```bash
 $ curl localhost:3000/auth/sign-up --json '{"email":"ada@example.com","password":"correct horse battery"}'
@@ -1381,7 +1381,7 @@ describe.skipIf(!url)('SaaS API (e2e)', () => {
 - **The race tests run ten races at once**, two requests per organization. In the first, both owners step down; the test then checks the database: one owner left in each, and one audit entry for the one demotion that happened. In the second, Ada removes Bob while Bob demotes Ada, with Carol as a third owner, so only the re-read of the actor's role can stop the second request.
 - **The extra owner memberships are inserted directly**, to set the races up in one statement. Everything the tests check goes through the API.
 
-Create a database of their own, since the tests truncate the tables, and run them. The JWT guide's [refresh-token store test](/guides/rest-api-jwt-authentication#test-it) applies here unchanged, and both files truncate tables of the same database, so run them one after the other:
+Create a database of their own, since the tests truncate the tables, and run them. The JWT tutorial's [refresh-token store test](/tutorials/rest-api-jwt-authentication#test-it) applies here unchanged, and both files truncate tables of the same database, so run them one after the other:
 
 ```bash
 $ docker exec saas-db psql -U postgres -c "CREATE DATABASE saas_test"
@@ -1395,9 +1395,9 @@ Remove `FOR UPDATE` from `lock()`, and both race tests fail: both owners step do
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For a multi-tenant backend in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For a multi-tenant backend in particular:
 
-- **Put every tenant-owned query behind the organization id.** The rule in this guide is that the id comes from the membership the guard loaded, and goes into the `WHERE` clause of every statement. Review new queries for it, and keep a test like the tenant test above for every new resource.
+- **Put every tenant-owned query behind the organization id.** The rule in this tutorial is that the id comes from the membership the guard loaded, and goes into the `WHERE` clause of every statement. Review new queries for it, and keep a test like the tenant test above for every new resource.
 - **Consider row-level security as a second line of defense.** PostgreSQL can refuse rows of other tenants even to a query that forgot its `WHERE` clause, with a policy on `org_id` that reads a setting your code sets per transaction (`set_config('app.org_id', ..., true)`). Superusers bypass it, and so does the owner of a table unless the table forces it, so the application then connects as a role of its own. See [Row security policies](https://www.postgresql.org/docs/current/ddl-rowsecurity.html).
 - **Rate-limit per tenant after the membership check, not before.** The throttler's guard is global, so it runs before `OrganizationGuard`, and before authentication. A throttler tracker keyed by the `:orgId` of the URL would let anyone, member or not, use up an organization's budget. Count per organization where the membership is known: in the guard, or in a service, with a store shared by all instances.
 - **Send invitations with a real transport, and through the outbox when they must not be lost.** `LogMailTransport` writes the invitation links into the logs; logs are shipped and kept, so it's for development only. See [Send in production](/application/mail#send-in-production) and [Send after the order commits](/application/mail#send-after-the-order-commits).
@@ -1412,4 +1412,4 @@ Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#pr
 - Send the invitation from a queue, with retries, outside the request: [Mail](/application/mail) and [Queues](/application/queues).
 - Let members sign in with Google, or with their company's Microsoft directory: [Authentication](/security/authentication#add-sign-in-with-google).
 - See per-tenant activity, slow routes and errors in production: [Observability](/observability/overview).
-- Build an e-commerce backend on the same foundation: [Build an e-commerce backend](/guides/ecommerce-backend).
+- Build an e-commerce backend on the same foundation: [Build an e-commerce backend](/tutorials/ecommerce-backend).

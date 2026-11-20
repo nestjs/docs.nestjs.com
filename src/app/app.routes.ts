@@ -109,10 +109,10 @@ export const routes: Routes = [
         data: { title: 'Official Support' },
       },
       {
-        path: 'guides',
+        path: 'tutorials',
         loadChildren: () =>
-          import('./homepage/pages/guides/guides.routes').then(
-            (r) => r.GUIDES_ROUTES,
+          import('./homepage/pages/tutorials/tutorials.routes').then(
+            (r) => r.TUTORIALS_ROUTES,
           ),
       },
       {

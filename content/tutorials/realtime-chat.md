@@ -1,6 +1,6 @@
 ### Build a real-time chat backend
 
-This guide builds the backend of a chat application: rooms with members, messages that arrive live over WebSockets and are stored in PostgreSQL, a history that clients page through over REST, and presence and typing indicators. A chat backend looks simple until you ask what happens at the edges: a user who leaves a room with a tab still open, a message broadcast and then lost on a restart, a token that expires in the middle of a connection, a client that sends a thousand messages a second. This guide spends its time on those.
+This tutorial builds the backend of a chat application: rooms with members, messages that arrive live over WebSockets and are stored in PostgreSQL, a history that clients page through over REST, and presence and typing indicators. A chat backend looks simple until you ask what happens at the edges: a user who leaves a room with a tab still open, a message broadcast and then lost on a restart, a token that expires in the middle of a connection, a client that sends a thousand messages a second. This tutorial spends its time on those.
 
 By the end, the API will:
 
@@ -12,19 +12,19 @@ By the end, the API will:
 - Limit how fast each user sends messages.
 - Prove all of it in end-to-end tests with real Socket.IO clients, against a listening server.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This guide doesn't explain those parts again.
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
 
 These are the endpoints and WebSocket events, and the section that adds each one:
 
 | Endpoint or event | Section |
 | --- | --- |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/guides/realtime-chat#start-from-the-jwt-api) |
-| `POST /rooms`, `GET /rooms`, `POST /rooms/:id/members`, `DELETE /rooms/:id/members/me`, `GET /rooms/:id/messages` | [Expose rooms and history over REST](/guides/realtime-chat#expose-rooms-and-history-over-rest) |
-| `join`, `leave`, `message` and `typing` events, sent by clients; `message`, `presence`, `typing` and `exception` events, sent by the server | [Add the WebSocket gateway](/guides/realtime-chat#add-the-websocket-gateway) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/tutorials/realtime-chat#start-from-the-jwt-api) |
+| `POST /rooms`, `GET /rooms`, `POST /rooms/:id/members`, `DELETE /rooms/:id/members/me`, `GET /rooms/:id/messages` | [Expose rooms and history over REST](/tutorials/realtime-chat#expose-rooms-and-history-over-rest) |
+| `join`, `leave`, `message` and `typing` events, sent by clients; `message`, `presence`, `typing` and `exception` events, sent by the server | [Add the WebSocket gateway](/tutorials/realtime-chat#add-the-websocket-gateway) |
 
 #### Start from the JWT API
 
-Create the project, and install everything this guide uses. These are the JWT guide's packages plus [`@nestjs/websockets`](/websockets/gateways) with its Socket.IO platform, and `socket.io-client` for the tests:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus [`@nestjs/websockets`](/websockets/gateways) with its Socket.IO platform, and `socket.io-client` for the tests:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -35,19 +35,19 @@ $ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite @electric-sql/pglite socket.io-client
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
 
 - `src/config.ts`, `src/main.ts`, `drizzle.config.ts` and `vitest.config.e2e.ts`
 - everything under `src/auth/`, `src/users/` and `src/health/`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out `src/notes/` and the JWT guide's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the chat where they're named: the `realm` in `JwtAuth` (`'chat'`) and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
+Leave out `src/notes/` and the JWT tutorial's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the chat where they're named: the `realm` in `JwtAuth` (`'chat'`) and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT guide, with a database of the chat's own:
+Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial, with a database of the chat's own:
 
 ```bash
 $ docker run -d --name chat-db -e POSTGRES_PASSWORD=chat -e POSTGRES_DB=chat -p 5432:5432 postgres:17
@@ -61,7 +61,7 @@ JWT_SECRET=
 
 #### Design the schema
 
-The whole schema, in one file. The users and refresh tokens are the JWT guide's:
+The whole schema, in one file. The users and refresh tokens are the JWT tutorial's:
 
 ```typescript
 @@filename(src/database/schema)
@@ -197,7 +197,7 @@ export const sendMessageSchema = z.object({
 export type SendMessageDto = z.infer<typeof sendMessageSchema>;
 ```
 
-Any member of a room can add another user to it by email, and any member can leave. The service takes the signed-in user's id as its first argument, as the JWT guide's notes service does:
+Any member of a room can add another user to it by email, and any member can leave. The service takes the signed-in user's id as its first argument, as the JWT tutorial's notes service does:
 
 ```typescript
 @@filename(src/chat/rooms.service)
@@ -365,12 +365,12 @@ export class MessagesService {
 
 #### Add the WebSocket gateway
 
-A [gateway](/websockets/gateways) handles the messages clients send over the socket. This guide uses Socket.IO, through `@nestjs/platform-socket.io`, rather than the `ws` library:
+A [gateway](/websockets/gateways) handles the messages clients send over the socket. This tutorial uses Socket.IO, through `@nestjs/platform-socket.io`, rather than the `ws` library:
 
 - **The access token goes in the handshake.** Browsers can't set an `Authorization` header on a WebSocket connection. A Socket.IO client sends the token in the `auth` payload of its handshake instead, and `JwtBearerProvider` reads it from there, so the gateway signs users in with the same tokens and the same `JwtAuth` provider as the REST routes.
 - **Rooms are built in.** Socket.IO keeps a set of sockets per room, and broadcasts to one, which is what a chat room needs.
 - **Acknowledgments are built in.** A client that sends a message gets the server's answer to that message, here the stored message with its id.
-- **It scales out with an adapter**, as [Run more than one instance](/guides/realtime-chat#run-more-than-one-instance) describes.
+- **It scales out with an adapter**, as [Run more than one instance](/tutorials/realtime-chat#run-more-than-one-instance) describes.
 
 With `@nestjs/platform-socket.io` installed, Nest serves Socket.IO on the HTTP server's port, under `/socket.io/`, with the Node adapter too. Nothing changes in `main.ts`.
 
@@ -574,7 +574,7 @@ export class ChatGateway implements OnGatewayConnection {
 
 - **The handshake is authenticated with `WsAuthenticator`.** Nest runs no guards on `handleConnection()`. `authenticateConnection()` runs the same credential providers as the guard, and disconnects a socket without a valid access token. See [GraphQL and WebSockets](/security/authentication#graphql-and-websockets). The client sees its `connect` event, then a `disconnect` with the reason `io server disconnect`.
 - **Every message is authenticated again.** The global authentication guard runs for each `@SubscribeMessage()` handler, as for each route, and `@CurrentUser('id')` reads the user of that message. Nest doesn't wait for `handleConnection()` before it handles a socket's messages, so the handshake isn't a gate on its own: the guard is.
-- **A connection lasts as long as its access token.** The token was checked once, at the handshake, and a socket can stay open for days. A timer disconnects it when the token's `exp` passes, and the client reconnects with a fresh token, as [Try it](/guides/realtime-chat#try-it) shows. Without it, a socket whose token expired would get a 401 for every message it sends, and keep receiving the room's messages for as long as it stays open.
+- **A connection lasts as long as its access token.** The token was checked once, at the handshake, and a socket can stay open for days. A timer disconnects it when the token's `exp` passes, and the client reconnects with a fresh token, as [Try it](/tutorials/realtime-chat#try-it) shows. Without it, a socket whose token expired would get a 401 for every message it sends, and keep receiving the room's messages for as long as it stays open.
 - **The membership is checked on every message, not only on `join`.** `join` checks it before the socket enters the room's channel, so only members receive a room's messages. But a client can send a `message` to any room id, whether it joined or not, so `post()` checks again, in the statement that stores the message.
 - **Messages are stored first, then broadcast.** If the process dies between the two, the message is in the history, where every client finds it when it reconnects. The other order would show the room a message that a restart could lose.
 - **The sender gets the acknowledgment; everyone else gets the broadcast.** `client.to(channel)` reaches every socket in the room except the sender's, including the sender's other tabs. Both carry the same message, with its id.
@@ -613,7 +613,7 @@ function bodyOf(exception: HttpException | WsException): object {
 }
 ```
 
-The global `StandardSchemaValidationPipe` from the JWT guide validates `@MessageBody()` against its `schema`, as it validates `@Body()`, so a malformed message never reaches a handler. A refused message gets no acknowledgment. The client receives an `exception` event instead, whose `cause` names the event and payload it refuses:
+The global `StandardSchemaValidationPipe` from the JWT tutorial validates `@MessageBody()` against its `schema`, as it validates `@Body()`, so a malformed message never reaches a handler. A refused message gets no acknowledgment. The client receives an `exception` event instead, whose `cause` names the event and payload it refuses:
 
 ```json
 {
@@ -627,7 +627,7 @@ The global `StandardSchemaValidationPipe` from the JWT guide validates `@Message
 
 #### Expose rooms and history over REST
 
-Creating rooms, adding members and reading the history are ordinary requests, and stay on REST: they need no open connection, and they keep the JWT guide's validation, rate limits and OpenAPI document.
+Creating rooms, adding members and reading the history are ordinary requests, and stay on REST: they need no open connection, and they keep the JWT tutorial's validation, rate limits and OpenAPI document.
 
 ```typescript
 @@filename(src/chat/rooms.controller)
@@ -716,7 +716,7 @@ export class ChatModule {}
 
 #### Rate-limit messages
 
-The JWT guide's global `ThrottlerGuard` runs for gateway messages too, and so does its `default` throttler. Over a WebSocket, the "request" it counts by is the socket, which has no `ip`, so every client's messages would share one counter: one noisy user would block everyone. Give the `default` throttler a tracker that counts gateway messages per user. The rate-limiting chapter's [WebSockets](/security/rate-limiting#websockets) section does this with a subclass of the guard; the `getTracker` option, which receives the `ExecutionContext` too (see [Configuration](/security/rate-limiting#configuration)), does it without one:
+The JWT tutorial's global `ThrottlerGuard` runs for gateway messages too, and so does its `default` throttler. Over a WebSocket, the "request" it counts by is the socket, which has no `ip`, so every client's messages would share one counter: one noisy user would block everyone. Give the `default` throttler a tracker that counts gateway messages per user. The rate-limiting chapter's [WebSockets](/security/rate-limiting#websockets) section does this with a subclass of the guard; the `getTracker` option, which receives the `ExecutionContext` too (see [Configuration](/security/rate-limiting#configuration)), does it without one:
 
 ```typescript
 @@filename(src/chat/throttler-tracker)
@@ -808,7 +808,7 @@ export class AppModule {}
 
 Everything above runs on one instance. On several behind a load balancer, three things are per process and stop being enough:
 
-- **Broadcasts.** `client.to(channel).emit()` reaches the sockets connected to this instance only. A [Redis adapter](/websockets/adapter#extend-socketio) shares broadcasts and `socketsLeave()` between the instances, so `removeFromRoom()` reaches a user's sockets wherever they are connected. As that chapter warns, Redis alone isn't enough: Socket.IO clients start with HTTP long-polling, whose requests must all reach the same instance. Either use sticky sessions at the load balancer, or connect with `transports: ['websocket']`, as this guide's clients do.
+- **Broadcasts.** `client.to(channel).emit()` reaches the sockets connected to this instance only. A [Redis adapter](/websockets/adapter#extend-socketio) shares broadcasts and `socketsLeave()` between the instances, so `removeFromRoom()` reaches a user's sockets wherever they are connected. As that chapter warns, Redis alone isn't enough: Socket.IO clients start with HTTP long-polling, whose requests must all reach the same instance. Either use sticky sessions at the load balancer, or connect with `transports: ['websocket']`, as this tutorial's clients do.
 - **Presence.** `PresenceService` knows the sockets of its own instance. To show who's online across instances, keep the same map in Redis, with an expiry per instance so that a crashed instance's sockets disappear, or ask every instance with Socket.IO's `fetchSockets()`, which the Redis adapter supports.
 - **Rate limits.** The throttler counts in memory, so each instance counts on its own. Use shared [storage](/security/rate-limiting#storages) such as Redis.
 
@@ -968,7 +968,7 @@ The `connect` handler runs again after the reconnect, and opens the rooms again:
 
 #### Test it
 
-The tests start the real application on a free port with `app.listen(0)`, and connect to it with `socket.io-client`, as a browser would. The database is PGlite, as in the JWT guide's tests: what the chat guarantees comes from single statements, not from how concurrent transactions interleave, so a single connection tests it faithfully.
+The tests start the real application on a free port with `app.listen(0)`, and connect to it with `socket.io-client`, as a browser would. The database is PGlite, as in the JWT tutorial's tests: what the chat guarantees comes from single statements, not from how concurrent transactions interleave, so a single connection tests it faithfully.
 
 ```typescript
 @@filename(test/chat.e2e-spec)
@@ -1229,7 +1229,7 @@ describe('Chat (e2e)', () => {
 - `send()` sets a timeout on the acknowledgment. A refused message never gets one, so without a timeout, a test that expects one would hang instead of failing.
 - `shortLivedToken()` signs a token the way the API's `accessToken` options do (HS256, the `chat-api` issuer and audience, the test's `JWT_SECRET`), which expires within two seconds of the handshake.
 
-Run them with the JWT guide's refresh-token store test, against a database of their own:
+Run them with the JWT tutorial's refresh-token store test, against a database of their own:
 
 ```bash
 $ docker exec chat-db psql -U postgres -c "CREATE DATABASE chat_test"
@@ -1243,9 +1243,9 @@ Store the message with a plain `insert(messages).values()` instead of the `INSER
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For the chat in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For the chat in particular:
 
-- **Plan for several instances before you need them.** The Redis adapter, shared presence and shared throttler storage, from [Run more than one instance](/guides/realtime-chat#run-more-than-one-instance), are easier to add before the second instance than after.
+- **Plan for several instances before you need them.** The Redis adapter, shared presence and shared throttler storage, from [Run more than one instance](/tutorials/realtime-chat#run-more-than-one-instance), are easier to add before the second instance than after.
 - **Expect every client to reconnect on deploy.** Shutdown hooks are on, so a deploy's `SIGTERM` closes the open connections with the application. Clients see `transport close`, not `io server disconnect`, and Socket.IO reconnects them on its own, to an instance that's still running, where they open their rooms again. Size the instances for that burst of handshakes.
 - **End a banned or deleted user's connections yourself.** The guard refuses their next message, but an open socket keeps receiving its rooms until its access token expires, up to 15 minutes later. Disconnect the sockets in the user's channel, the way `removeFromRoom()` empties them out of a room.
 - **Bound what one client can send.** The Zod schema caps a message at 4,000 characters, and the throttler caps the rate. The `IoAdapter` also limits how many messages of one client are handled at once (see [Limits](/websockets/adapter#limits)).
@@ -1259,4 +1259,4 @@ Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#pr
 - Give rooms owners and moderators, with permissions checked per room: [Authorization](/security/authorization).
 - Share broadcasts between instances: [Adapters](/websockets/adapter#extend-socketio).
 - See slow history pages and refused messages in production: [Observability](/observability/overview).
-- Build an e-commerce backend on the same foundation: [Build an e-commerce backend](/guides/ecommerce-backend).
+- Build an e-commerce backend on the same foundation: [Build an e-commerce backend](/tutorials/ecommerce-backend).

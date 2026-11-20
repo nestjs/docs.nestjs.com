@@ -1,6 +1,6 @@
 ### Build a REST API with JWT authentication
 
-This guide builds a REST API for personal notes, from one file to an application you can deploy. Users sign up with an email and a password, get a short-lived JWT access token and a rotating refresh token, and read and write only their own notes. Each building block has its own chapter in this documentation; this guide puts them together in the order a real project needs them, and links to the chapter whenever you want the details.
+This tutorial builds a REST API for personal notes, from one file to an application you can deploy. Users sign up with an email and a password, get a short-lived JWT access token and a rotating refresh token, and read and write only their own notes. Each building block has its own chapter in this documentation; this tutorial puts them together in the order a real project needs them, and links to the chapter whenever you want the details.
 
 By the end, the API will:
 
@@ -17,10 +17,10 @@ These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| `GET /notes`, `GET /notes/:id`, `POST /notes`, `PATCH /notes/:id`, `DELETE /notes/:id` | [Start with one file](/guides/rest-api-jwt-authentication#start-with-one-file) |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me` | [Sign users in with JWTs](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts) |
-| `GET /docs` | [Describe the API with OpenAPI](/guides/rest-api-jwt-authentication#describe-the-api-with-openapi) |
-| `GET /health/live`, `GET /health/ready` | [Add health checks](/guides/rest-api-jwt-authentication#add-health-checks) |
+| `GET /notes`, `GET /notes/:id`, `POST /notes`, `PATCH /notes/:id`, `DELETE /notes/:id` | [Start with one file](/tutorials/rest-api-jwt-authentication#start-with-one-file) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me` | [Sign users in with JWTs](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts) |
+| `GET /docs` | [Describe the API with OpenAPI](/tutorials/rest-api-jwt-authentication#describe-the-api-with-openapi) |
+| `GET /health/live`, `GET /health/ready` | [Add health checks](/tutorials/rest-api-jwt-authentication#add-health-checks) |
 
 You need Node.js 22 or later, and a PostgreSQL server for the second section onwards.
 
@@ -433,7 +433,7 @@ import { NotesModule } from './notes/notes.module.js';
 export class AppModule {}
 ```
 
-The pipe moved from `main.ts` to an `APP_PIPE` provider. It still applies to every route, and it's now part of `AppModule`, so the end-to-end tests at the end of this guide get it too, without repeating the `main.ts` setup.
+The pipe moved from `main.ts` to an `APP_PIPE` provider. It still applies to every route, and it's now part of `AppModule`, so the end-to-end tests at the end of this tutorial get it too, without repeating the `main.ts` setup.
 
 ```typescript
 @@filename(src/main)
@@ -907,7 +907,7 @@ export class DrizzleRefreshTokenStore implements RefreshTokenStore {
 }
 ```
 
-`markRefreshTokenUsed()` is the method that matters most. It's one conditional `UPDATE`, so when a thief and the client refresh with the same token at the same moment, exactly one of them wins, and the other one's attempt revokes the family. A store that read the row, checked `usedAt` and then wrote it would let both through. [The store contract](/security/authentication#the-store-contract) lists the rule for every method, and the [tests](/guides/rest-api-jwt-authentication#test-it) at the end of this guide check them.
+`markRefreshTokenUsed()` is the method that matters most. It's one conditional `UPDATE`, so when a thief and the client refresh with the same token at the same moment, exactly one of them wins, and the other one's attempt revokes the family. A store that read the row, checked `usedAt` and then wrote it would let both through. [The store contract](/security/authentication#the-store-contract) lists the rule for every method, and the [tests](/tutorials/rest-api-jwt-authentication#test-it) at the end of this tutorial check them.
 
 ```typescript
 @@filename(src/auth/auth.module)
@@ -1534,4 +1534,4 @@ The API has the parts most production APIs need, and each one can grow from its 
 - Share notes, with permissions checked per record: [Authorization](/security/authorization).
 - Send email, or run work in the background: [Mail](/application/mail) and [Queues](/application/queues).
 - See what it does in production, request by request: [Observability](/observability/overview).
-- Build on the same foundation: an [e-commerce backend](/guides/ecommerce-backend), a [multi-tenant SaaS backend](/guides/multi-tenant-saas), a [project-management API](/guides/project-management-api), a [real-time chat backend](/guides/realtime-chat), a [booking system](/guides/booking-system), [emails and background jobs](/guides/background-jobs), a [file upload service](/guides/file-uploads), or an [AI chat backend](/guides/ai-chat-backend).
+- Build on the same foundation: an [e-commerce backend](/tutorials/ecommerce-backend), a [multi-tenant SaaS backend](/tutorials/multi-tenant-saas), a [project-management API](/tutorials/project-management-api), a [real-time chat backend](/tutorials/realtime-chat), a [booking system](/tutorials/booking-system), [emails and background jobs](/tutorials/background-jobs), a [file upload service](/tutorials/file-uploads), or an [AI chat backend](/tutorials/ai-chat-backend).

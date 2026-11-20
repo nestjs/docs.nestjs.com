@@ -1,6 +1,6 @@
 ### Build an e-commerce backend
 
-This guide builds the backend of an online shop: a product catalog that staff manage, a cart for every customer, and a checkout that turns the cart into an order without ever selling more than is in stock. Most of an e-commerce backend is ordinary CRUD. The parts that aren't are where money and stock change hands, so this guide spends its time there: prices in integer cents, prices frozen into each order, stock taken in the same statement that checks it, and checkouts that are safe when a customer double-clicks or a thousand customers want the last item.
+This tutorial builds the backend of an online shop: a product catalog that staff manage, a cart for every customer, and a checkout that turns the cart into an order without ever selling more than is in stock. Most of an e-commerce backend is ordinary CRUD. The parts that aren't are where money and stock change hands, so this tutorial spends its time there: prices in integer cents, prices frozen into each order, stock taken in the same statement that checks it, and checkouts that are safe when a customer double-clicks or a thousand customers want the last item.
 
 By the end, the API will:
 
@@ -10,21 +10,21 @@ By the end, the API will:
 - Let customers cancel orders that haven't shipped, which puts the stock back, and let staff ship them.
 - Prove, in a test against PostgreSQL, that ten customers racing for the last unit produce exactly one order.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This guide doesn't explain those parts again.
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
 
 These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/guides/ecommerce-backend#start-from-the-jwt-api) |
-| `GET /products`, `GET /products/:id`, `POST /products`, `PATCH /products/:id` | [Let staff manage the catalog](/guides/ecommerce-backend#let-staff-manage-the-catalog) |
-| `GET /cart`, `PUT /cart/items/:productId`, `DELETE /cart/items/:productId` | [Keep a cart](/guides/ecommerce-backend#keep-a-cart) |
-| `POST /orders`, `GET /orders`, `GET /orders/:id` | [Check out without overselling](/guides/ecommerce-backend#check-out-without-overselling) |
-| `POST /orders/:id/cancel`, `POST /orders/:id/ship` | [Cancel and ship orders](/guides/ecommerce-backend#cancel-and-ship-orders) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/tutorials/ecommerce-backend#start-from-the-jwt-api) |
+| `GET /products`, `GET /products/:id`, `POST /products`, `PATCH /products/:id` | [Let staff manage the catalog](/tutorials/ecommerce-backend#let-staff-manage-the-catalog) |
+| `GET /cart`, `PUT /cart/items/:productId`, `DELETE /cart/items/:productId` | [Keep a cart](/tutorials/ecommerce-backend#keep-a-cart) |
+| `POST /orders`, `GET /orders`, `GET /orders/:id` | [Check out without overselling](/tutorials/ecommerce-backend#check-out-without-overselling) |
+| `POST /orders/:id/cancel`, `POST /orders/:id/ship` | [Cancel and ship orders](/tutorials/ecommerce-backend#cancel-and-ship-orders) |
 
 #### Start from the JWT API
 
-Create the project, and install everything this guide uses. These are the JWT guide's packages plus `@nestjs/authorization`:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -35,19 +35,19 @@ $ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
 
 - `src/config.ts`, `src/main.ts`, `drizzle.config.ts` and `vitest.config.e2e.ts`
 - everything under `src/auth/`, `src/users/` and `src/health/`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out `src/notes/` and the JWT guide's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the shop where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
+Leave out `src/notes/` and the JWT tutorial's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the shop where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT guide, with a database of the shop's own:
+Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial, with a database of the shop's own:
 
 ```bash
 $ docker run -d --name shop-db -e POSTGRES_PASSWORD=shop -e POSTGRES_DB=shop -p 5432:5432 postgres:17
@@ -85,7 +85,7 @@ The role isn't in the access token. `JwtAuth.validate()` loads the user on every
 
 #### Design the schema
 
-The whole schema, in one file. The users and refresh tokens are the JWT guide's, with the role added:
+The whole schema, in one file. The users and refresh tokens are the JWT tutorial's, with the role added:
 
 ```typescript
 @@filename(src/database/schema)
@@ -280,7 +280,7 @@ import { UsersModule } from './users/users.module.js';
 export class AppModule {}
 ```
 
-The authorization guard **denies by default**: a route runs only if it declares who may call it, with `@Can()` for a policy check, `@Can.Anyone()` for any caller that authentication let through, or `@Public()`, which counts as `@Can.Anyone()`. A route whose declaration was forgotten is closed, not open, and the module logs every such route at startup. The routes from the JWT guide under `/auth` and `/health` are `@Public()` already. `GET /me` is for any signed-in user:
+The authorization guard **denies by default**: a route runs only if it declares who may call it, with `@Can()` for a policy check, `@Can.Anyone()` for any caller that authentication let through, or `@Public()`, which counts as `@Can.Anyone()`. A route whose declaration was forgotten is closed, not open, and the module logs every such route at startup. The routes from the JWT tutorial under `/auth` and `/health` are `@Public()` already. `GET /me` is for any signed-in user:
 
 ```typescript
 @@filename(src/users/me.controller)
@@ -343,7 +343,7 @@ export const listProductsQuerySchema = z.object({
 export type ListProductsQuery = z.infer<typeof listProductsQuerySchema>;
 ```
 
-As in the JWT guide, the update schema isn't derived from the create schema with `partial()`, which would keep the `description` default and clear the description on every update.
+As in the JWT tutorial, the update schema isn't derived from the create schema with `partial()`, which would keep the `description` default and clear the description on every update.
 
 ```typescript
 @@filename(src/products/products.service)
@@ -615,7 +615,7 @@ export class CartModule {}
 
 #### Check out without overselling
 
-Checkout is where an e-commerce backend usually goes wrong. The obvious version reads the product, checks that `stock` is high enough, and writes the new stock. Two customers who check out at the same moment both read a stock of 1, both pass the check, and both get an order for the last unit. A test at the end of this guide runs ten such customers against PostgreSQL: that version accepted several orders for the single unit in every run.
+Checkout is where an e-commerce backend usually goes wrong. The obvious version reads the product, checks that `stock` is high enough, and writes the new stock. Two customers who check out at the same moment both read a stock of 1, both pass the check, and both get an order for the last unit. A test at the end of this tutorial runs ten such customers against PostgreSQL: that version accepted several orders for the single unit in every run.
 
 The checkout below takes everything it needs with conditional statements, inside one transaction:
 
@@ -1031,11 +1031,11 @@ $ TEST_DATABASE_URL=postgres://postgres:shop@localhost:5432/shop_test npm run te
 
 Replace the stock `UPDATE` in `checkout()` with a read, a check in JavaScript and a write, and "sells the last unit exactly once" fails: several of the ten customers get an order.
 
-The JWT guide's [refresh-token store test](/guides/rest-api-jwt-authentication#test-it) applies here unchanged. Both test files truncate tables of the same database, so run them one after the other, with `npm run test:e2e -- --no-file-parallelism`.
+The JWT tutorial's [refresh-token store test](/tutorials/rest-api-jwt-authentication#test-it) applies here unchanged. Both test files truncate tables of the same database, so run them one after the other, with `npm run test:e2e -- --no-file-parallelism`.
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For the shop in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For the shop in particular:
 
 - **Size the connection pool for checkout.** Each checkout holds a connection for the length of its transaction, and checkouts of a popular product queue on its row lock. Keep transactions short: nothing in `checkout()` waits on anything but the database, and it should stay that way. Call a payment provider before or after the transaction, never inside it.
 - **Take payment with an idempotency key.** A checkout is safe to retry because the cart is gone after the first one. A payment isn't: a retried charge charges twice. The provider's API takes a key; send the order's id. To make your own payment endpoint safe to retry, see [Idempotency keys](/reliability/idempotency).
@@ -1046,7 +1046,7 @@ Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#pr
 
 #### What's next
 
-- Take payments, and mark orders paid from the provider's webhook: [Accept payments with webhooks](/guides/payments-webhooks).
+- Take payments, and mark orders paid from the provider's webhook: [Accept payments with webhooks](/tutorials/payments-webhooks).
 - Send order confirmations, outside the request: [Mail](/application/mail) and [Queues](/application/queues). To send an event only once the order's transaction has committed, use the [transactional outbox](/reliability/outbox).
 - Let customers see per-order permissions, or give staff finer roles: [Authorization](/security/authorization).
 - See slow checkouts and lock waits in production, request by request: [Observability](/observability/overview).

@@ -1,6 +1,6 @@
 ### Build a file upload service
 
-This guide builds a file upload service: users upload images and PDF documents, download them through the API or through links that expire after five minutes, and delete them, each user within a storage quota of their own. Uploading a file looks like one line of code, and most of what goes wrong happens around it: a file that claims to be a PNG and is an HTML page, a 2 GB upload held in memory, two uploads that both fit in the last free megabyte, and bytes left on the disk that nothing points to. This guide handles each of these, with the same code on a laptop folder and on S3.
+This tutorial builds a file upload service: users upload images and PDF documents, download them through the API or through links that expire after five minutes, and delete them, each user within a storage quota of their own. Uploading a file looks like one line of code, and most of what goes wrong happens around it: a file that claims to be a PNG and is an HTML page, a 2 GB upload held in memory, two uploads that both fit in the last free megabyte, and bytes left on the disk that nothing points to. This tutorial handles each of these, with the same code on a laptop folder and on S3.
 
 By the end, the API will:
 
@@ -11,21 +11,21 @@ By the end, the API will:
 - Stream downloads with the right `Content-Type` and `Content-Disposition`, and hand out signed links that expire after five minutes.
 - Delete a file's row before its bytes, so a row never points at a missing file.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This guide doesn't explain those parts again.
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
 
 These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/guides/file-uploads#start-from-the-jwt-api) |
-| `POST /files`, `GET /files`, `GET /files/:id` | [Accept uploads](/guides/file-uploads#accept-uploads) |
-| `GET /me/storage` | [Stay within the quota](/guides/file-uploads#stay-within-the-quota) |
-| `GET /files/:id/content`, `GET /files/:id/link`, `GET /downloads` | [Download files](/guides/file-uploads#download-files) |
-| `DELETE /files/:id` | [Delete files](/guides/file-uploads#delete-files) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/tutorials/file-uploads#start-from-the-jwt-api) |
+| `POST /files`, `GET /files`, `GET /files/:id` | [Accept uploads](/tutorials/file-uploads#accept-uploads) |
+| `GET /me/storage` | [Stay within the quota](/tutorials/file-uploads#stay-within-the-quota) |
+| `GET /files/:id/content`, `GET /files/:id/link`, `GET /downloads` | [Download files](/tutorials/file-uploads#download-files) |
+| `DELETE /files/:id` | [Delete files](/tutorials/file-uploads#delete-files) |
 
 #### Start from the JWT API
 
-Create the project, and install everything this guide uses. These are the JWT guide's packages plus `@nestjs/storage`:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/storage`:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -36,19 +36,19 @@ $ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
 
 - `src/main.ts` and `drizzle.config.ts`
 - everything under `src/auth/`, `src/users/` and `src/health/`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out `src/notes/` and the JWT guide's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the files where they're named: the `realm` in `JwtAuth` (`'files'`) and the title of the OpenAPI document in `main.ts`. `src/config.ts`, `src/app.module.ts` and `vitest.config.e2e.ts` change in this guide, and are shown in full below. Add the test script to `package.json`:
+Leave out `src/notes/` and the JWT tutorial's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the files where they're named: the `realm` in `JwtAuth` (`'files'`) and the title of the OpenAPI document in `main.ts`. `src/config.ts`, `src/app.module.ts` and `vitest.config.e2e.ts` change in this tutorial, and are shown in full below. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT guide, with a database of the application's own:
+Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial, with a database of the application's own:
 
 ```bash
 $ docker run -d --name files-db -e POSTGRES_PASSWORD=files -e POSTGRES_DB=files -p 5432:5432 postgres:17
@@ -64,7 +64,7 @@ The application uses multer through the upload interceptors of `@nestjs/platform
 
 #### Design the schema
 
-The whole schema, in one file. The refresh tokens are the JWT guide's. The users gain two columns, and a table records the files:
+The whole schema, in one file. The refresh tokens are the JWT tutorial's. The users gain two columns, and a table records the files:
 
 ```typescript
 @@filename(src/database/schema)
@@ -236,8 +236,8 @@ export function createStorageOptions(config: ConfigService<Env, true>): StorageM
 ```
 
 - **The local disk keeps files under `STORAGE_ROOT`**, `storage/` in the project's directory, and creates it at startup. Add it to `.gitignore`.
-- **A folder can't presign URLs the way S3 does**, so with `signedUrls`, the local disk signs its own links with HMAC-SHA256, under `baseUrl`. The application serves them at `/downloads`, in [Download files](/guides/file-uploads#download-files).
-- **The S3 disk is the same class for AWS S3, Cloudflare R2 and MinIO.** [Use S3 in production](/guides/file-uploads#use-s3-in-production) sets it up.
+- **A folder can't presign URLs the way S3 does**, so with `signedUrls`, the local disk signs its own links with HMAC-SHA256, under `baseUrl`. The application serves them at `/downloads`, in [Download files](/tutorials/file-uploads#download-files).
+- **The S3 disk is the same class for AWS S3, Cloudflare R2 and MinIO.** [Use S3 in production](/tutorials/file-uploads#use-s3-in-production) sets it up.
 
 Register `StorageModule` in the root module, with the factory. It's global, so any provider can inject the disk. With the files module of the next sections, the root module is:
 
@@ -321,7 +321,7 @@ export const FILE_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif',
 export const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10 MiB
 ```
 
-The upload route uses `FileInterceptor()`, as any upload in Nest does. On the Node adapter, it comes from `@nestjs/platform-node` (see [Other packages](/http/performance#other-packages)). What's particular is its `storage` option: `uploadToDisk()` is a multer storage engine that streams the file onto the disk as it arrives, instead of into memory (multer's default) or a temporary folder. The controller has every route of this guide; the next sections explain the ones after `findOne()`:
+The upload route uses `FileInterceptor()`, as any upload in Nest does. On the Node adapter, it comes from `@nestjs/platform-node` (see [Other packages](/http/performance#other-packages)). What's particular is its `storage` option: `uploadToDisk()` is a multer storage engine that streams the file onto the disk as it arrives, instead of into memory (multer's default) or a temporary folder. The controller has every route of this tutorial; the next sections explain the ones after `findOne()`:
 
 ```typescript
 @@filename(src/files/files.controller)
@@ -426,7 +426,7 @@ By the time `upload()` runs, the file is on the disk, and these checks have pass
 
 #### Stay within the quota
 
-The file is stored; recording it is the service's job, and so is the quota. The obvious version reads the user's usage, checks that the new file fits, and writes the new usage. Two uploads that arrive together both read the same usage, both pass the check, and both are recorded. A test at the end of this guide sends five 3,000-byte uploads at once against a quota of 10,000 bytes: that version accepted all five in every run.
+The file is stored; recording it is the service's job, and so is the quota. The obvious version reads the user's usage, checks that the new file fits, and writes the new usage. Two uploads that arrive together both read the same usage, both pass the check, and both are recorded. A test at the end of this tutorial sends five 3,000-byte uploads at once against a quota of 10,000 bytes: that version accepted all five in every run.
 
 The service below checks and takes the quota in one statement:
 
@@ -537,7 +537,7 @@ function displayName(originalname: string): string {
 - **The quota answer is a 409, not a 413.** A `413` tells the client that this file is too large to be accepted, ever. A `409 Conflict` tells it that the request is fine but the account's state refuses it: delete some files, and the same upload succeeds.
 - **The size and type come from the upload**, as stored: `upload.size` is the bytes written, and `upload.contentType` the detected type.
 
-The list takes a page size and an offset, as the notes did in the JWT guide:
+The list takes a page size and an offset, as the notes did in the JWT tutorial:
 
 ```typescript
 @@filename(src/files/files.schemas)
@@ -837,7 +837,7 @@ storage/d4614e84-dc0c-4539-a0af-3c7131b2a11a/8758a3d5-f18a-4cc2-a65c-970825c0de3
 
 #### Test it
 
-The guarantees that matter here are about concurrency, and an in-process database such as PGlite has a single connection, where requests never truly race. So the tests run against a real PostgreSQL server, through a connection pool, as in the [e-commerce guide](/guides/ecommerce-backend#test-it). The files go to an `InMemoryDisk`, which behaves like the other disks and lets the test see what's stored, with `keys()`. Overriding `STORAGE_MODULE_OPTIONS` replaces what the factory would have returned (see [Testing](/application/file-storage#testing)). The configuration still needs a signing key, so add one to the test environment:
+The guarantees that matter here are about concurrency, and an in-process database such as PGlite has a single connection, where requests never truly race. So the tests run against a real PostgreSQL server, through a connection pool, as in the [e-commerce tutorial](/tutorials/ecommerce-backend#test-it). The files go to an `InMemoryDisk`, which behaves like the other disks and lets the test see what's stored, with `keys()`. Overriding `STORAGE_MODULE_OPTIONS` replaces what the factory would have returned (see [Testing](/application/file-storage#testing)). The configuration still needs a signing key, so add one to the test environment:
 
 ```typescript
 @@filename(vitest.config.e2e)
@@ -1033,13 +1033,13 @@ $ TEST_DATABASE_URL=postgres://postgres:files@localhost:5432/files_test npm run 
       Tests  11 passed (11)
 ```
 
-The second file is the JWT guide's [refresh-token store test](/guides/rest-api-jwt-authentication#test-it), unchanged. Both truncate tables of the same database, hence `--no-file-parallelism`.
+The second file is the JWT tutorial's [refresh-token store test](/tutorials/rest-api-jwt-authentication#test-it), unchanged. Both truncate tables of the same database, hence `--no-file-parallelism`.
 
 Replace the quota `UPDATE` in `create()` with a read, a check in JavaScript and a write, and "never lets concurrent uploads exceed the quota" fails: all five uploads get a 201.
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For the files in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For the files in particular:
 
 - **Set `STORAGE_DRIVER` to `s3`.** Files on a container's disk are gone at the next deploy, and the other instances can't read them. The storage module logs a warning at startup when it finds a local disk with `NODE_ENV=production`.
 - **Keep the bucket private.** Every download goes through the API or a signed link, so the bucket needs no public access at all. Grant the application `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` and `s3:ListBucket` on it, and nothing else. Without `s3:ListBucket`, S3 answers a request for a missing file with `403` instead of `404`.

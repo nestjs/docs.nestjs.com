@@ -1,6 +1,6 @@
 ### Send emails and run background jobs
 
-This guide adds email to the notes API of the JWT guide: a welcome email after sign-up, and an evening digest of the notes each user changed that day, sent from a BullMQ queue so that no request waits for a mail server. Sending an email is one call. Sending it from the background, reliably, is where the work is: the job must not be lost between the database and the queue, a job that runs twice must not send twice, a scheduled job must run once however many instances the API has, and a deploy must not cut a send in half.
+This tutorial adds email to the notes API of the JWT tutorial: a welcome email after sign-up, and an evening digest of the notes each user changed that day, sent from a BullMQ queue so that no request waits for a mail server. Sending an email is one call. Sending it from the background, reliably, is where the work is: the job must not be lost between the database and the queue, a job that runs twice must not send twice, a scheduled job must run once however many instances the API has, and a deploy must not cut a send in half.
 
 By the end, the API will:
 
@@ -12,16 +12,16 @@ By the end, the API will:
 - Finish the email in flight when a deploy stops the process, and run the workers in a process of their own when you need to.
 - Prove all of it in tests against PostgreSQL and Redis.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in and keeps their notes in PostgreSQL through Drizzle. This guide doesn't explain those parts again. It adds no endpoints; these are the emails, and the section that adds each one:
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in and keeps their notes in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again. It adds no endpoints; these are the emails, and the section that adds each one:
 
 | Email | Sent when | Section |
 | --- | --- | --- |
-| Welcome | `POST /auth/sign-up` commits | [Hand the welcome email to the queue](/guides/background-jobs#hand-the-welcome-email-to-the-queue) |
-| Digest | Every evening at 18:00 UTC, to each user who changed notes that day | [Send the digest from one instance](/guides/background-jobs#send-the-digest-from-one-instance) |
+| Welcome | `POST /auth/sign-up` commits | [Hand the welcome email to the queue](/tutorials/background-jobs#hand-the-welcome-email-to-the-queue) |
+| Digest | Every evening at 18:00 UTC, to each user who changed notes that day | [Send the digest from one instance](/tutorials/background-jobs#send-the-digest-from-one-instance) |
 
 #### Start from the JWT API
 
-Create the project, and install the JWT guide's packages, plus the five this guide adds: the mailer, BullMQ with its Nest module and its Redis client, the outbox, the scheduler and the locks:
+Create the project, and install the JWT tutorial's packages, plus the five this tutorial adds: the mailer, BullMQ with its Nest module and its Redis client, the outbox, the scheduler and the locks:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -33,19 +33,19 @@ $ npm i --save @nestjs/mail @nestjs/bullmq bullmq ioredis @nestjs/outbox @nestjs
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#test-it), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#test-it), as they are:
 
 - `src/main.ts` and `drizzle.config.ts`
 - everything under `src/auth/`, `src/users/`, `src/notes/` and `src/health/`, and `src/database/schema.ts`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out the JWT guide's `drizzle/` folder, since the next steps change the schema and generate one migration for all of it, and `test/notes.e2e-spec.ts`, which runs the application on PGlite: from now on the application also needs Redis, and the tests at the end of this guide run it against both servers. Add the test script to `package.json`:
+Leave out the JWT tutorial's `drizzle/` folder, since the next steps change the schema and generate one migration for all of it, and `test/notes.e2e-spec.ts`, which runs the application on PGlite: from now on the application also needs Redis, and the tests at the end of this tutorial run it against both servers. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-BullMQ keeps its jobs in [Redis](https://redis.io). Run one next to the JWT guide's PostgreSQL container:
+BullMQ keeps its jobs in [Redis](https://redis.io). Run one next to the JWT tutorial's PostgreSQL container:
 
 ```bash
 $ docker run -d --name notes-redis -p 6379:6379 redis:7
@@ -105,14 +105,14 @@ export const sentEmails = pgTable('sent_emails', {
 });
 ```
 
-Generate the migration and apply it, as in the JWT guide:
+Generate the migration and apply it, as in the JWT tutorial:
 
 ```bash
 $ npx drizzle-kit generate --name=notes
 $ npx drizzle-kit migrate
 ```
 
-The root module registers everything this guide adds. Each part is explained in the section that uses it:
+The root module registers everything this tutorial adds. Each part is explained in the section that uses it:
 
 ```typescript
 @@filename(src/app.module)
@@ -214,10 +214,10 @@ import { UsersModule } from './users/users.module.js';
 export class AppModule {}
 ```
 
-- `MailModule` sends the mail ([Write the emails](/guides/background-jobs#write-the-emails)).
+- `MailModule` sends the mail ([Write the emails](/tutorials/background-jobs#write-the-emails)).
 - `BullModule.forRootAsync()` connects BullMQ to Redis, from `REDIS_URL`. A database number in the URL's path, such as `redis://localhost:6379/1`, keeps the jobs apart from anything else on the server.
-- `OutboxModule` and `PostgresOutboxStore` take the welcome email from the sign-up transaction to the queue ([Hand the welcome email to the queue](/guides/background-jobs#hand-the-welcome-email-to-the-queue)).
-- `ScheduleModule`, `LocksModule`, `RedisModule` and `RedisLockStore` run the digest on one instance ([Send the digest from one instance](/guides/background-jobs#send-the-digest-from-one-instance)).
+- `OutboxModule` and `PostgresOutboxStore` take the welcome email from the sign-up transaction to the queue ([Hand the welcome email to the queue](/tutorials/background-jobs#hand-the-welcome-email-to-the-queue)).
+- `ScheduleModule`, `LocksModule`, `RedisModule` and `RedisLockStore` run the digest on one instance ([Send the digest from one instance](/tutorials/background-jobs#send-the-digest-from-one-instance)).
 
 #### Write the emails
 
@@ -354,7 +354,7 @@ export class EmailJobs {
 
 - **`attempts` and `backoff`.** A job fails when the worker throws, and BullMQ runs it again after the backoff: 2 seconds, then 4, 8 and so on, ten attempts over about 17 minutes. Size it to the outages you expect from your mail provider. After the last attempt the job moves to the failed set.
 - **`removeOnComplete` and `removeOnFail`.** By default BullMQ keeps every finished job in Redis, forever. Here completed jobs go after a day (or past the 10,000 most recent), and failed ones after a week, long enough to look at them. Ages are in seconds.
-- **`jobId`.** Every email has a key, such as `welcome-<user id>`. Used as the job's id, it makes adding the same email twice a no-op while the first job is still in Redis. Once `removeOnComplete` removed it, the same id can be added again, so the job id alone doesn't make an email unique: the `sent_emails` table does, in [Send each email once](/guides/background-jobs#send-each-email-once). BullMQ refuses integer ids, and most ids with a `:` in them, hence the dashes.
+- **`jobId`.** Every email has a key, such as `welcome-<user id>`. Used as the job's id, it makes adding the same email twice a no-op while the first job is still in Redis. Once `removeOnComplete` removed it, the same id can be added again, so the job id alone doesn't make an email unique: the `sent_emails` table does, in [Send each email once](/tutorials/background-jobs#send-each-email-once). BullMQ refuses integer ids, and most ids with a `:` in them, hence the dashes.
 
 The options are passed on every `add()`, rather than as the queue's defaults, so they sit next to the jobs they apply to. [Job options](/application/queues#job-options) lists the others, such as `delay` and `priority`.
 
@@ -560,7 +560,7 @@ export class SentEmailsRepository {
 }
 ```
 
-- **The claim is one statement.** `INSERT ... ON CONFLICT DO UPDATE ... WHERE` inserts the row, or takes over a claim that nobody finished within 5 minutes. Of two workers racing for the same email, PostgreSQL lets one of them insert the row; the other's statement waits for that insert to commit, then changes nothing. A `SELECT` to check for the row followed by an `INSERT` would let both through: the test at the end of this guide shows it.
+- **The claim is one statement.** `INSERT ... ON CONFLICT DO UPDATE ... WHERE` inserts the row, or takes over a claim that nobody finished within 5 minutes. Of two workers racing for the same email, PostgreSQL lets one of them insert the row; the other's statement waits for that insert to commit, then changes nothing. A `SELECT` to check for the row followed by an `INSERT` would let both through: the test at the end of this tutorial shows it.
 - **The loser doesn't send.** If the email is marked sent, its job completes as `already sent`. If it's still being sent, the job throws, and BullMQ's retry, a few seconds later, finds it sent.
 - **A failed send gives the claim back.** The job's next attempt claims it again. Without that, a mail server that refused the first attempt would leave a claim that blocks every retry for 5 minutes.
 - **No transaction is held open during the send.** The claim commits on its own, so the send holds no database connection and no row lock for as long as the mail server takes.
@@ -731,7 +731,7 @@ export class DigestScheduler {
 
 `@nestjs/schedule` runs the method on every instance of the application. With three instances, three of them would query the notes and queue the same jobs. The job ids would make the extra jobs no-ops, but the work would still run three times, and a job that does something without a natural key, such as calling another service, would do it three times. `@OnOneInstance()` runs the method on one instance: the first one whose scheduler fires takes a lease on the job, renews it while it's up, and runs every tick, and the others skip theirs. If the owner dies, another instance takes over at its first tick after the lease expired, 30 seconds later. [Run each job on one instance](/reliability/locks#run-each-job-on-one-instance) explains the lease, and why ticks aren't caught up.
 
-The cron expression comes from `process.env.DIGEST_CRON`, read when the file is loaded, which is before `ConfigModule` reads `.env`. Set it in the process's environment, as the [Try it](/guides/background-jobs#try-it) section does, to see a digest without waiting for the evening.
+The cron expression comes from `process.env.DIGEST_CRON`, read when the file is loaded, which is before `ConfigModule` reads `.env`. Set it in the process's environment, as the [Try it](/tutorials/background-jobs#try-it) section does, to see a digest without waiting for the evening.
 
 The instances agree on who holds the lease through a **lock store** they share. `@nestjs/locks` defines the contract, `LockStore`, and keeps the locks in memory until you register one, which only excludes callers in the same process: with `NODE_ENV` set to `production`, it refuses to start that way. The API has Redis already, so the store is the one from [The store on Redis](/reliability/locks#the-store-on-redis), on its own ioredis client:
 
@@ -832,7 +832,7 @@ Each method is one Lua script, which Redis runs atomically: of any number of ins
 
 #### Shut down without losing an email
 
-A deploy stops each old instance with `SIGTERM`. `main.ts` already calls `app.enableShutdownHooks()`, from the JWT guide, and every part of this guide uses the hooks it enables:
+A deploy stops each old instance with `SIGTERM`. `main.ts` already calls `app.enableShutdownHooks()`, from the JWT tutorial, and every part of this tutorial uses the hooks it enables:
 
 1. In the first phase, BullMQ's workers close: they take no new jobs, and wait for the jobs they're running to finish. The digest's lease goes back, so another instance's next tick takes it without waiting 30 seconds, and the outbox relay finishes what it's publishing.
 2. In the last phase, the queues close their Redis connections, the lock store's client quits, and the database pool ends. Nothing that a finishing job needs is closed before it finished.
@@ -1190,7 +1190,7 @@ Replace the claim in `sendOnce()` with a `SELECT` for the row and an `INSERT` af
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For the emails and the jobs in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For the emails and the jobs in particular:
 
 - **Send through a real transport.** Set `MAIL_TRANSPORT=smtp` and `SMTP_URL`, or swap in an HTTP provider's transport. With `NODE_ENV=production`, the mail module warns at startup that `LogMailTransport` doesn't deliver mail. Configure SPF, DKIM and DMARC for the sending domain; the [mail chapter's checklist](/application/mail#production-checklist) covers the rest.
 - **Give Redis persistence and `maxmemory-policy noeviction`.** The queue's jobs and the locks live there. An evicted job is an email that never goes out, and an evicted lock lets a second instance run the digest.
@@ -1203,7 +1203,7 @@ Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#pr
 
 #### What's next
 
-- Verify email addresses and reset passwords, with the mail this guide set up: [Authentication](/security/authentication#verify-email-addresses).
+- Verify email addresses and reset passwords, with the mail this tutorial set up: [Authentication](/security/authentication#verify-email-addresses).
 - Translate the emails into each user's language: [Send it in the customer's language](/application/mail#send-it-in-the-customers-language).
 - Run jobs on PostgreSQL instead of Redis: [Pluggable backends](/application/queues#pluggable-backends-postgresql).
 - Learn what the outbox guarantees, and how its relay shares work between instances: [Outbox](/reliability/outbox#delivery-guarantees).

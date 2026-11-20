@@ -1,6 +1,6 @@
 ### Build a booking system without double bookings
 
-This guide builds the backend of a booking system: resources such as meeting rooms, which staff manage, a list of each day's free slots, and bookings that users make and cancel, with a guarantee that no two bookings of one resource ever overlap. The guarantee doesn't come from application code that looks for a conflict before it inserts, which two requests arriving together both pass. It comes from PostgreSQL: an exclusion constraint refuses the second of two overlapping bookings however they arrive, and the API turns that refusal into a `409 Conflict`.
+This tutorial builds the backend of a booking system: resources such as meeting rooms, which staff manage, a list of each day's free slots, and bookings that users make and cancel, with a guarantee that no two bookings of one resource ever overlap. The guarantee doesn't come from application code that looks for a conflict before it inserts, which two requests arriving together both pass. It comes from PostgreSQL: an exclusion constraint refuses the second of two overlapping bookings however they arrive, and the API turns that refusal into a `409 Conflict`.
 
 By the end, the API will:
 
@@ -10,21 +10,21 @@ By the end, the API will:
 - Let users cancel a booking up to 24 hours before it starts, with one conditional update.
 - Prove, in a test against PostgreSQL, that ten users racing for one slot get exactly one booking.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This guide doesn't explain those parts again.
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
 
 These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/guides/booking-system#start-from-the-jwt-api) |
-| `GET /resources`, `GET /resources/:id`, `POST /resources`, `PATCH /resources/:id` | [Let staff manage resources](/guides/booking-system#let-staff-manage-resources) |
-| `POST /bookings`, `GET /bookings`, `GET /bookings/:id` | [Book without double bookings](/guides/booking-system#book-without-double-bookings) |
-| `GET /resources/:id/availability` | [List the free slots of a day](/guides/booking-system#list-the-free-slots-of-a-day) |
-| `POST /bookings/:id/cancel` | [Cancel before the cutoff](/guides/booking-system#cancel-before-the-cutoff) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/tutorials/booking-system#start-from-the-jwt-api) |
+| `GET /resources`, `GET /resources/:id`, `POST /resources`, `PATCH /resources/:id` | [Let staff manage resources](/tutorials/booking-system#let-staff-manage-resources) |
+| `POST /bookings`, `GET /bookings`, `GET /bookings/:id` | [Book without double bookings](/tutorials/booking-system#book-without-double-bookings) |
+| `GET /resources/:id/availability` | [List the free slots of a day](/tutorials/booking-system#list-the-free-slots-of-a-day) |
+| `POST /bookings/:id/cancel` | [Cancel before the cutoff](/tutorials/booking-system#cancel-before-the-cutoff) |
 
 #### Start from the JWT API
 
-Create the project, and install everything this guide uses. These are the JWT guide's packages plus `@nestjs/authorization`:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -35,19 +35,19 @@ $ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
 
 - `src/config.ts`, `src/main.ts`, `drizzle.config.ts` and `vitest.config.e2e.ts`
 - everything under `src/auth/`, `src/users/` and `src/health/`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out `src/notes/` and the JWT guide's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the booking system where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
+Leave out `src/notes/` and the JWT tutorial's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the booking system where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT guide, with a database of the booking system's own:
+Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial, with a database of the booking system's own:
 
 ```bash
 $ docker run -d --name booking-db -e POSTGRES_PASSWORD=booking -e POSTGRES_DB=booking -p 5432:5432 postgres:17
@@ -85,7 +85,7 @@ The role isn't in the access token. `JwtAuth.validate()` loads the user on every
 
 #### Design the schema
 
-The whole schema, in one file. The users and refresh tokens are the JWT guide's, with the role added:
+The whole schema, in one file. The users and refresh tokens are the JWT tutorial's, with the role added:
 
 ```typescript
 @@filename(src/database/schema)
@@ -186,7 +186,7 @@ $ npx drizzle-kit migrate
 
 #### Make double bookings impossible
 
-The obvious way to prevent double bookings is in the service: look for a confirmed booking of the resource that overlaps the new one, and insert only if there's none. Two requests for the same slot that arrive together both look, both find nothing, and both insert. A test at the end of this guide runs ten such requests against PostgreSQL: that version accepted between five and ten bookings of the one slot, in each of five runs.
+The obvious way to prevent double bookings is in the service: look for a confirmed booking of the resource that overlaps the new one, and insert only if there's none. Two requests for the same slot that arrive together both look, both find nothing, and both insert. A test at the end of this tutorial runs ten such requests against PostgreSQL: that version accepted between five and ten bookings of the one slot, in each of five runs.
 
 PostgreSQL can enforce the rule itself, with an **exclusion constraint**. A unique constraint says that no two rows have equal values; an exclusion constraint generalizes it to any operator: no two rows of a resource may have overlapping time ranges. PostgreSQL checks it on every insert and update, whatever code sends them, including concurrent ones, and fails the statement that would break it.
 
@@ -295,7 +295,7 @@ import { UsersModule } from './users/users.module.js';
 export class AppModule {}
 ```
 
-The authorization guard **denies by default**: a route runs only if it declares who may call it, with `@Can()` for a policy check, `@Can.Anyone()` for any caller that authentication let through, or `@Public()`, which counts as `@Can.Anyone()`. The routes from the JWT guide under `/auth` and `/health` are `@Public()` already. `GET /me` is for any signed-in user:
+The authorization guard **denies by default**: a route runs only if it declares who may call it, with `@Can()` for a policy check, `@Can.Anyone()` for any caller that authentication let through, or `@Public()`, which counts as `@Can.Anyone()`. The routes from the JWT tutorial under `/auth` and `/health` are `@Public()` already. `GET /me` is for any signed-in user:
 
 ```typescript
 @@filename(src/users/me.controller)
@@ -1073,13 +1073,13 @@ $ TEST_DATABASE_URL=postgres://postgres:booking@localhost:5432/booking_test npm 
       Tests  10 passed (10)
 ```
 
-The JWT guide's refresh-token store test runs too. Both test files truncate tables of the same database, so `--no-file-parallelism` runs them one after the other.
+The JWT tutorial's refresh-token store test runs too. Both test files truncate tables of the same database, so `--no-file-parallelism` runs them one after the other.
 
 Drop the constraint from the test database (`ALTER TABLE bookings DROP CONSTRAINT bookings_no_overlap`) and run the tests again: all ten racing users get a 201, and the back-to-back test's overlapping booking is accepted too.
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For bookings in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For bookings in particular:
 
 - **Ship the custom migration like any other.** `drizzle-kit migrate` runs it in order, as a release step. Its first statement creates `btree_gist`; if the role that runs migrations may not create extensions on your database, have an administrator create it once.
 - **Clean up overlaps before adding the constraint to an existing table.** `ALTER TABLE ... ADD CONSTRAINT` fails, naming the two conflicting rows, if any confirmed bookings already overlap.

@@ -1,29 +1,29 @@
 ### Accept payments with webhooks
 
-This guide adds payments to an e-commerce backend: the API creates a payment for each order at a payment provider, and an order becomes paid when the provider's signed webhook says so, never because the browser came back from the payment page. It continues [Build an e-commerce backend](/guides/ecommerce-backend). Taking the money is the provider's job. The API's job is to ask for it once, to believe only what the provider signed, and to apply each of the provider's events exactly once, whatever order they arrive in and however often.
+This tutorial adds payments to an e-commerce backend: the API creates a payment for each order at a payment provider, and an order becomes paid when the provider's signed webhook says so, never because the browser came back from the payment page. It continues [Build an e-commerce backend](/tutorials/ecommerce-backend). Taking the money is the provider's job. The API's job is to ask for it once, to believe only what the provider signed, and to apply each of the provider's events exactly once, whatever order they arrive in and however often.
 
 By the end, the API will:
 
 - Create one payment per order at the provider, through a typed client on [`@nestjs/http-client`](/application/http-client), with the order's id as the provider's idempotency key, so a retry or a second click never creates a second payment.
 - Receive the provider's webhooks with [`@nestjs/webhooks`](/http/webhooks): verified on the raw body, deduplicated by event id, and recorded in the same transaction as the change they make.
 - Move an order from `placed` to `paid` with one conditional update, so a replayed, late or out-of-order event changes nothing, and a payment never brings a cancelled order back.
-- Cancel the order and put its stock back when a payment fails, with the e-commerce guide's cancel logic.
+- Cancel the order and put its stock back when a payment fails, with the e-commerce tutorial's cancel logic.
 - Announce `order.paid` only once the payment's transaction has committed, through the [transactional outbox](/reliability/outbox).
 - Prove it in tests that sign webhooks the way the provider does, against PostgreSQL.
 
-**What is simulated.** There is no real payment provider here, and nothing on this page charges a card. The provider is fictional: its API is shaped like Stripe's (a `POST` with a bearer key and an `Idempotency-Key` header), and its webhooks follow [Standard Webhooks](https://www.standardwebhooks.com), the scheme many providers use. When you try the API, a small script stands in for the provider, and the tests sign the provider's requests themselves. [Switch to a real provider](/guides/payments-webhooks#switch-to-a-real-provider) lists what changes for one.
+**What is simulated.** There is no real payment provider here, and nothing on this page charges a card. The provider is fictional: its API is shaped like Stripe's (a `POST` with a bearer key and an `Idempotency-Key` header), and its webhooks follow [Standard Webhooks](https://www.standardwebhooks.com), the scheme many providers use. When you try the API, a small script stands in for the provider, and the tests sign the provider's requests themselves. [Switch to a real provider](/tutorials/payments-webhooks#switch-to-a-real-provider) lists what changes for one.
 
 These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| The e-commerce guide's: `/auth/*`, `/me`, `/health/*`, `/products`, `/cart` and `/orders` | [Start from the e-commerce backend](/guides/payments-webhooks#start-from-the-e-commerce-backend) |
-| `POST /orders/:id/payment` | [Create the payment](/guides/payments-webhooks#create-the-payment) |
-| `POST /webhooks/payments` | [Receive the provider's webhooks](/guides/payments-webhooks#receive-the-providers-webhooks) |
+| The e-commerce tutorial's: `/auth/*`, `/me`, `/health/*`, `/products`, `/cart` and `/orders` | [Start from the e-commerce backend](/tutorials/payments-webhooks#start-from-the-e-commerce-backend) |
+| `POST /orders/:id/payment` | [Create the payment](/tutorials/payments-webhooks#create-the-payment) |
+| `POST /webhooks/payments` | [Receive the provider's webhooks](/tutorials/payments-webhooks#receive-the-providers-webhooks) |
 
 #### Start from the e-commerce backend
 
-Start from the finished application of [Build an e-commerce backend](/guides/ecommerce-backend), all of it: `src/`, `test/`, the `drizzle/` folder with its migration, and its database. This guide changes a few of its files and adds a second migration. Install the three packages it adds:
+Start from the finished application of [Build an e-commerce backend](/tutorials/ecommerce-backend), all of it: `src/`, `test/`, the `drizzle/` folder with its migration, and its database. This tutorial changes a few of its files and adds a second migration. Install the three packages it adds:
 
 ```bash
 $ npm i --save @nestjs/webhooks @nestjs/outbox @nestjs/http-client
@@ -33,7 +33,7 @@ $ npm i --save @nestjs/webhooks @nestjs/outbox @nestjs/http-client
 - `@nestjs/outbox` keeps the list of processed webhooks (its **inbox**), in your database, and sends `order.paid` after the commit. `@nestjs/webhooks` needs it for the inbox even in an application that sends no webhooks.
 - `@nestjs/http-client` calls the provider's API.
 
-The provider gives you three things: the URL of its API, an API key, and a webhook signing secret, which Standard Webhooks writes as `whsec_` followed by base64. The fake provider of [Try it](/guides/payments-webhooks#try-it) takes any key, and a secret you generate. Add them to `.env`:
+The provider gives you three things: the URL of its API, an API key, and a webhook signing secret, which Standard Webhooks writes as `whsec_` followed by base64. The fake provider of [Try it](/tutorials/payments-webhooks#try-it) takes any key, and a secret you generate. Add them to `.env`:
 
 ```bash
 PAYMENTS_API_URL=http://localhost:4000
@@ -66,7 +66,7 @@ export const envSchema = z.object({
 export type Env = z.infer<typeof envSchema>;
 ```
 
-`OUTBOX_RELAY` lets the tests run the outbox's relay themselves, as [Test it](/guides/payments-webhooks#test-it) does.
+`OUTBOX_RELAY` lets the tests run the outbox's relay themselves, as [Test it](/tutorials/payments-webhooks#test-it) does.
 
 #### Record payments on orders
 
@@ -232,7 +232,7 @@ export class PaymentsController {
 }
 ```
 
-The payments module registers the client, with the API's URL, the key as a bearer token, and a timeout per attempt. It imports `OrdersModule`, so add `exports: [OrdersService]` to that module (its final version is in [Announce paid orders after the commit](/guides/payments-webhooks#announce-paid-orders-after-the-commit)):
+The payments module registers the client, with the API's URL, the key as a bearer token, and a timeout per attempt. It imports `OrdersModule`, so add `exports: [OrdersService]` to that module (its final version is in [Announce paid orders after the commit](/tutorials/payments-webhooks#announce-paid-orders-after-the-commit)):
 
 ```typescript
 @@filename(src/payments/payments.module)
@@ -444,14 +444,14 @@ export class PaymentWebhooksController {
 ```
 
 - **`@VerifyWebhook('payments')`** runs before the handler. A request whose signature doesn't match one made with the secret gets a `401`, and the handler never runs. The answer doesn't say what was wrong: a forger learns nothing from it.
-- **`@Public()` and `@SkipThrottle()`.** The JWT guide's global guard would ask the provider for a token, and its per-IP limit would refuse a burst of deliveries. The signature is the authentication.
+- **`@Public()` and `@SkipThrottle()`.** The JWT tutorial's global guard would ask the provider for a token, and its per-IP limit would refuse a burst of deliveries. The signature is the authentication.
 - **`processInTransaction()`** is the deduplication by event id. It records the webhook's id in the inbox through `tx`, then runs the callback only if the id is new. The record and the order's change commit together, or roll back together. A redelivery, even one that arrives on another instance while the first is still running, finds the id and changes nothing; the controller still answers `200`, so the provider stops retrying.
 - **`@HttpCode(200)`.** The provider retries anything but a `2xx`, for days. A handler that throws rolls the transaction back, the record with it, and the provider's retry gets another chance.
 - **Events that aren't about an order are answered too.** A payment whose `reference` isn't an order id (another application on the same provider account, say) is logged and answered `200`; passed on, it would fail the `uuid` comparison with a `500`, retried for days. An event type the switch doesn't know is recorded, and changes nothing.
 
 #### Mark orders paid exactly once
 
-The inbox catches a redelivery of the same event. It can't catch two different events about one order: a `payment.succeeded` that arrives after the customer cancelled, a `payment.failed` from an earlier attempt that arrives after the success, a provider that sends a second event for the same payment. So the order's change is a conditional update too, as every status change in the e-commerce guide is. In `OrdersService`, `cancel()` and `ship()` change, `markPaid()`, `cancelUnpaid()`, `cancelPlaced()` and `explainUnpaid()` are new, and the 409 of `refuse()` now names any status, as in `Order is placed`; `checkout()`, `findMine()`, `findOne()` and `items()` stay as they are:
+The inbox catches a redelivery of the same event. It can't catch two different events about one order: a `payment.succeeded` that arrives after the customer cancelled, a `payment.failed` from an earlier attempt that arrives after the success, a provider that sends a second event for the same payment. So the order's change is a conditional update too, as every status change in the e-commerce tutorial is. In `OrdersService`, `cancel()` and `ship()` change, `markPaid()`, `cancelUnpaid()`, `cancelPlaced()` and `explainUnpaid()` are new, and the 409 of `refuse()` now names any status, as in `Order is placed`; `checkout()`, `findMine()`, `findOne()` and `items()` stay as they are:
 
 ```typescript
 @@filename(src/orders/orders.service)
@@ -577,8 +577,8 @@ export class OrdersService {
 - **`markPaid()` is one `UPDATE`**, whose `WHERE` clause requires the order to be `placed` and the payment to be for its total. A cancelled order stays cancelled, a paid one stays paid, and a payment for the wrong amount pays nothing. There's no read before it, so there's no window in which a cancel could slip in between a check and the write.
 - **A customer's cancel and the provider's payment race on the same row**, both conditional on `placed`. PostgreSQL locks the row for the first `UPDATE`; the second waits, then finds the order no longer `placed`, and changes nothing. Exactly one wins, and the stock goes back only if the cancel did.
 - **A payment that changed nothing isn't an error.** The handler returns normally, the event is recorded, and the provider gets its `200`. A `409` would make the provider retry for days an event that can never apply. The money did move, though: `explainUnpaid()` logs a warning to refund it, unless the order is already paid by this same payment.
-- **`payment.failed` cancels the order** with the e-commerce guide's cancel logic, now in `cancelPlaced()`, which both the customer's cancel and the webhook run in their own transaction: the order is cancelled only while it's `placed`, and its stock goes back in the same transaction. The customer's cart is gone since checkout, so they check out again to retry.
-- **Customers cancel only orders that aren't paid.** Cancelling a paid order means a refund through the provider, which this guide leaves out. And staff now ship only `paid` orders: shipping a `placed` one is a 409, `Order is placed`.
+- **`payment.failed` cancels the order** with the e-commerce tutorial's cancel logic, now in `cancelPlaced()`, which both the customer's cancel and the webhook run in their own transaction: the order is cancelled only while it's `placed`, and its stock goes back in the same transaction. The customer's cart is gone since checkout, so they check out again to retry.
+- **Customers cancel only orders that aren't paid.** Cancelling a paid order means a refund through the provider, which this tutorial leaves out. And staff now ship only `paid` orders: shipping a `placed` one is a 409, `Order is placed`.
 
 #### Announce paid orders after the commit
 
@@ -737,7 +737,7 @@ LOG [OutboxModule] OutboxStorage: PostgresOutboxStore
 LOG [OutboxModule] PostgresOutboxStore: migrated schema "nest_outbox" to version 1.
 ```
 
-As in the e-commerce guide, sign in as Ada and Sam (Sam is staff), add a keyboard to the catalog, and check out two of them (tokens and bodies are shortened here and below):
+As in the e-commerce tutorial, sign in as Ada and Sam (Sam is staff), add a keyboard to the catalog, and check out two of them (tokens and bodies are shortened here and below):
 
 ```bash
 $ curl localhost:3000/auth/sign-up --json '{"email":"ada@example.com","password":"correct horse battery"}'
@@ -830,7 +830,7 @@ ERROR [HttpClient] POST http://localhost:4000/v1/payments failed: ECONNREFUSED; 
 
 #### Test it
 
-The tests play the provider: they sign each webhook with `signWebhook()` from `@nestjs/webhooks/testing`, which produces the body and headers a Standard Webhooks sender would, with the secret the application has. The provider's API is a stubbed `fetch`, so the tests check what the shop sends it, and the shop never reaches a network. As in the e-commerce guide, they run against a real PostgreSQL server through a pool, because two copies of an event and a customer's cancel only really race there. Add the payments settings to the environment the tests run with:
+The tests play the provider: they sign each webhook with `signWebhook()` from `@nestjs/webhooks/testing`, which produces the body and headers a Standard Webhooks sender would, with the secret the application has. The provider's API is a stubbed `fetch`, so the tests check what the shop sends it, and the shop never reaches a network. As in the e-commerce tutorial, they run against a real PostgreSQL server through a pool, because two copies of an event and a customer's cancel only really race there. Add the payments settings to the environment the tests run with:
 
 ```typescript
 @@filename(vitest.config.e2e)
@@ -1072,7 +1072,7 @@ describe.skipIf(!url)('Payments (e2e)', () => {
 - **Two instances of the API** receive the same signed request at the same moment, each on its own pool, as two pods behind a load balancer would. One records the id and pays the order; the other's inbox insert waits for that transaction, then finds the id, and `markPaid()` runs once in all.
 - **The provider's API answers 503 once.** The client retries the `POST`, with the same idempotency key, and the customer gets the payment: three calls to the provider for two requests, every one with the order's id as its key.
 
-Run them with the e-commerce guide's, one file after the other, since they truncate the same tables:
+Run them with the e-commerce tutorial's, one file after the other, since they truncate the same tables:
 
 ```bash
 $ TEST_DATABASE_URL=postgres://postgres:shop@localhost:5432/shop_test npm run test:e2e -- --no-file-parallelism
@@ -1085,7 +1085,7 @@ Remove `eq(orders.status, 'placed')` from `markPaid()`, and "never brings a canc
 
 #### Switch to a real provider
 
-What this guide simulates, and what a real provider changes:
+What this tutorial simulates, and what a real provider changes:
 
 - **The API.** Replace `PaymentsClient.createPayment()` with your provider's create-payment call (or its SDK), and keep the order's id as its idempotency key. Providers keep keys for a limited time, and some refuse a key reused with different parameters: check what yours does. Run it against the provider's test mode, with its test keys, before live keys.
 - **The webhooks.** For a provider that follows Standard Webhooks, the receiver stays as it is: only the secret, and the payload type and its event names, change. Stripe signs with its own scheme, which the same module verifies with `scheme: 'stripe'` and no `header`; the event's id is then the payload's `id` (see [Receive the carrier's Stripe-like webhooks](/http/webhooks#receive-the-carriers-stripe-like-webhooks)). Map the provider's events to `markPaid()` and `cancelUnpaid()` in the controller.
@@ -1093,7 +1093,7 @@ What this guide simulates, and what a real provider changes:
 
 #### Production checklist
 
-Everything in the e-commerce guide's [checklist](/guides/ecommerce-backend#production-checklist) applies. For payments in particular:
+Everything in the e-commerce tutorial's [checklist](/tutorials/ecommerce-backend#production-checklist) applies. For payments in particular:
 
 - **Trust only the webhook.** The browser returning from the provider's page proves nothing: anyone can open that URL. The order is paid when the signed `payment.succeeded` arrives, and the success page reads the order's status.
 - **Keep `rawBody: true`, and keep the secret in your platform's secret store.** While the provider rotates the secret, give the receiver both, as an array in its `secret` option: every one is tried.

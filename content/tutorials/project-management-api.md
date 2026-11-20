@@ -1,6 +1,6 @@
 ### Build a project-management API
 
-This guide builds the API of a project-management tool for teams: projects with members, tasks with a status, an assignee and a due date, comments, live updates in the browser, and reminders before tasks are due. Most of it is CRUD. The parts that aren't are where several people work on the same records at once, so this guide spends its time there: permissions checked against each record, status changes that can't overwrite each other, a task list that pages correctly while it changes, and a stream that carries only a user's own projects.
+This tutorial builds the API of a project-management tool for teams: projects with members, tasks with a status, an assignee and a due date, comments, live updates in the browser, and reminders before tasks are due. Most of it is CRUD. The parts that aren't are where several people work on the same records at once, so this tutorial spends its time there: permissions checked against each record, status changes that can't overwrite each other, a task list that pages correctly while it changes, and a stream that carries only a user's own projects.
 
 By the end, the API will:
 
@@ -11,21 +11,21 @@ By the end, the API will:
 - Remind assignees of tasks due within a day, from a scheduled job that runs on one instance with [`@nestjs/locks`](/reliability/locks).
 - Prove the races, the stream and the reminders in tests against PostgreSQL.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This guide doesn't explain those parts again.
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps its data in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
 
 These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/guides/project-management-api#start-from-the-jwt-api) |
-| `POST /projects`, `GET /projects`, `GET /projects/:projectId/members`, `POST /projects/:projectId/members` | [Share projects with their members](/guides/project-management-api#share-projects-with-their-members) |
-| `POST /projects/:projectId/tasks`, `GET /projects/:projectId/tasks`, `GET /tasks/:id`, `PATCH /tasks/:id`, `POST /tasks/:id/status` | [Add tasks](/guides/project-management-api#add-tasks) |
-| `GET /tasks/:taskId/comments`, `POST /tasks/:taskId/comments`, `PATCH /comments/:id` | [Comment on tasks](/guides/project-management-api#comment-on-tasks) |
-| `GET /projects/:projectId/events` | [Stream changes with server-sent events](/guides/project-management-api#stream-changes-with-server-sent-events) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/tutorials/project-management-api#start-from-the-jwt-api) |
+| `POST /projects`, `GET /projects`, `GET /projects/:projectId/members`, `POST /projects/:projectId/members` | [Share projects with their members](/tutorials/project-management-api#share-projects-with-their-members) |
+| `POST /projects/:projectId/tasks`, `GET /projects/:projectId/tasks`, `GET /tasks/:id`, `PATCH /tasks/:id`, `POST /tasks/:id/status` | [Add tasks](/tutorials/project-management-api#add-tasks) |
+| `GET /tasks/:taskId/comments`, `POST /tasks/:taskId/comments`, `PATCH /comments/:id` | [Comment on tasks](/tutorials/project-management-api#comment-on-tasks) |
+| `GET /projects/:projectId/events` | [Stream changes with server-sent events](/tutorials/project-management-api#stream-changes-with-server-sent-events) |
 
 #### Start from the JWT API
 
-Create the project, and install everything this guide uses. These are the JWT guide's packages plus `@nestjs/authorization`, `@nestjs/event-emitter`, `@nestjs/schedule` and `@nestjs/locks`:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`, `@nestjs/event-emitter`, `@nestjs/schedule` and `@nestjs/locks`:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -36,19 +36,19 @@ $ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
 
 - `src/config.ts`, `src/main.ts`, `drizzle.config.ts` and `vitest.config.e2e.ts`
 - everything under `src/auth/`, `src/users/` and `src/health/`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out `src/notes/` and the JWT guide's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the projects where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
+Leave out `src/notes/` and the JWT tutorial's `drizzle/` folder: this application's first migration comes from its own schema, in the next section. Rename the notes to the projects where they're named: the `realm` in `JwtAuth` and the title of the OpenAPI document in `main.ts`. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT guide, with a database of the application's own:
+Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial, with a database of the application's own:
 
 ```bash
 $ docker run -d --name projects-db -e POSTGRES_PASSWORD=projects -e POSTGRES_DB=projects -p 5432:5432 postgres:17
@@ -73,7 +73,7 @@ Adding a member to a project goes by email, so `UsersRepository` gets a method t
 
 #### Design the schema
 
-The whole schema, in one file. The users and refresh tokens are the JWT guide's:
+The whole schema, in one file. The users and refresh tokens are the JWT tutorial's:
 
 ```typescript
 @@filename(src/database/schema)
@@ -226,7 +226,7 @@ export type Comment = typeof comments.$inferSelect;
 
 - **A membership is a row of `project_members`**, keyed by project and user, with the user's role in that project: `admin` or `member`. Roles belong to the membership, not to the user, so Ada can run one project and be a member of another.
 - **The assignee is a member, by a foreign key.** `tasks_assignee_is_member_fk` points `(project_id, assignee_id)` at `project_members`, so PostgreSQL refuses a task assigned to someone outside its project, whatever the code does. When `assignee_id` is null, the key isn't checked, and the task is unassigned.
-- **`created_at` of a task is stored to the millisecond.** The list's page cursor carries it, and a JavaScript `Date` holds milliseconds while PostgreSQL's default is microseconds. A cursor that dropped the microseconds would skip the tasks created within the same millisecond; [Page through the list](/guides/project-management-api#page-through-the-list) explains it.
+- **`created_at` of a task is stored to the millisecond.** The list's page cursor carries it, and a JavaScript `Date` holds milliseconds while PostgreSQL's default is microseconds. A cursor that dropped the microseconds would skip the tasks created within the same millisecond; [Page through the list](/tutorials/project-management-api#page-through-the-list) explains it.
 - **Each way the task list is read has an index**: all of a project's tasks, those with a status, and those of an assignee, each in the order the list pages through them. The reminder job has a partial index of its own, holding only the open tasks that haven't been reminded yet, so it stays small however many tasks are done.
 - **`locks` and its sequence are for `@nestjs/locks`**, which keeps its leases in the application's database. They are the tables of [Keep locks in your database](/reliability/locks#keep-locks-in-your-database).
 
@@ -239,7 +239,7 @@ $ npx drizzle-kit migrate
 
 #### Share projects with their members
 
-Register the modules this guide adds in the root module, with the feature modules of the sections that follow:
+Register the modules this tutorial adds in the root module, with the feature modules of the sections that follow:
 
 ```typescript
 @@filename(src/app.module)
@@ -320,7 +320,7 @@ import { UsersModule } from './users/users.module.js';
 export class AppModule {}
 ```
 
-- `AuthorizationModule` comes right after `AuthenticationModule`. Both register a global guard, and authorization's needs the user that authentication sets. Its guard **denies by default**: a route runs only if it declares who may call it, with `@Can()`, `@Can.Anyone()`, or `@Public()`. The JWT guide's routes under `/auth` and `/health` are `@Public()` already.
+- `AuthorizationModule` comes right after `AuthenticationModule`. Both register a global guard, and authorization's needs the user that authentication sets. Its guard **denies by default**: a route runs only if it declares who may call it, with `@Can()`, `@Can.Anyone()`, or `@Public()`. The JWT tutorial's routes under `/auth` and `/health` are `@Public()` already.
 - `EventEmitterModule` has wildcards on, for the stream's listeners. `ScheduleModule` and `LocksModule` run the reminder job, and `DrizzleLockStore` keeps the job's lease in PostgreSQL. They come up in their own sections below.
 
 `GET /me` is for any signed-in user:
@@ -496,7 +496,7 @@ export class ProjectsService {
 
 - **A project and its first admin are created in one transaction.** A project without a member would be visible to nobody, and nobody could ever add one.
 - **`addMember()` checks `manage` against the caller's own membership**: it loads it with `access()`, which also answers 404 to non-members, then asks the policy whether that membership is an admin's.
-- **Adding someone twice is a 409**, from `onConflictDoNothing()` on the membership's primary key: of two admins adding the same user at once, one adds them and the other learns they're already there. Changing a role isn't in this guide, because it brings a rule of its own: a project must always keep an admin.
+- **Adding someone twice is a 409**, from `onConflictDoNothing()` on the membership's primary key: of two admins adding the same user at once, one adds them and the other learns they're already there. Changing a role isn't in this tutorial, because it brings a rule of its own: a project must always keep an admin.
 
 Every route checks permissions in the service, so the controller declares `@Can.Anyone()`. Without it, the authorization guard would deny them all:
 
@@ -806,7 +806,7 @@ function assigneeNotMember(error: unknown): never {
 ```
 
 - **`load()` is one query**: the task, left-joined with the caller's row of `project_members`. A missing task and a task in someone else's project are the same 404.
-- **The emitter is called after the write has returned**, so nothing announces a change the database refused. The stream that listens comes in [its own section](/guides/project-management-api#stream-changes-with-server-sent-events).
+- **The emitter is called after the write has returned**, so nothing announces a change the database refused. The stream that listens comes in [its own section](/tutorials/project-management-api#stream-changes-with-server-sent-events).
 - **An assignee outside the project is a 400.** The foreign key refuses the write, and `assigneeNotMember()` turns that one constraint's violation into a `BadRequestException`. Drizzle wraps the driver's error, so the constraint's name is on its `cause`. Any other database error still reaches the client as a 500, as it should.
 - **A new due date clears `reminded_at`**, so the assignee is reminded of the new date too.
 
@@ -814,7 +814,7 @@ function assigneeNotMember(error: unknown): never {
 
 Two people look at the same board. Bob drags a task from `todo` to `in_progress` and, at the same moment, Ada drags it from `todo` to `done`. With an `UPDATE` that only sets the status, both requests succeed, the last one wins, and one of them is looking at a board that is wrong without knowing it.
 
-So the client says which status it moves the task **from**: the one it showed the user. `move()` makes that the condition of its `UPDATE`, and when the task has left that status in the meantime, the statement changes nothing and the client gets a 409, which tells it to reload the task and let the user decide again. The status is checked in the statement that writes, not in the policy's earlier read: PostgreSQL locks the row for the update, so of ten moves from `todo` at once, exactly one finds the task still in `todo`. The [test](/guides/project-management-api#test-it) at the end runs those ten.
+So the client says which status it moves the task **from**: the one it showed the user. `move()` makes that the condition of its `UPDATE`, and when the task has left that status in the meantime, the statement changes nothing and the client gets a 409, which tells it to reload the task and let the user decide again. The status is checked in the statement that writes, not in the policy's earlier read: PostgreSQL locks the row for the update, so of ten moves from `todo` at once, exactly one finds the task still in `todo`. The [test](/tutorials/project-management-api#test-it) at the end runs those ten.
 
 ##### Page through the list
 
@@ -1241,7 +1241,7 @@ export class RemindersJob {
 - **A reminder is claimed before it's sent.** If sending fails, that reminder is lost rather than sent twice. For email, send it with [`@nestjs/mail`](/application/mail), from a [queue](/application/queues) that retries.
 - **Missed ticks catch up by themselves.** The job takes everything that is due, not "the last minute's" tasks, so a tick that didn't run is covered by the next one.
 
-The [last step of Try it](/guides/project-management-api#try-it) shows a reminder going out.
+The [last step of Try it](/tutorials/project-management-api#try-it) shows a reminder going out.
 
 #### Try it
 
@@ -1251,7 +1251,7 @@ Start the application:
 $ npm run start:dev
 ```
 
-Sign up Ada, Bob and Eve, as in the JWT guide, and keep their access tokens in variables (tokens and long bodies are shortened here and below):
+Sign up Ada, Bob and Eve, as in the JWT tutorial, and keep their access tokens in variables (tokens and long bodies are shortened here and below):
 
 ```bash
 $ curl localhost:3000/auth/sign-up --json '{"email":"ada@example.com","password":"correct horse battery"}'
@@ -1374,7 +1374,7 @@ LOG [RemindersJob] Reminder to bob@example.com: "Send the newsletter" is due 202
 
 #### Test it
 
-As in the e-commerce guide, the guarantees that matter here are about concurrency, and an in-process database such as PGlite has a single connection, where requests never truly race. So the tests run against a real PostgreSQL server, through a connection pool. The stream test reads a real HTTP response, so the application listens on a free port, and the others send requests with `app.inject()`:
+As in the e-commerce tutorial, the guarantees that matter here are about concurrency, and an in-process database such as PGlite has a single connection, where requests never truly race. So the tests run against a real PostgreSQL server, through a connection pool. The stream test reads a real HTTP response, so the application listens on a free port, and the others send requests with `app.inject()`:
 
 ```typescript
 @@filename(test/projects.e2e-spec)
@@ -1568,7 +1568,7 @@ describe.skipIf(!url)('Project management API (e2e)', () => {
 - **The cron is stopped** through `SchedulerRegistry` (see [Dynamic cron jobs](/application/task-scheduling#dynamic-cron-jobs)), so the test calls the job when it chooses, and a tick at the turn of a minute can't claim the test's tasks first. The first call takes the job's lease; after that, every call on this instance runs, so the three calls really overlap.
 - **The stream is closed when its test ends**, pass or fail: an open response would keep `app.close()` waiting for it.
 
-Create a database for the tests, since they truncate the tables, and run them with the JWT guide's refresh-token store test, one file after the other:
+Create a database for the tests, since they truncate the tables, and run them with the JWT tutorial's refresh-token store test, one file after the other:
 
 ```bash
 $ docker exec projects-db psql -U postgres -c "CREATE DATABASE projects_test"
@@ -1582,12 +1582,12 @@ Replace the status condition in `move()` with a check of the status that `load()
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For this API in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For this API in particular:
 
 - **Fan the events out between instances.** `EventEmitter2` is in-process: with two instances, a change saved on one reaches the streams open on that one only. Put a shared channel between the services and the stream, such as PostgreSQL's `LISTEN`/`NOTIFY` or Redis pub/sub, and keep the `Subject` per instance.
 - **Have clients reload after a reconnect.** Events are sent once, to the streams open at that moment, and not stored, so a client that was disconnected for a minute missed that minute. An `EventSource` reconnects by itself; on reconnecting, the client fetches the task list again.
 - **Check the proxy in front of the stream.** Nest sends `X-Accel-Buffering: no` and the keep-alive comment every 20 seconds keeps idle connections open, but a load balancer with a shorter idle timeout, or one that buffers responses, still cuts or delays the stream. Every open stream is also an open connection: size the proxy's and the server's connection limits for one per open browser tab.
-- **Set `NODE_ENV` to `production`**, as the JWT guide's checklist says. `LocksModule` then refuses to start without a registered lock store, as the authentication module does without its refresh-token store, instead of running every job on every instance.
+- **Set `NODE_ENV` to `production`**, as the JWT tutorial's checklist says. `LocksModule` then refuses to start without a registered lock store, as the authentication module does without its refresh-token store, instead of running every job on every instance.
 - **Run the lock store's contract suite in CI.** `lockStoreContract()` from `@nestjs/locks/testing` checks every rule of [the store contract](/reliability/locks#the-store-contract), races included with `concurrent: true`, against the PostgreSQL version you run.
 - **Remove members carefully.** The assignee foreign key refuses to delete a membership while that member has tasks assigned. Unassign them in the same transaction as the removal, and close the member's open streams, which checked membership once, when they opened.
 - **Watch the task list and the reminder job.** [NestJS Observe](/observability/overview) reports the latency of every route, its average and p95, so a filter combination that misses its index shows up as a slow `GET /projects/:projectId/tasks`. It reports cron runs as jobs, with their duration and outcome, and a job silence alert fires when the reminder job stops reporting, which a crashed scheduler never tells you itself (see [Knowing a cron job actually ran](/application/task-scheduling#knowing-a-cron-job-actually-ran)).
@@ -1598,4 +1598,4 @@ Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#pr
 - Send the reminders by email with retries: [Mail](/application/mail) and [Queues](/application/queues).
 - Let users reorder tasks within a column, or move them between projects; both are conditional updates like `move()`.
 - See which routes and jobs are slow in production, request by request: [Observability](/observability/overview).
-- Build an e-commerce backend on the same foundation: [Build an e-commerce backend](/guides/ecommerce-backend).
+- Build an e-commerce backend on the same foundation: [Build an e-commerce backend](/tutorials/ecommerce-backend).

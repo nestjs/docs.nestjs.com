@@ -1,6 +1,6 @@
 ### Build an AI chat backend that streams answers
 
-This guide builds a chat assistant for a notes API: a signed-in user asks about their notes, the model looks them up with tools that run as that user, and the answer streams to the browser as the model writes it. Calling a model takes a few lines. The work is in what surrounds the call: the model must never read another user's notes, a browser that closes mid-answer must stop the paid call, the history sent to the model must stay within a budget, and a double-clicked send must not start two answers. This guide spends its time on those parts.
+This tutorial builds a chat assistant for a notes API: a signed-in user asks about their notes, the model looks them up with tools that run as that user, and the answer streams to the browser as the model writes it. Calling a model takes a few lines. The work is in what surrounds the call: the model must never read another user's notes, a browser that closes mid-answer must stop the paid call, the history sent to the model must stay within a budget, and a double-clicked send must not start two answers. This tutorial spends its time on those parts.
 
 By the end, the API will:
 
@@ -11,21 +11,21 @@ By the end, the API will:
 - Limit how many messages each user sends per hour.
 - Run its end-to-end tests, and a development server, with a fake model instead of a provider, so neither needs an API key.
 
-It starts from the API of [Build a REST API with JWT authentication](/guides/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps notes in PostgreSQL through Drizzle. This guide doesn't explain those parts again.
+It starts from the API of [Build a REST API with JWT authentication](/tutorials/rest-api-jwt-authentication), which signs users in with access and refresh tokens, validates requests with Zod, and keeps notes in PostgreSQL through Drizzle. This tutorial doesn't explain those parts again.
 
 These are the endpoints, and the section that adds each one:
 
 | Endpoint | Section |
 | --- | --- |
-| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /notes`, `GET /notes/:id`, `POST /notes`, `PATCH /notes/:id`, `DELETE /notes/:id`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/guides/ai-chat-backend#start-from-the-jwt-api) |
-| `POST /conversations`, `GET /conversations`, `GET /conversations/:id`, `DELETE /conversations/:id` | [Store conversations](/guides/ai-chat-backend#store-conversations) |
-| `POST /conversations/:id/messages` | [Stream the answer](/guides/ai-chat-backend#stream-the-answer) |
+| `POST /auth/sign-up`, `POST /auth/token`, `POST /auth/token/refresh`, `POST /auth/token/revoke`, `GET /me`, `GET /notes`, `GET /notes/:id`, `POST /notes`, `PATCH /notes/:id`, `DELETE /notes/:id`, `GET /health/live`, `GET /health/ready` | [Start from the JWT API](/tutorials/ai-chat-backend#start-from-the-jwt-api) |
+| `POST /conversations`, `GET /conversations`, `GET /conversations/:id`, `DELETE /conversations/:id` | [Store conversations](/tutorials/ai-chat-backend#store-conversations) |
+| `POST /conversations/:id/messages` | [Stream the answer](/tutorials/ai-chat-backend#stream-the-answer) |
 
-You need Node.js 22 or later and a PostgreSQL server. For real answers you also need an API key of a model provider; this guide uses Anthropic's, as the [AI chapter](/ai/overview) does. Every model answer on this page comes from `FakeModel`, the scripted model of `@nestjs/ai/testing`: a real model writes different text, and decides for itself which tools to call, but the tools, the stream, the history and the limits around them run the same code.
+You need Node.js 22 or later and a PostgreSQL server. For real answers you also need an API key of a model provider; this tutorial uses Anthropic's, as the [AI chapter](/ai/overview) does. Every model answer on this page comes from `FakeModel`, the scripted model of `@nestjs/ai/testing`: a real model writes different text, and decides for itself which tools to call, but the tools, the stream, the history and the limits around them run the same code.
 
 #### Start from the JWT API
 
-Create the project, and install everything this guide uses. These are the JWT guide's packages plus `@nestjs/ai`, `@nestjs/resilience`, whose policies model calls run on, the [AI SDK](https://ai-sdk.dev) (`ai`), and its Anthropic provider:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/ai`, `@nestjs/resilience`, whose policies model calls run on, the [AI SDK](https://ai-sdk.dev) (`ai`), and its Anthropic provider:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -36,19 +36,19 @@ $ npm i --save @nestjs/platform-node zod @nestjs/config @nestjs/drizzle drizzle-
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
-Then take these files from the [finished JWT guide](/guides/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
+Then take these files from the [finished JWT tutorial](/tutorials/rest-api-jwt-authentication#sign-users-in-with-jwts), as they are:
 
 - `src/main.ts`, `src/database/schema.ts` and `drizzle.config.ts`
 - everything under `src/auth/`, `src/users/`, `src/health/` and `src/notes/`
 - `test/refresh-token.store.e2e-spec.ts`
 
-Leave out the JWT guide's `drizzle/` folder, since this application's first migration comes from its own schema, and `test/notes.e2e-spec.ts`, which runs on PGlite: this guide's tests need a PostgreSQL server. `src/config.ts`, `src/app.module.ts` and `vitest.config.e2e.ts` are shown in full below. Add the test script to `package.json`:
+Leave out the JWT tutorial's `drizzle/` folder, since this application's first migration comes from its own schema, and `test/notes.e2e-spec.ts`, which runs on PGlite: this tutorial's tests need a PostgreSQL server. `src/config.ts`, `src/app.module.ts` and `vitest.config.e2e.ts` are shown in full below. Add the test script to `package.json`:
 
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
 
-Start a database, and add its URL and a `JWT_SECRET` to `.env`, as in the JWT guide. Without an API key, set `AI_MODEL=fake`, described in the next section:
+Start a database, and add its URL and a `JWT_SECRET` to `.env`, as in the JWT tutorial. Without an API key, set `AI_MODEL=fake`, described in the next section:
 
 ```bash
 $ docker run -d --name assistant-db -e POSTGRES_PASSWORD=assistant -e POSTGRES_DB=assistant -p 5432:5432 postgres:17
@@ -101,7 +101,7 @@ export type Env = z.infer<typeof envSchema>;
 - `ANTHROPIC_API_KEY` is required for any other model, so a missing key stops the application at startup rather than at the first question.
 - `AI_MAX_OUTPUT_TOKENS` caps the output of each model call. An answer makes at most five of them (`maxSteps` below), so it writes at most five times that.
 
-The root module builds the model in a factory, from `ConfigService`, as [Async configuration](/ai/overview#async-configuration) describes. With the modules this guide adds, it is:
+The root module builds the model in a factory, from `ConfigService`, as [Async configuration](/ai/overview#async-configuration) describes. With the modules this tutorial adds, it is:
 
 ```typescript
 @@filename(src/app.module)
@@ -207,7 +207,7 @@ export class AppModule {}
 - `maxOutputTokens` in the `default` model's definition is sent with every model call to it. A model call that reaches it stops there, with the finish reason `'length'`.
 - `defaults` apply to every call. An attempt may take 30 seconds, which for a streamed answer is the time until its first chunk. What the provider marks retryable, 408, 409, 429 and 5xx responses and failed connections, gets three attempts, with backoff (see [Retries, timeouts and fallback](/ai/models#retries-timeouts-and-fallback)). `maxSteps` caps the model calls of one answer: each round of tool results the model reads takes one more. `budget` stops an answer before its next model call once its model calls have used 60,000 tokens, input and output. It's checked before each model call, so the last one can take an answer a little over (see [Usage, cost and budgets](/ai/models#usage-cost-and-budgets)).
 - The fake model is imported only when `AI_MODEL` is `fake`, so a production process never loads `@nestjs/ai/testing`.
-- The throttler's `chat` definition is explained in [Limit each user](/guides/ai-chat-backend#limit-each-user), and `ChatModule` in the sections before it.
+- The throttler's `chat` definition is explained in [Limit each user](/tutorials/ai-chat-backend#limit-each-user), and `ChatModule` in the sections before it.
 
 A configuration that can't work stops the application before it serves a request:
 
@@ -253,7 +253,7 @@ The development server, the frontend and the tests then need no API key, and cos
 
 The browser could send the whole conversation with each message, as the AI chapter's [chat route](/ai/agents#streaming-to-the-browser) does. The client would then decide what the model reads, tool results included, and could make them up. Here the server keeps each conversation, and the client sends only its new message.
 
-Two tables join the JWT guide's schema, which needs `bigint` and `integer` in its imports:
+Two tables join the JWT tutorial's schema, which needs `bigint` and `integer` in its imports:
 
 ```typescript
 @@filename(src/database/schema)
@@ -467,7 +467,7 @@ function notFound(): never {
 }
 ```
 
-- **`claim()` is one conditional `UPDATE`.** A double-clicked send, or a second tab, posts two messages to one conversation at the same moment. Both would read the same history, both would start a paid model call, and the second answer wouldn't know about the first. PostgreSQL locks the row while it updates it, so of two claims at the same moment, the second waits for the first, then finds `answering_until` set, changes nothing, and answers 409. An answer is aborted after `ANSWER_TIMEOUT_MS`, as the next section shows, and a claim lasts 30 seconds longer, so one past its time was left by a process that died mid-answer, and is taken over. A [test](/guides/ai-chat-backend#test-it) sends ten messages at once; a claim that reads the row, checks it in JavaScript and then writes it let five or six of them through in every run.
+- **`claim()` is one conditional `UPDATE`.** A double-clicked send, or a second tab, posts two messages to one conversation at the same moment. Both would read the same history, both would start a paid model call, and the second answer wouldn't know about the first. PostgreSQL locks the row while it updates it, so of two claims at the same moment, the second waits for the first, then finds `answering_until` set, changes nothing, and answers 409. An answer is aborted after `ANSWER_TIMEOUT_MS`, as the next section shows, and a claim lasts 30 seconds longer, so one past its time was left by a process that died mid-answer, and is taken over. A [test](/tutorials/ai-chat-backend#test-it) sends ten messages at once; a claim that reads the row, checks it in JavaScript and then writes it let five or six of them through in every run.
 - **`history()` walks back from the newest message** until the budget is spent, then drops messages from the oldest end until the history starts with a question. A history that started with a tool's result, whose tool call the budget cut off, is refused by providers.
 - **`saveTurn()` inserts the whole turn with one statement**, and frees the conversation in the same transaction. A turn is saved complete or not at all, so the history never holds a question without its answer, or a tool call without its result.
 
@@ -1231,7 +1231,7 @@ Replace the conditional `UPDATE` in `claim()` with a read, a check in JavaScript
 
 #### Production checklist
 
-Everything in the JWT guide's [checklist](/guides/rest-api-jwt-authentication#production-checklist) applies. For the assistant in particular:
+Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production-checklist) applies. For the assistant in particular:
 
 - **Keep `ANTHROPIC_API_KEY` in your platform's secret store**, injected at runtime, and set `NODE_ENV` to `production`, which refuses the fake model.
 - **Let the stream through.** A proxy or load balancer in front of the API must pass `text/event-stream` responses on as they come, and keep a connection open for as long as an answer takes. The `x-accel-buffering` header covers nginx, and the keep-alive comments cover idle timeouts of 15 seconds or more. Don't put the [compression](/http/compression) middleware on the chat route: it buffers.
