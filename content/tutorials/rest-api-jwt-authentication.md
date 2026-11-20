@@ -9,8 +9,10 @@ By the end, the API will:
 - Keep users, notes and refresh tokens in PostgreSQL, through [Drizzle](/data/drizzle).
 - Refuse to start when its configuration is missing or malformed.
 - Limit how fast anyone can guess passwords.
+- Send security headers with every response, and accept browser requests only from the origins you list.
 - Describe itself in an OpenAPI document, with Swagger UI.
 - Answer liveness and readiness checks, and shut down cleanly on `SIGTERM`.
+- Write its logs as JSON in production, with passwords and tokens masked.
 - Run end-to-end tests without a database server.
 
 These are the endpoints, and the section that adds each one:
@@ -1217,6 +1219,95 @@ Retry-After-account: 900
 
 > info **Hint** The throttler counts in memory by default, so every instance counts on its own. With more than one instance, use shared [storage](/security/rate-limiting#storages) such as Redis. Behind a load balancer, pass the `trustProxy` option to `NodeAdapter` (see [Node adapter options](/http/performance#node-adapter-options)), so the tracker sees the client's address rather than the proxy's.
 
+#### Set security headers and CORS
+
+Two more settings belong at the edge of any API that browsers call. Security headers tell browsers to turn on protections such as refusing to frame the page, or to guess a response's content type. CORS decides which websites' scripts may call the API from a visitor's browser and read the answers.
+
+`app.useSecurityHeaders()`, built into Nest since v12.1, sends the headers [Helmet](https://helmetjs.github.io/) would, with its defaults, and needs no package (see [Security headers](/security/helmet)). Call it right after creating the application, so its headers are on every response, errors included. CORS takes the origins from the configuration:
+
+```typescript
+@@filename(src/main)
+// ...
+
+const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
+app.useSecurityHeaders();
+app.enableShutdownHooks();
+
+const config = app.get<ConfigService<Env, true>>(ConfigService);
+app.enableCors({ origin: config.get('CORS_ORIGINS', { infer: true }) });
+
+await app.listen(config.get('PORT', { infer: true }));
+```
+
+The origins are a comma-separated variable, which the configuration schema turns into a list of URLs, and rejects at startup if one isn't a URL:
+
+```typescript
+@@filename(src/config)
+import { z } from 'zod';
+
+export const envSchema = z.object({
+  NODE_ENV: z.enum(['development', 'test', 'production']).default('development'),
+  PORT: z.coerce.number().int().default(3000),
+  DATABASE_URL: z.url(),
+  // Signs the access tokens: at least 32 bytes.
+  JWT_SECRET: z.string().min(32),
+  // The browser origins allowed to call the API, comma-separated. None by default.
+  CORS_ORIGINS: z
+    .string()
+    .default('')
+    .transform((value) => value.split(',').map((origin) => origin.trim()).filter(Boolean))
+    .pipe(z.array(z.url())),
+});
+
+export type Env = z.infer<typeof envSchema>;
+```
+
+List your web app's origins in `.env`:
+
+```bash
+CORS_ORIGINS=https://app.example.com
+```
+
+- **No origin is allowed by default.** Called without an `origin`, `enableCors()` answers every website with `Access-Control-Allow-Origin: *`, so any page a signed-in user visits could call the API from their browser and read the answers (see [Default allowed origins](/security/cors#default-allowed-origins)). With an empty list, no website can; `curl`, mobile apps and other servers aren't affected, since CORS is enforced by browsers.
+- **No `credentials` option.** The API authenticates with a bearer token, which the web app sends in the `Authorization` header itself. Cookies, and the `credentials: true` that goes with them, aren't involved.
+- **Swagger UI keeps working.** It loads its scripts and stylesheets from the application, which the default `Content-Security-Policy` allows. Served over plain HTTP from anywhere but `localhost`, though, its assets are upgraded to HTTPS and fail to load; see [Swagger UI and GraphQL IDEs](/security/helmet#swagger-ui-and-graphql-ides).
+
+Every response now carries the headers (some omitted here):
+
+```bash
+$ curl -i localhost:3000/health/live
+HTTP/1.1 200 OK
+Content-Security-Policy: default-src 'self';base-uri 'self';font-src 'self' https: data:;form-action 'self';frame-ancestors 'self';img-src 'self' data:;object-src 'none';script-src 'self';script-src-attr 'none';style-src 'self' https: 'unsafe-inline';upgrade-insecure-requests
+Cross-Origin-Opener-Policy: same-origin
+Cross-Origin-Resource-Policy: same-origin
+Referrer-Policy: no-referrer
+Strict-Transport-Security: max-age=31536000; includeSubDomains
+X-Content-Type-Options: nosniff
+X-Frame-Options: SAMEORIGIN
+...
+```
+
+A browser asks before a cross-origin `PATCH` with an `Authorization` header. The listed origin gets its answer:
+
+```bash
+$ curl -i -X OPTIONS localhost:3000/notes -H "Origin: https://app.example.com" -H "Access-Control-Request-Method: PATCH" -H "Access-Control-Request-Headers: authorization,content-type"
+HTTP/1.1 204 No Content
+Access-Control-Allow-Origin: https://app.example.com
+Vary: Origin, Access-Control-Request-Headers
+Access-Control-Allow-Methods: GET,HEAD,PUT,PATCH,POST,DELETE
+Access-Control-Allow-Headers: authorization,content-type
+```
+
+Any other origin gets no `Access-Control-Allow-Origin` header, so its browser refuses to send the request:
+
+```bash
+$ curl -i -X OPTIONS localhost:3000/notes -H "Origin: https://evil.example" -H "Access-Control-Request-Method: PATCH" -H "Access-Control-Request-Headers: authorization"
+HTTP/1.1 204 No Content
+Vary: Origin, Access-Control-Request-Headers
+Access-Control-Allow-Methods: GET,HEAD,PUT,PATCH,POST,DELETE
+Access-Control-Allow-Headers: authorization
+```
+
 #### Describe the API with OpenAPI
 
 [`@nestjs/swagger`](/openapi/introduction) generates an OpenAPI document from the controllers. Zod 4.2 and later exposes JSON Schema itself, so the request bodies and query parameters come from the same schemas that validate them, with nothing to configure (see [Standard Schema](/openapi/introduction#standard-schema-zod-valibot)):
@@ -1233,7 +1324,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 // ...
 
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
-app.enableShutdownHooks();
+app.useSecurityHeaders();
+// ...
 
 const document = new DocumentBuilder()
   .setTitle('Notes API')
@@ -1371,6 +1463,67 @@ HTTP/1.1 503 Service Unavailable
 {"status":"error","info":{},"error":{"database":{"message":"timeout of 1000ms exceeded","responseTime":1001,"status":"down"}},"details":{"database":{"message":"timeout of 1000ms exceeded","responseTime":1001,"status":"down"}}}
 $ docker unpause notes-db
 ```
+
+#### Log in JSON
+
+In development, Nest's logger writes readable lines. In production, the platform collects what the process writes to stdout, and a log search is far more useful when every line is a JSON object it can filter by level, context or any field. Nest's `ConsoleLogger` writes JSON itself (see [JSON logging](/application/logger#json-logging)):
+
+```typescript
+@@filename(src/main)
+import { ConsoleLogger } from '@nestjs/common';
+// ...
+
+const production = process.env.NODE_ENV === 'production';
+const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  logger: new ConsoleLogger({
+    // One JSON object per line in production; readable text in development.
+    json: production,
+    // Masks these properties wherever they appear in a logged object.
+    redact: ['password', 'authorization', 'accessToken', 'refreshToken'],
+  }),
+});
+app.useSecurityHeaders();
+// ...
+```
+
+- **The logger is created before `ConfigModule` reads `.env`**, so it reads `NODE_ENV` from the process environment, which is where your platform sets it in production.
+- **`redact` is a safety net.** Wherever a property with one of these names appears in a logged object, at any depth and in any letter case, its value is written as `"[REDACTED]"`. The day someone logs a whole request body or the headers while debugging, the password and the tokens stay out of the logs. It covers objects, not strings: the message itself is printed as it is, so never interpolate a secret into it (see [Redacting sensitive values](/application/logger#redacting-sensitive-values)).
+
+A log line worth having: a failed sign-in, with the address as a structured param, not in the message:
+
+```typescript
+@@filename(src/auth/auth.controller)
+import { Body, Controller, HttpCode, Logger, Post, UnauthorizedException } from '@nestjs/common';
+// ...
+
+export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
+  // ...
+  async token(@Body({ schema: signInSchema }) body: SignInDto) {
+    const user = await this.credentialsService.verify(body.email, body.password);
+    if (!user) {
+      this.logger.warn('Sign-in failed', { email: body.email });
+      throw new UnauthorizedException('Invalid email or password');
+    }
+    // ...
+  }
+}
+```
+
+A wrong password in development:
+
+```bash
+WARN [AuthController] Sign-in failed { email: 'ada@example.com' }
+```
+
+The same in production, with `NODE_ENV=production`:
+
+```json
+{"level":"warn","pid":19998,"timestamp":1795163181664,"message":"Sign-in failed","context":"AuthController","params":{"email":"ada@example.com"}}
+```
+
+A log search can now count failed sign-ins per address, which is how you notice someone guessing at one account despite the rate limit. With [NestJS Observe](/observability/overview) installed, each line written during a request also carries that request's trace id (see [Logging in production](/application/logger#logging-in-production)).
 
 #### Test it
 
@@ -1550,6 +1703,8 @@ $ TEST_DATABASE_URL=postgres://postgres:notes@localhost:5432/notes_test npm run 
 - **Set `NODE_ENV` to `production`.** The authentication module then refuses to start while a feature it uses has no store, instead of keeping tokens in one process's memory.
 - **Keep `JWT_SECRET` in your platform's secret store**, injected at runtime, not in an image or a committed `.env` file. Anyone who has it can sign tokens for any user.
 - **Run `drizzle-kit migrate` as a release step**, before the new version starts, not from every instance at startup.
+- **Set `CORS_ORIGINS` to your web app's origins**, with their scheme (`https://`) and no path. Leave it empty if no browser calls the API.
+- **Collect the JSON logs from stdout** with your platform's log driver, rather than writing files from the process.
 - **Use shared storage for the throttler** once you run more than one instance, and pass `trustProxy` to `NodeAdapter` behind a load balancer.
 - **Size the servers for scrypt.** Each hash at the default cost uses 128 MiB, on the libuv thread pool (four threads unless you set `UV_THREADPOOL_SIZE`). Sign-in bursts queue behind each other; the throttler bounds them.
 - **Point the platform's probes at the health checks**: liveness at `/health/live`, readiness at `/health/ready`. Shutdown hooks are on, so a deploy's `SIGTERM` closes the server and the pool before the process exits.
