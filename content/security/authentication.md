@@ -682,6 +682,19 @@ export class PasswordResetMailer extends PasswordResetHandler {
 
 `findUser()` returns the account's id, its stored address and its stored password hash, `null` for an account without a password. The link goes to that stored address, never to the one typed into the form: a lookup that ignores accents or dots, as MySQL's default collation does, would otherwise mail one customer's link to whoever typed a lookalike address. A link works only while the address and the hash are unchanged, so a password change, by any route, invalidates the links sent before it. Leaving the address or the hash out is an error, which the package logs instead of sending the link.
 
+If your application hashes passwords with something other than `PasswordHasher`, such as argon2 or bcrypt, give the handler a `hashPassword()` method. `reset()` then stores the hash it returns instead of a scrypt one, so the new password is in the format your sign-in checks:
+
+```typescript
+@@filename(src/auth/password-reset.mailer)
+import * as argon2 from 'argon2';
+// ...
+hashPassword(password: string) {
+  return argon2.hash(password);
+}
+```
+
+It receives the password as the customer typed it, once `reset()` has accepted it: not empty and at most 4 KiB. A stricter limit of your hasher, such as bcrypt's 72 bytes, is yours to check before you call `reset()`. When `hashPassword()` throws, the password and the sign-ins stay as they were, and the link works again.
+
 Enable password reset next to email verification, the handler in `AuthModule` and the page in the options:
 
 ```typescript
@@ -777,7 +790,7 @@ export class PasswordResetController {
 
 - `request()` returns before it looks the address up. Finding the account, storing the token and sending the email happen after the response, so a request for an address nobody registered gets the same 202, in the same time, as a customer's: the route can't tell anyone who has an account. That's why `forgot` doesn't `await` anything. A failure after the response, such as a mail server that is down, is logged.
 - A link works once, for an hour (`passwordReset.ttl`), and only while the account still has the address and the password it had when the link was sent.
-- `reset()` stores the new password's hash, invalidates the customer's other reset links, and ends every session of the account, and every refresh token once the application [issues them](/security/authentication#issue-tokens-to-the-mobile-app), so whoever knew the old password is signed out everywhere. [API keys](/security/authentication#issue-api-keys-to-partners) live in your own table and stay valid: to cut them off too, revoke them on the `password-reset` event. A password that `PasswordHasher` refuses, empty or over 4 KiB, gets `null` without spending the link, so the customer can try again. With `signIn: true`, it then signs the customer in on this browser through `SignInService`, so a customer with [two-factor authentication](/security/authentication#add-two-factor-authentication) still has to enter a code.
+- `reset()` stores the new password's hash, invalidates the customer's other reset links, and ends every session of the account, and every refresh token once the application [issues them](/security/authentication#issue-tokens-to-the-mobile-app), so whoever knew the old password is signed out everywhere. [API keys](/security/authentication#issue-api-keys-to-partners) live in your own table and stay valid: to cut them off too, revoke them on the `password-reset` event. A password that is empty or over 4 KiB gets `null` without spending the link, so the customer can try again. With `signIn: true`, it then signs the customer in on this browser through `SignInService`, so a customer with [two-factor authentication](/security/authentication#add-two-factor-authentication) still has to enter a code.
 - The link proves the address too, so `reset()` marks it verified, through your `markVerified()`. That also rescues an account that someone else signed up for with the customer's address: the reset replaces the stranger's password and signs them out.
 
 With the Zod schemas:
