@@ -384,6 +384,89 @@ export class MailPreviewController {
 export class NotificationsModule {}
 ```
 
+#### Send a calendar invitation
+
+A delivery slot, a booking or a meeting is easier to keep when it lands in the customer's calendar. Give the message a `calendar`: an iCalendar object (RFC 5545) that your application builds, and the mailer sends it the way mail clients look for an invitation, so they show the event with its accept and decline buttons. `@nestjs/mail` has no dependencies, so it doesn't generate the event. [`ical-generator`](https://github.com/sebbo2002/ical-generator) does, and is what the example uses:
+
+```bash
+$ npm i --save ical-generator
+```
+
+The mail class builds the event with `ical-generator` in `render()`, and returns the calendar's `toString()`, the iCalendar text with its line breaks and folded lines, as `calendar`:
+
+```typescript
+@@filename(notifications/delivery-slot.mail)
+import { Injectable } from '@nestjs/common';
+import { html, type Mailable } from '@nestjs/mail';
+import ical, { ICalAttendeeRole, ICalCalendarMethod, ICalEventStatus } from 'ical-generator';
+
+export interface DeliverySlotChange {
+  order: Order;
+  customer: Customer;
+  start: Date;
+  end: Date;
+  /** Starts at 0, and goes up each time the slot is moved or cancelled */
+  revision: number;
+  cancelled?: boolean;
+}
+
+@Injectable()
+export class DeliverySlotMail implements Mailable<DeliverySlotChange> {
+  render({ order, customer, start, end, revision, cancelled = false }: DeliverySlotChange) {
+    const calendar = ical({
+      prodId: '//Example Shop//Orders//EN',
+      method: cancelled ? ICalCalendarMethod.CANCEL : ICalCalendarMethod.REQUEST,
+    });
+    calendar.createEvent({
+      // The same id for every version of this event, so a calendar replaces it instead of adding another
+      id: `delivery-${order.id}@shop.example.com`,
+      sequence: revision,
+      start,
+      end,
+      summary: `Delivery of order #${order.number}`,
+      status: cancelled ? ICalEventStatus.CANCELLED : ICalEventStatus.CONFIRMED,
+      organizer: { name: 'Example Shop', email: 'orders@shop.example.com' },
+      attendees: [{ name: customer.name, email: customer.email, rsvp: true, role: ICalAttendeeRole.REQ }],
+    });
+
+    return {
+      subject: cancelled ? `Delivery of order #${order.number} cancelled` : `Delivery of order #${order.number}`,
+      html: html`<p>Hi ${customer.name}, ${cancelled ? 'the delivery was cancelled.' : 'your order is on its way. Add the delivery to your calendar.'}</p>`,
+      // The method comes from the METHOD that ical-generator wrote into the calendar
+      calendar: { content: calendar.toString() },
+    };
+  }
+}
+```
+
+`calendar` is also an option of a message written inline and passed to `mailer.send()`, and a template-based mail returns it beside `template` and `context`. It takes:
+
+| Field | Description |
+| --- | --- |
+| `content` | The iCalendar object, as a string or UTF-8 bytes. It must contain a `BEGIN:VCALENDAR`. |
+| `method` | The iTIP method (RFC 5546): `PUBLISH`, `REQUEST`, `REPLY`, `ADD`, `CANCEL`, `REFRESH`, `COUNTER` or `DECLINECOUNTER`. It defaults to the `METHOD` in `content`, and when `content` has one, the two must agree. |
+| `filename` | The name of the attached copy. It defaults to `invite.ics`. |
+
+A calendar that disagrees with itself is refused with a `MailMessageError`, before anything is sent: a mail client drops an invitation whose method doesn't match, and tells nobody. The mailer writes the event into the message twice, the way nodemailer's `icalEvent` does, which mail clients have long been tested against: as a `text/calendar` part with its method, last in the `multipart/alternative` next to the text and the HTML, where Gmail looks for it, and as an attached `.ics` file, for clients that only read attachments. Some clients list the first one as an attachment too, without a name.
+
+To move the delivery, send the mail again with the same `UID` (the event's `id`) and a higher `SEQUENCE` (its `sequence`), here `revision` going up. A calendar that already holds the event updates it. To cancel it, send it once more with a higher `SEQUENCE` and `METHOD:CANCEL`, which the mail does when `cancelled` is set:
+
+```typescript
+// Moved to a new time
+await this.mailer.send(DeliverySlotMail, {
+  to: customer.email,
+  data: { order, customer, start: newStart, end: newEnd, revision: 1 },
+});
+
+// Cancelled
+await this.mailer.send(DeliverySlotMail, {
+  to: customer.email,
+  data: { order, customer, start: newStart, end: newEnd, revision: 2, cancelled: true },
+});
+```
+
+Not every provider can add a part to the message. `SmtpTransport`, `SesTransport`, `FileMailTransport` and `InMemoryMailTransport` send the message as built, and `SendGridTransport` sends the event as a `text/calendar` content entry after the text and the HTML, and as the attached copy. `ResendTransport` and `PostmarkTransport` have no way to add an alternative part, so they send the event as a single `.ics` attachment typed `text/calendar` with its method, which Gmail shows as an invitation too.
+
 #### Send after the order commits
 
 [Write the order confirmation mail](/application/mail#write-the-order-confirmation-mail) sends the mail from the request, after the order commits. Three things go wrong there:
@@ -1174,6 +1257,7 @@ describe('Order confirmation mail', () => {
 - **The database is PostgreSQL, in-process.** PGlite (`@electric-sql/pglite`, a dev dependency) runs your real migrations, and the test overrides the database `DrizzleModule` registers (its token comes from `getDrizzleToken()`) with it, so the repositories and the outbox store use it. There's no server to start, and each test file gets a fresh database.
 - **`assertSent()`** returns the most recent mail that matches, by recipient (`to` matches to, cc and bcc), `subject`, mail class or `template`, or a predicate. When nothing matches, it throws an error that lists what was sent. `assertNotSent()`, `filter()`, `find()` and `mails` cover the rest. The helpers throw plain errors, so they work with any test runner.
 - **`link()`** returns the first link in the mail that contains a string or matches a regular expression, as a `URL`. For a password reset or a magic link, that is the whole test: send the mail, then call `mail.link('/reset-password').searchParams.get('token')` and follow the link. Entities are decoded, so the `&amp;` that escaping writes in a query string is `&` again.
+- **`calendar`** is the invitation a mail carries, with its `content`, `method` and `filename`: `expect(mail.calendar?.method).toBe('REQUEST')`, or a check that its `content` has the event's `UID`.
 - **`failNext()`** makes the next send throw, here a permanent SMTP error, to test the error path.
 - **`raw`** is the message as MIME, and `mailer.render()` renders a mail class or a template on its own, for unit tests of a template.
 
@@ -1289,6 +1373,7 @@ There are no helpers and no expressions. Values are read from the context's own 
 | `subject`, `html`, `text` | The content, for a message written inline. `text` is derived from `html` when omitted. |
 | `template`, `context` | The template the body is rendered from, and the values it reads, in place of `html` and `text`. A mail class's `render()` returns them the same way. |
 | `attachments` | Each has `filename`, `content` (a `Buffer`, string or stream) or a local `path`, and optionally `contentType` and `cid`. See [Attach the invoice and preview the mail](/application/mail#attach-the-invoice-and-preview-the-mail). |
+| `calendar` | A calendar invitation: `content` (the iCalendar object), and optionally `method` and `filename`. See [Send a calendar invitation](/application/mail#send-a-calendar-invitation). |
 | `headers` | Custom headers, such as `List-Unsubscribe`. |
 | `retry` | Overrides the module's `retry` for this send. |
 | `signal` | An `AbortSignal` that stops the send and any wait between attempts. |
@@ -1309,7 +1394,7 @@ There are no helpers and no expressions. Values are read from the context's own 
 | `LogMailTransport` | `body`, `logger` | development only |
 | `InMemoryMailTransport` | none | tests only, see [Testing](/application/mail#testing) |
 
-`InMemoryMailTransport.mails` lists every mail received, oldest first, as a `SentMail`, which `filter()`, `find()` and `assertSent()` return too. A `SentMail` has the message's `messageId`, `from`, `to`, `cc`, `bcc`, `subject`, `html`, `text`, `attachments`, `headers`, `mail` (the mail class), `template` and `locale`, plus `sentAt` (when the transport received it), `raw` (the MIME source), `links` (every link, from the HTML, then the ones only the text part has), `link()`, `attachment()` and `message`, the `MailMessage` itself. `clear()` forgets them all.
+`InMemoryMailTransport.mails` lists every mail received, oldest first, as a `SentMail`, which `filter()`, `find()` and `assertSent()` return too. A `SentMail` has the message's `messageId`, `from`, `to`, `cc`, `bcc`, `subject`, `html`, `text`, `attachments`, `calendar`, `headers`, `mail` (the mail class), `template` and `locale`, plus `sentAt` (when the transport received it), `raw` (the MIME source), `links` (every link, from the HTML, then the ones only the text part has), `link()`, `attachment()` and `message`, the `MailMessage` itself. `clear()` forgets them all.
 
 With `pool: true`, `SmtpTransport` keeps up to 5 connections, sends up to 100 messages per connection, and closes a connection after 30 seconds idle; an object with `maxConnections`, `maxMessages` and `idleTimeout` as `pool` changes those limits. Its default timeouts are `30s` to connect, `30s` for the greeting, `1m` per command and `5m` for the data. HTTP providers time out after `30s` per request.
 
