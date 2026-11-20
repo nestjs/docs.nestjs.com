@@ -195,6 +195,7 @@ export const NAV_ITEMS: NavItem[] = [
     title: 'Tutorials',
     isOpened: false,
     children: [
+      { title: 'Overview', path: '/tutorials/overview' },
       {
         title: 'REST API with JWT authentication',
         path: '/tutorials/rest-api-jwt-authentication',

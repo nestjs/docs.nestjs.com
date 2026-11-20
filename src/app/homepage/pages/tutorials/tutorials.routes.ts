@@ -1,4 +1,5 @@
 import { Routes } from '@angular/router';
+import { TutorialsOverviewComponent } from './overview/overview.component';
 import { AiChatBackendComponent } from './ai-chat-backend/ai-chat-backend.component';
 import { BackgroundJobsComponent } from './background-jobs/background-jobs.component';
 import { BookingSystemComponent } from './booking-system/booking-system.component';
@@ -11,6 +12,16 @@ import { RealtimeChatComponent } from './realtime-chat/realtime-chat.component';
 import { RestApiJwtAuthenticationComponent } from './rest-api-jwt-authentication/rest-api-jwt-authentication.component';
 
 export const TUTORIALS_ROUTES: Routes = [
+  {
+    path: '',
+    redirectTo: 'overview',
+    pathMatch: 'full',
+  },
+  {
+    path: 'overview',
+    component: TutorialsOverviewComponent,
+    data: { title: 'Node.js backend tutorials with NestJS' },
+  },
   {
     path: 'rest-api-jwt-authentication',
     component: RestApiJwtAuthenticationComponent,
