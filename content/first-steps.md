@@ -23,11 +23,19 @@ $ nest new project-name
 
 The CLI asks which module system to use: ESM (the default), which uses Vitest as the test runner, or CommonJS, which uses Jest. Pass `--type esm` or `--type cjs` to choose without being asked.
 
-It also asks whether to set up [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe'), the official observability platform for Nest. If you answer yes, the generated project includes the `@nestjs/observe` SDK, already wired into `AppModule` and `NestFactory.create()`. In an interactive terminal, the prompt defaults to yes; in non-interactive environments, such as CI, it is skipped and Observe is not added. Pass `--observe` or `--no-observe` to skip the prompt either way. See the [Observability](/observability/overview) chapter for what Observe covers.
+It also asks whether to set up [NestJS Observe](https://www.observe.nestjs.com/ 'NestJS Observe'), the official observability platform for Nest. If you answer yes, the generated project includes the `@nestjs/observe` SDK, already wired into `AppModule` and `NestFactory.create()`. In an interactive terminal, the prompt defaults to yes; without one, such as in CI or a coding agent's shell, it is skipped and Observe is added, sending nothing until you link the project. Pass `--observe` or `--no-observe` to skip the prompt either way. See the [Observability](/observability/overview) chapter for what Observe covers.
 
 If you set up Observe, the CLI then offers to link the new project to it, once the dependencies are installed. Accepting prints a code to approve at [observe.nestjs.com/link](https://www.observe.nestjs.com/link 'Link a project to NestJS Observe') (signing up first if you don't have an account; the free plan needs no payment details), and the CLI then writes the app key and secret into `.env` and makes every `nest start` script (`start`, `start:dev`, and `start:debug`) load it. Requests, background jobs, errors, and distributed traces start reporting the next time you start the application. To link later, or when the CLI doesn't offer it (without a terminal, or with `--skip-install`), run `npx @nestjs/observe link` in the project directory - see [Linking from the terminal](/observability/sdk#linking-from-the-terminal).
 
 It also asks which coding agents should get the official NestJS agent skills (all of them by default). See [Coding agents](/first-steps#coding-agents).
+
+To create the project in the current folder instead, from a script or a coding agent's shell, run:
+
+```bash
+$ npx @nestjs/cli new . --skip-git --package-manager npm
+```
+
+Without a terminal, the CLI asks nothing and uses the defaults described above: ESM, Observe, and the agent skills for Codex, Cursor and Claude Code.
 
 > info **Hint** New projects are generated with TypeScript's [strict](https://www.typescriptlang.org/tsconfig#strict) mode enabled. To opt out, set `"strict": false` in the generated `tsconfig.json`.
 
