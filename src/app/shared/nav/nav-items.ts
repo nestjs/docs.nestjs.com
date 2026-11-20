@@ -37,25 +37,6 @@ export const NAV_ITEMS: NavItem[] = [
     ],
   },
   {
-    title: 'Guides',
-    isOpened: false,
-    children: [
-      {
-        title: 'REST API with JWT authentication',
-        path: '/guides/rest-api-jwt-authentication',
-      },
-      { title: 'E-commerce backend', path: '/guides/ecommerce-backend' },
-      { title: 'Multi-tenant SaaS backend', path: '/guides/multi-tenant-saas' },
-      { title: 'Project-management API', path: '/guides/project-management-api' },
-      { title: 'Real-time chat backend', path: '/guides/realtime-chat' },
-      { title: 'Booking system', path: '/guides/booking-system' },
-      { title: 'Emails and background jobs', path: '/guides/background-jobs' },
-      { title: 'File upload service', path: '/guides/file-uploads' },
-      { title: 'Payments with webhooks', path: '/guides/payments-webhooks' },
-      { title: 'AI chat backend', path: '/guides/ai-chat-backend' },
-    ],
-  },
-  {
     title: 'Fundamentals',
     isOpened: false,
     children: [
@@ -208,6 +189,25 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Durable workflows', path: '/reliability/workflows' },
       { title: 'Distributed locks', path: '/reliability/locks' },
       { title: 'Health checks', path: '/reliability/terminus' },
+    ],
+  },
+  {
+    title: 'Guides',
+    isOpened: false,
+    children: [
+      {
+        title: 'REST API with JWT authentication',
+        path: '/guides/rest-api-jwt-authentication',
+      },
+      { title: 'E-commerce backend', path: '/guides/ecommerce-backend' },
+      { title: 'Multi-tenant SaaS backend', path: '/guides/multi-tenant-saas' },
+      { title: 'Project-management API', path: '/guides/project-management-api' },
+      { title: 'Real-time chat backend', path: '/guides/realtime-chat' },
+      { title: 'Booking system', path: '/guides/booking-system' },
+      { title: 'Emails and background jobs', path: '/guides/background-jobs' },
+      { title: 'File upload service', path: '/guides/file-uploads' },
+      { title: 'Payments with webhooks', path: '/guides/payments-webhooks' },
+      { title: 'AI chat backend', path: '/guides/ai-chat-backend' },
     ],
   },
   {
