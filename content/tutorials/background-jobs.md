@@ -765,6 +765,8 @@ export class RedisModule implements OnApplicationShutdown {
 }
 ```
 
+The lock store implements `LockStore` on that client:
+
 ```typescript
 @@filename(src/redis/redis-lock.store)
 import { Inject, Injectable } from '@nestjs/common';
@@ -975,6 +977,8 @@ export default defineConfig({
   },
 });
 ```
+
+The tests check the welcome email, a job running three times at once, retries and refusals, the digest on two instances, and shutdown:
 
 ```typescript
 @@filename(test/emails.e2e-spec)

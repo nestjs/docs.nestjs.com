@@ -54,6 +54,8 @@ Start a database, and add its URL and a `JWT_SECRET` to `.env`, as in the JWT tu
 $ docker run -d --name assistant-db -e POSTGRES_PASSWORD=assistant -e POSTGRES_DB=assistant -p 5432:5432 postgres:17
 ```
 
+Its URL goes in `.env`, with the signing secret and the model setting:
+
 ```bash
 DATABASE_URL=postgres://postgres:assistant@localhost:5432/assistant
 # Generate with: openssl rand -base64 32
@@ -560,6 +562,8 @@ export class NotesTools {
 }
 ```
 
+Register the tools in the notes module, next to the service they call:
+
 ```typescript
 @@filename(src/notes/notes.module)
 import { Module } from '@nestjs/common';
@@ -723,6 +727,8 @@ export class ChatController {
   }
 }
 ```
+
+The chat module registers the controller, and the services that keep conversations and run the agent:
 
 ```typescript
 @@filename(src/chat/chat.module)
@@ -918,6 +924,8 @@ export default defineConfig({
   },
 });
 ```
+
+The tests sign users up, script the fake model's answers, and check the tools, the stream, the abort, the history budget and the limits:
 
 ```typescript
 @@filename(test/chat.e2e-spec)

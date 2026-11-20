@@ -773,6 +773,8 @@ $ curl -X POST localhost:3000/orders/2145ea60-1156-47f1-b304-ffaa33582c34/ship -
 {"id":"2145ea60-1156-47f1-b304-ffaa33582c34",...,"status":"shipped","total":25800,"paymentId":"pay_27a152e7",...}
 ```
 
+The application's log shows the confirmation going out:
+
 ```bash
 LOG [OrderPaidHandler] Order 2145ea60-1156-47f1-b304-ffaa33582c34 paid (25800 cents): sending the confirmation
 ```
@@ -810,6 +812,8 @@ $ curl localhost:3000/orders/20b90e94-af9e-4d41-8bca-e3449dc13deb -H "$ADA"
 {"id":"20b90e94-af9e-4d41-8bca-e3449dc13deb",...,"status":"cancelled","total":12900,"paymentId":null,...}
 ```
 
+The log flags the late success for a refund, and the order stays cancelled:
+
 ```bash
 WARN [OrdersService] Payment pay_07c5a5e9 of 12900 for order 20b90e94-af9e-4d41-8bca-e3449dc13deb changed nothing (order cancelled, total 12900): refund it
 ```
@@ -823,6 +827,8 @@ $ curl -X POST localhost:3000/orders -H "$ADA"
 $ curl -X POST localhost:3000/orders/f43ba16e-fd3e-4f4e-ba12-bcff19c3c3bb/payment -H "$ADA"
 {"message":"Bad Gateway","statusCode":502}
 ```
+
+The log has the reason the client gave up:
 
 ```bash
 ERROR [HttpClient] POST http://localhost:4000/v1/payments failed: ECONNREFUSED; answering 502 Bad Gateway
@@ -854,6 +860,8 @@ export default defineConfig({
   },
 });
 ```
+
+The tests cover the idempotency key, the provider being down, signed and forged webhooks, duplicates on two instances, wrong amounts, and a payment racing a cancel:
 
 ```typescript
 @@filename(test/payments.e2e-spec)

@@ -54,6 +54,8 @@ Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tuto
 $ docker run -d --name projects-db -e POSTGRES_PASSWORD=projects -e POSTGRES_DB=projects -p 5432:5432 postgres:17
 ```
 
+Its URL goes in `.env`, next to the signing secret:
+
 ```bash
 DATABASE_URL=postgres://postgres:projects@localhost:5432/projects
 # Generate with: openssl rand -base64 32
@@ -406,6 +408,8 @@ A user who isn't a member of a project gets a 404 for it, the same answer as for
 
 ##### Projects and members
 
+A project has a name, and a member is added by email, as an admin or a member:
+
 ```typescript
 @@filename(src/projects/projects.schemas)
 import { z } from 'zod';
@@ -421,6 +425,8 @@ export const addMemberSchema = z.object({
 });
 export type AddMemberDto = z.infer<typeof addMemberSchema>;
 ```
+
+The service creates projects and lists their members, and checks the project's policy before adding a member:
 
 ```typescript
 @@filename(src/projects/projects.service)
@@ -545,6 +551,8 @@ export class ProjectsController {
   }
 }
 ```
+
+The projects module registers the controller, the services and the policy, and exports the memberships for the other modules:
 
 ```typescript
 @@filename(src/projects/projects.module)
@@ -1065,6 +1073,8 @@ export type ProjectActivity =
   | { type: 'comment.created' | 'comment.updated'; projectId: string; data: Comment };
 ```
 
+The activity service listens for those events, and gives each project's stream only its own:
+
 ```typescript
 @@filename(src/activity/activity.service)
 import { Injectable, type MessageEvent } from '@nestjs/common';
@@ -1138,6 +1148,8 @@ export class ProjectMemberGuard implements CanActivate {
 }
 ```
 
+The controller puts that guard in front of the stream:
+
 ```typescript
 @@filename(src/activity/activity.controller)
 import { Controller, Param, Sse, UseGuards, type MessageEvent } from '@nestjs/common';
@@ -1161,6 +1173,8 @@ export class ActivityController {
   }
 }
 ```
+
+The activity module registers the controller and the service, and imports the projects module for the guard's membership check:
 
 ```typescript
 @@filename(src/activity/activity.module)
@@ -1366,6 +1380,8 @@ Last, a task due within a day. At the first tick after startup, the instance tak
 $ curl localhost:3000/projects/$PROJECT/tasks -H "$ADA" --json '{"title":"Send the newsletter","assigneeId":"c1ffc2db-5cf3-4835-b05a-1e0daf80903b","dueAt":"2026-11-20T01:00:00Z"}'
 {"id":"e0b29e6d-cc14-4251-a64e-61fbe530e072",...,"title":"Send the newsletter",...,"dueAt":"2026-11-20T01:00:00.000Z","remindedAt":null,...}
 ```
+
+The log shows the lease being taken, and the reminder:
 
 ```bash
 LOG [Locks] RemindersJob.sendReminders runs on this instance (lease "tasks:due-reminders:owner", fencing token 1)

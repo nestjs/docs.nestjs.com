@@ -53,6 +53,8 @@ Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tuto
 $ docker run -d --name booking-db -e POSTGRES_PASSWORD=booking -e POSTGRES_DB=booking -p 5432:5432 postgres:17
 ```
 
+Its URL goes in `.env`, next to the signing secret:
+
 ```bash
 DATABASE_URL=postgres://postgres:booking@localhost:5432/booking
 # Generate with: openssl rand -base64 32
@@ -661,6 +663,8 @@ export class BookingsController {
   }
 }
 ```
+
+The bookings module registers the controller and the service:
 
 ```typescript
 @@filename(src/bookings/bookings.module)

@@ -53,6 +53,8 @@ Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tuto
 $ docker run -d --name chat-db -e POSTGRES_PASSWORD=chat -e POSTGRES_DB=chat -p 5432:5432 postgres:17
 ```
 
+Its URL goes in `.env`, next to the signing secret:
+
 ```bash
 DATABASE_URL=postgres://postgres:chat@localhost:5432/chat
 # Generate with: openssl rand -base64 32

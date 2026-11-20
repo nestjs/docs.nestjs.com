@@ -54,6 +54,8 @@ Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tuto
 $ docker run -d --name files-db -e POSTGRES_PASSWORD=files -e POSTGRES_DB=files -p 5432:5432 postgres:17
 ```
 
+Its URL goes in `.env`, next to the signing secret:
+
 ```bash
 DATABASE_URL=postgres://postgres:files@localhost:5432/files
 # Generate with: openssl rand -base64 32

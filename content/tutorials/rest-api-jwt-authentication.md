@@ -172,6 +172,8 @@ Start the application, and try it from another terminal (`--json`, curl 7.82 or 
 $ npm run start:dev
 ```
 
+Create a note, then try a few requests that fail validation:
+
 ```bash
 $ curl localhost:3000/notes --json '{"title":"Buy milk"}'
 {"id":"d90a31d3-2df2-447d-8d5e-c2b2e241a8eb","title":"Buy milk","body":"","createdAt":"2026-11-19T19:42:46.765Z","updatedAt":"2026-11-19T19:42:46.765Z"}
@@ -391,6 +393,8 @@ export class NotesController {
 }
 ```
 
+The notes module registers the controller and the service:
+
 ```typescript
 @@filename(src/notes/notes.module)
 import { Module } from '@nestjs/common';
@@ -452,7 +456,7 @@ await app.listen(config.get('PORT', { infer: true }));
 
 `enableShutdownHooks()` makes the application close on `SIGTERM`, which is what a container platform sends on every deploy: the HTTP server stops accepting connections and the pool is closed. Without it, the process just ends.
 
-Add a `drizzle.config.ts` to the project's root directory, then generate the first migration and apply it (see [Migrations](/data/drizzle#migrations)):
+Add a `drizzle.config.ts` to the project's root directory:
 
 ```typescript
 @@filename(drizzle.config)
@@ -467,6 +471,8 @@ export default defineConfig({
   },
 });
 ```
+
+Generate the first migration from the schema, and apply it (see [Migrations](/data/drizzle#migrations)):
 
 ```bash
 $ npx drizzle-kit generate --name=notes
@@ -494,6 +500,8 @@ Add a signing secret to `.env`. It must be at least 32 bytes:
 # Generate with: openssl rand -base64 32
 JWT_SECRET=
 ```
+
+The configuration schema requires it:
 
 ```typescript
 @@filename(src/config)
@@ -654,6 +662,8 @@ export class MeController {
   }
 }
 ```
+
+The users module registers the controller and the repository, and exports the repository for the authentication code:
 
 ```typescript
 @@filename(src/users/users.module)
@@ -1140,6 +1150,8 @@ export function accountEmail(req: { body?: { email?: unknown } }): string {
 }
 ```
 
+Register both definitions in the root module, with `ThrottlerGuard` as a global guard:
+
 ```typescript
 @@filename(src/app.module)
 import { APP_GUARD, APP_PIPE } from '@nestjs/core';
@@ -1212,6 +1224,8 @@ Retry-After-account: 900
 ```bash
 $ npm i --save @nestjs/swagger
 ```
+
+Build the document and serve Swagger UI from `main.ts`:
 
 ```typescript
 @@filename(src/main)
@@ -1288,6 +1302,8 @@ export class DatabaseHealthIndicator {
 }
 ```
 
+The controller exposes the two checks, public and outside the rate limit:
+
 ```typescript
 @@filename(src/health/health.controller)
 import { Controller, Get } from '@nestjs/common';
@@ -1318,6 +1334,8 @@ export class HealthController {
   }
 }
 ```
+
+The health module imports Terminus and provides the indicator:
 
 ```typescript
 @@filename(src/health/health.module)
@@ -1354,6 +1372,8 @@ End-to-end tests boot the real `AppModule` with two changes. The database is [PG
 $ npm i --save-dev @nestjs/testing vitest vite @electric-sql/pglite
 ```
 
+The test configuration gives the application the environment it validates at startup:
+
 ```typescript
 @@filename(vitest.config.e2e)
 import { defineConfig } from 'vitest/config';
@@ -1370,6 +1390,8 @@ export default defineConfig({
   },
 });
 ```
+
+The tests cover a request without a token, notes that only their owner sees, and refresh-token rotation:
 
 ```typescript
 @@filename(test/notes.e2e-spec)
@@ -1504,6 +1526,8 @@ Add a script to `package.json`, and run both against a database of their own (th
 ```json
 "test:e2e": "vitest run --config ./vitest.config.e2e.ts"
 ```
+
+Create the test database once, then run both files:
 
 ```bash
 $ docker exec notes-db psql -U postgres -c "CREATE DATABASE notes_test"

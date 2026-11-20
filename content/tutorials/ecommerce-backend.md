@@ -53,6 +53,8 @@ Finally, add the database's URL and a `JWT_SECRET` to `.env`, as in the JWT tuto
 $ docker run -d --name shop-db -e POSTGRES_PASSWORD=shop -e POSTGRES_DB=shop -p 5432:5432 postgres:17
 ```
 
+Its URL goes in `.env`, next to the signing secret:
+
 ```bash
 DATABASE_URL=postgres://postgres:shop@localhost:5432/shop
 # Generate with: openssl rand -base64 32
@@ -487,6 +489,8 @@ export const setQuantitySchema = z.object({
 export type SetQuantityDto = z.infer<typeof setQuantitySchema>;
 ```
 
+The service reads the cart at today's prices, and sets a line with that upsert:
+
 ```typescript
 @@filename(src/cart/cart.service)
 import { Injectable, NotFoundException } from '@nestjs/common';
@@ -599,6 +603,8 @@ export class CartController {
   }
 }
 ```
+
+The cart module registers the controller and the service:
 
 ```typescript
 @@filename(src/cart/cart.module)
@@ -772,6 +778,8 @@ export class OrderPolicy {
   }
 }
 ```
+
+The controller checks that policy on the ship route. The other routes are for any signed-in customer, whose queries are scoped to them:
 
 ```typescript
 @@filename(src/orders/orders.controller)
@@ -1020,6 +1028,8 @@ describe.skipIf(!url)('Shop API (e2e)', () => {
   });
 });
 ```
+
+Create the test database once, then run the suite:
 
 ```bash
 $ docker exec shop-db psql -U postgres -c "CREATE DATABASE shop_test"
