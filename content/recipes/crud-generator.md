@@ -86,6 +86,8 @@ $ nest g resource users
 
 > info **Hint** To skip generating test files, pass the `--no-spec` flag, as follows: `nest g resource users --no-spec`.
 
+> info **Hint** To answer the questions with options instead, pass `--type` (`rest`, `graphql-code-first`, `graphql-schema-first`, `microservice` or `ws`) and `--crud` or `--no-crud`, for example `nest g resource users --type rest --crud`. Without a terminal, under CI, or with `--no-interactive`, the CLI doesn't ask: it uses the defaults (`--type rest`, `--crud`) and prints them.
+
 As shown below, the command not only creates all the boilerplate mutations and queries, but also wires everything together, using the `UsersService`, the `User` entity, and the DTOs.
 
 ```typescript

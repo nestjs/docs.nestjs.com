@@ -247,3 +247,5 @@ Similarly, for [custom providers](/fundamentals/custom-providers), set the `dura
   durable: true,
 }
 ```
+
+> info **Hint** For durable providers in a complete multi-tenant application, with a bounded number of sub-trees, follow [Build a multi-tenant SaaS backend in Node.js](/tutorials/multi-tenant-saas#give-each-organization-its-own-di-sub-tree).

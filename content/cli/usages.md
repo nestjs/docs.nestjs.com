@@ -11,19 +11,19 @@ $ nest n <name> [options]
 
 ##### Description
 
-Creates and initializes a new Nest project. The command prompts for any information you don't pass as an option: the project name, the package manager, the module system (ESM or CommonJS), and whether to set up [NestJS Observe](/observability/overview).
+Creates and initializes a new Nest project. The command prompts for any information you don't pass as an option: the project name, the package manager, the module system (ESM or CommonJS), whether to set up [NestJS Observe](/observability/overview), and which coding agents get the [NestJS agent skills](/first-steps#coding-agents). Every question has an option that answers it.
 
-> info **Hint** In non-interactive environments, such as CI, pass the project name and `--package-manager`. The module system then defaults to ESM, and Observe is set up only if you pass `--observe`.
+> info **Hint** The command doesn't prompt when stdin or stdout isn't a terminal, when the `CI` environment variable is set, or when you pass `--no-interactive` (for a terminal that looks interactive but has nobody to answer, such as a coding agent's). It then uses a default for every question you didn't answer with an option: the name `nest-app`, the package manager that ran the CLI (or npm), ESM, Observe set up (it sends nothing until you link the project), and the agent skills for Codex, Cursor and Claude Code. It prints each default it used, for example `Not prompting, so @nestjs/observe is set up (it sends nothing until you run npx @nestjs/observe link). Pass --no-observe to skip it.`
 
 > info **Hint** Choosing **ESM** scaffolds an ESM-first project that uses Vitest for testing. Choosing **CommonJS** scaffolds the traditional layout, which uses Jest. Both variants use oxlint for linting.
 
 The command:
 
-- Creates a folder with the given `<name>`
+- Creates a folder with the given `<name>`, or uses the current folder with `nest new .`. In a folder that already has files, the files the project doesn't include are left alone, an existing `README.md` and `.gitignore` are kept, and if any other file would be overwritten, the command lists them and stops before writing anything. An existing git repository is kept as it is.
 - Populates the folder with configuration files
-- Creates subfolders for source code (`/src`) and end-to-end tests (`/test`)
+- Creates subfolders for source code (`/src`) and end-to-end tests (`/test`, unless you pass `--skip-tests` or `--minimal`)
 - Populates the subfolders with default files for application components and tests
-- If Observe was set up, offers to link the project to it once the dependencies are installed (in an interactive terminal only). Accepting runs `npx @nestjs/observe link`, which writes the app key and secret into `.env` - see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)
+- If Observe was set up, offers to link the project to it once the dependencies are installed (in an interactive terminal only). Accepting runs `npx @nestjs/observe link`, which writes the app key and secret into `.env` - see [Linking from the terminal](/observability/sdk#linking-from-the-terminal). Without a terminal, it prints that command instead, with a line asking a coding agent to tell you to run it
 
 ##### Arguments
 
@@ -39,14 +39,18 @@ The command:
 | `--dry-run`                           | Report the changes that would be made, without changing the filesystem.<br/> Alias: `-d`                                                                                                                                                                      |
 | `--skip-git`                          | Skip git repository initialization.<br/> Alias: `-g`                                                                                                                                                                                                          |
 | `--skip-install`                      | Skip package installation.<br/> Alias: `-s`                                                                                                                                                                                                                   |
-| `--skip-tests`                        | Skip generating test files for the new project.<br/> Alias: `-t`                                                                                                                                                                                              |
+| `--skip-tests`                        | Create the project without tests: no spec or e2e files, no Vitest or Jest configuration, test scripts or test dependencies. Unlike `--minimal`, keeps the module, controller and service files.<br/> Alias: `-t`                                              |
 | `--package-manager [package-manager]` | Package manager to use: `npm`, `yarn`, `pnpm`, or `bun`. The package manager must be installed globally.<br/> Alias: `-p`                                                                                                                                      |
 | `--language [language]`               | Programming language: `TS` (default) or `JS`. The value is case-insensitive, and `typescript` / `javascript` are also accepted.<br/> Alias: `-l`                                                                                                                |
+| `--type [type]`                       | Module system: `esm` (the default, tested with Vitest) or `cjs` (tested with Jest). `--minimal` is ESM only, so `--minimal --type cjs` is refused.                                                                                                              |
 | `--collection [collectionName]`       | Schematics collection to use. Pass the package name of an installed npm package that contains the schematic.<br/> Alias: `-c`                                                                                                                                 |
 | `--strict`                            | Enable TypeScript's `strict` mode (with `strictPropertyInitialization` disabled) in the generated `tsconfig.json`. Enabled by default, and there is no flag to disable it: to opt out, set `"strict": false` in `tsconfig.json` after generating the project. |
 | `--format`                            | Format generated files using Prettier.                                                                                                                                                                                                                        |
-| `--observe` / `--no-observe`          | Set up the `@nestjs/observe` SDK, or skip it, without being prompted. Omit both to be prompted in an interactive terminal (the prompt defaults to yes). Without a terminal, Observe is not set up.                                                            |
-| `--minimal`                           | Generate an application whose code is one file, `src/main.ts`. See [One-file projects](/cli/usages#one-file-projects). TypeScript and ESM only.                                                                                                                 |
+| `--observe` / `--no-observe`          | Set up the `@nestjs/observe` SDK, or skip it, without being prompted. Omit both to be prompted in an interactive terminal (the prompt defaults to yes). When `nest new` doesn't prompt (no terminal, `CI` set, or `--no-interactive`), Observe is set up, and sends nothing until you link the project; pass `--no-observe` to skip it. |
+| `--skills <agents>`                   | Add the official [NestJS agent skills](https://github.com/nestjs/agent-skills) for these coding agents, comma-separated: `all` (`.agents/skills` and `.claude/skills`, for Codex, Cursor and Claude Code), `agents` (`.agents/skills`), `claude` (`.claude/skills`), `cursor` (`.cursor/skills`), or `none`. Omit it to be prompted in an interactive terminal (the prompt defaults to `all`). When `nest new` doesn't prompt (no terminal, `CI` set, or `--no-interactive`), `all` is used. With `--skip-install`, the skills aren't installed and the command that installs them is printed.|
+| `--skip-skills`                       | Do not add the NestJS agent skills. The same as `--skills none`.                                                                                                                                                                                              |
+| `--no-interactive`                    | Never prompt: answer every question that no flag answers with its default (the name `nest-app`, the package manager that ran the CLI or else npm, ESM, Observe set up, and the agent skills for `all`), and print the defaults it used. The CLI also doesn't prompt without a terminal on stdin and stdout, or when `CI` is set; use this flag for terminals that look interactive but have nobody to answer, such as a coding agent's.|
+| `--minimal`                           | Generate an application whose code is one file, `src/main.ts`, with no tests, linter or formatter. See [One-file projects](/cli/usages#one-file-projects). TypeScript and ESM only.                                                                             |
 
 ##### One-file projects
 
@@ -129,7 +133,7 @@ $ nest g <schematic> <name> [options]
 | Argument      | Description                                                                                              |
 | ------------- | -------------------------------------------------------------------------------------------------------- |
 | `<schematic>` | The `schematic` or `collection:schematic` to generate. See the table below for the available schematics. |
-| `<name>`      | The name of the generated component. If omitted, the schematic prompts for it.                           |
+| `<name>`      | The name of the generated component. If omitted, the schematic prompts for it. When the CLI doesn't prompt (see `--no-interactive`), the name is required.|
 
 ##### Schematics
 
@@ -158,7 +162,7 @@ $ nest g <schematic> <name> [options]
 | Option                          | Description                                                                                                     |
 | ------------------------------- | --------------------------------------------------------------------------------------------------------------- |
 | `--dry-run`                     | Report the changes that would be made, without changing the filesystem.<br/> Alias: `-d`                        |
-| `--project [project]`           | Project that the element should be added to.<br/> Alias: `-p`                                                   |
+| `--project [project]`           | Project that the element should be added to. In a monorepo, when the CLI doesn't prompt, the default project is used.<br/> Alias: `-p`|
 | `--flat`                        | Do not generate a folder for the element.                                                                       |
 | `--no-flat`                     | Generate a folder for the element.                                                                              |
 | `--collection [collectionName]` | Schematics collection to use. Pass the package name of an installed npm package that contains the schematic.<br/> Alias: `-c` |
@@ -169,6 +173,9 @@ $ nest g <schematic> <name> [options]
 | `--format`                      | Format generated files using Prettier.                                                                          |
 | `--type <type>`                 | (`resource` only) Transport layer: `rest`, `graphql-code-first`, `graphql-schema-first`, `microservice`, or `ws`. |
 | `--crud [value]`                | (`resource` only) Whether to generate CRUD entry points (`true` or `false`).                                    |
+| `--no-crud`                     | (`resource` only) Generate the resource without CRUD entry points. The same as `--crud false`.                  |
+| `--prefix <prefix>`             | (`library` only) Import path prefix of the library (default: `@app`, or `defaultLibraryPrefix` in `nest-cli.json`).|
+| `--no-interactive`              | Never prompt: use the default for every question not answered by an option, and print the defaults used (for example, `Not prompting, so using the defaults: --type rest, --crud.`). A missing `<name>` is an error. The CLI also doesn't prompt when stdin or stdout isn't a terminal, or when `CI` is set. The option is passed on to the schematics, so their own questions (such as those of `resource`) aren't asked either.|
 
 #### nest build
 
@@ -205,6 +212,8 @@ $ nest build [name...] [options]
 | `--watchAssets`         | Watch non-TS files (assets such as `.graphql` files). See [Assets](/cli/monorepo#assets) for more details.                                                                                 |
 | `--type-check`          | Enable type checking (when SWC is used).                                                                                                                                                   |
 | `--no-type-check`       | Disable type checking (when SWC is used).                                                                                                                                                  |
+| `--bundle-dependencies` | Bundle `node_modules` into the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`, but keeps its `exclude` list. |
+| `--no-bundle-dependencies` | Leave `node_modules` out of the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`. |
 | `--emit-declarations`   | Emit declaration files (`.d.ts`) when using the SWC builder.                                                                                                                               |
 | `--all`                 | Build all projects in a monorepo.                                                                                                                                                          |
 | `--parallel [concurrency]` | Build projects in parallel (use with `--all`). Pass a positive integer to limit concurrency, or omit the value for unlimited concurrency.                                                |
@@ -242,6 +251,8 @@ $ nest start [name] [options]
 | `--tsc`                 | Force the use of `tsc` for compilation.                                                                                            |
 | `--type-check`          | Enable type checking (when SWC is used).                                                                                           |
 | `--no-type-check`       | Disable type checking (when SWC is used).                                                                                          |
+| `--bundle-dependencies` | Bundle `node_modules` into the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`, but keeps its `exclude` list. |
+| `--no-bundle-dependencies` | Leave `node_modules` out of the output (when Rspack is used). Overrides `compilerOptions.bundleDependencies`. |
 | `--emit-declarations`   | Emit declaration files (`.d.ts`) when using the SWC builder.                                                                       |
 | `--silent`              | Suppress informational compiler logs.                                                                                              |
 | `--sourceRoot [sourceRoot]` | Root of the source code (overrides the `sourceRoot` setting in `nest-cli.json`).                                               |
@@ -310,7 +321,7 @@ The command finishes by installing the updated dependencies (unless `--skip-inst
 | ------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
 | `--dry-run`                     | Report the changes that would be made, without changing the filesystem.<br/> Alias: `-d`                          |
 | `--skip-install`                | Skip package installation.<br/> Alias: `-s`                                                                       |
-| `--observe` / `--no-observe`    | Set up `@nestjs/observe`, or skip the setup, without being prompted. Omit both to be prompted in an interactive terminal (the prompt defaults to no). Without a terminal, Observe is not set up. |
+| `--observe` / `--no-observe`    | Set up `@nestjs/observe`, or skip the setup, without being prompted. Omit both to be prompted in an interactive terminal (the prompt defaults to no). Without a terminal, or when `CI` is set, Observe is not set up. |
 | `--tag [tag]`                   | Use an npm dist-tag (e.g., `next`) instead of the default version ranges.<br/> Alias: `-t`                        |
 | `--collection [collectionName]` | Schematics collection to use. Pass the package name of an installed npm package that contains the schematic.<br/> Alias: `-c` |
 

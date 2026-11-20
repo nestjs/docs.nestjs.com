@@ -10,6 +10,8 @@ Nest provides the `@nestjs/bullmq` package for BullMQ integration and the `@nest
 
 Both BullMQ and Bull use [Redis](https://redis.io/) to persist job data, so you need a running Redis instance. Because they are Redis-backed, your queue architecture can be fully distributed and platform-independent. For example, you can run some queue <a href="application/queues#producers">producers</a>, <a href="application/queues#consumers">consumers</a>, and <a href="application/queues#event-listeners">listeners</a> in Nest on one or more nodes, and other producers, consumers, and listeners on other Node.js platforms on other network nodes.
 
+> info **Hint** To see a queue send email in a complete application, with retries and no duplicate sends, follow [Send emails and run background jobs in Node.js](/tutorials/background-jobs).
+
 This chapter covers the `@nestjs/bullmq` and `@nestjs/bull` packages. For more background and implementation details, see the [BullMQ documentation](https://docs.bullmq.io/) and the [Bull reference](https://github.com/OptimalBits/bull/blob/master/REFERENCE.md).
 
 #### BullMQ installation

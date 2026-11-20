@@ -260,7 +260,7 @@ export class AppService implements OnModuleInit {
     this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
-  getHero(): Observable<string> {
+  getHero(): Observable<Hero> {
     return this.heroesService.findOne({ id: 1 });
   }
 }
@@ -290,7 +290,7 @@ export class AppService implements OnModuleInit {
     this.heroesService = this.client.getService<HeroesService>('HeroesService');
   }
 
-  getHero(): Observable<string> {
+  getHero(): Observable<Hero> {
     return this.heroesService.findOne({ id: 1 });
   }
 }
@@ -303,8 +303,13 @@ In each case, you end up with a reference to the `HeroesService` proxy object, w
 All service methods are **lower camel cased**, following the natural convention of the language. For example, while the `HeroesService` definition in the `.proto` file contains the `FindOne()` function, the `heroesService` instance provides the `findOne()` method.
 
 ```typescript
+interface Hero {
+  id: number;
+  name: string;
+}
+
 interface HeroesService {
-  findOne(data: { id: number }): Observable<any>;
+  findOne(data: { id: number }): Observable<Hero>;
 }
 ```
 
@@ -313,7 +318,7 @@ A handler can also return an `Observable`, in which case the result values are e
 ```typescript
 @@filename(heroes.controller)
 @Get()
-call(): Observable<any> {
+call(): Observable<Hero> {
   return this.heroesService.findOne({ id: 1 });
 }
 @@switch
@@ -326,7 +331,7 @@ call() {
 To send gRPC metadata along with the request, pass a second argument, as follows:
 
 ```typescript
-call(): Observable<any> {
+call(): Observable<Hero> {
   const metadata = new Metadata();
   metadata.add('Set-Cookie', 'yummy_cookie=choco');
 
