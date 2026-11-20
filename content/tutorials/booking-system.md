@@ -1,6 +1,8 @@
-### Build a booking system without double bookings
+### Build a booking system in Node.js without double bookings
 
-This tutorial builds the backend of a booking system: resources such as meeting rooms, which staff manage, a list of each day's free slots, and bookings that users make and cancel, with a guarantee that no two bookings of one resource ever overlap. The guarantee doesn't come from application code that looks for a conflict before it inserts, which two requests arriving together both pass. It comes from PostgreSQL: an exclusion constraint refuses the second of two overlapping bookings however they arrive, and the API turns that refusal into a `409 Conflict`.
+Build a booking and reservation system in Node.js with NestJS and PostgreSQL that never double-books, with free slots, time zones and cancellations.
+
+The system has resources such as meeting rooms, which staff manage, a list of each day's free slots, and bookings that users make and cancel, with a guarantee that no two bookings of one resource ever overlap. The guarantee doesn't come from application code that looks for a conflict before it inserts, which two requests arriving together both pass. It comes from PostgreSQL: an exclusion constraint refuses the second of two overlapping bookings however they arrive, and the API turns that refusal into a `409 Conflict`.
 
 By the end, the API will:
 

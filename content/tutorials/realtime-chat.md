@@ -1,6 +1,8 @@
-### Build a real-time chat backend
+### Build a real-time chat backend in Node.js
 
-This tutorial builds the backend of a chat application: rooms with members, messages that arrive live over WebSockets and are stored in PostgreSQL, a history that clients page through over REST, and presence and typing indicators. A chat backend looks simple until you ask what happens at the edges: a user who leaves a room with a tab still open, a message broadcast and then lost on a restart, a token that expires in the middle of a connection, a client that sends a thousand messages a second. This tutorial spends its time on those.
+Build a real-time chat backend in Node.js with NestJS and Socket.IO: authenticated WebSockets, rooms, message history in PostgreSQL, and presence.
+
+The chat has rooms with members, messages that arrive live over WebSockets and are stored in PostgreSQL, a history that clients page through over REST, and presence and typing indicators. A chat backend looks simple until you ask what happens at the edges: a user who leaves a room with a tab still open, a message broadcast and then lost on a restart, a token that expires in the middle of a connection, a client that sends a thousand messages a second. This tutorial spends its time on those.
 
 By the end, the API will:
 

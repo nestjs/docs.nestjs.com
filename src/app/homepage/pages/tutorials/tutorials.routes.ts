@@ -14,51 +14,51 @@ export const TUTORIALS_ROUTES: Routes = [
   {
     path: 'rest-api-jwt-authentication',
     component: RestApiJwtAuthenticationComponent,
-    data: { title: 'Build a REST API with JWT authentication - Tutorials' },
+    data: { title: 'How to build a REST API with JWT authentication in Node.js' },
   },
   {
     path: 'ecommerce-backend',
     component: EcommerceBackendComponent,
-    data: { title: 'Build an e-commerce backend - Tutorials' },
+    data: { title: 'How to build an e-commerce backend in Node.js' },
   },
   {
     path: 'multi-tenant-saas',
     component: MultiTenantSaasComponent,
-    data: { title: 'Build a multi-tenant SaaS backend - Tutorials' },
+    data: { title: 'How to build a multi-tenant SaaS backend in Node.js' },
   },
   {
     path: 'project-management-api',
     component: ProjectManagementApiComponent,
-    data: { title: 'Build a project-management API - Tutorials' },
+    data: { title: 'How to build a project-management API in Node.js' },
   },
   {
     path: 'realtime-chat',
     component: RealtimeChatComponent,
-    data: { title: 'Build a real-time chat backend - Tutorials' },
+    data: { title: 'How to build a real-time chat backend in Node.js' },
   },
   {
     path: 'booking-system',
     component: BookingSystemComponent,
-    data: { title: 'Build a booking system - Tutorials' },
+    data: { title: 'How to build a booking system in Node.js without double bookings' },
   },
   {
     path: 'background-jobs',
     component: BackgroundJobsComponent,
-    data: { title: 'Send emails and run background jobs - Tutorials' },
+    data: { title: 'How to send emails and run background jobs in Node.js' },
   },
   {
     path: 'file-uploads',
     component: FileUploadsComponent,
-    data: { title: 'Build a file upload service - Tutorials' },
+    data: { title: 'How to build a file upload service in Node.js' },
   },
   {
     path: 'payments-webhooks',
     component: PaymentsWebhooksComponent,
-    data: { title: 'Accept payments with webhooks - Tutorials' },
+    data: { title: 'How to accept payments with webhooks in Node.js' },
   },
   {
     path: 'ai-chat-backend',
     component: AiChatBackendComponent,
-    data: { title: 'Build an AI chat backend - Tutorials' },
+    data: { title: 'How to build an AI chat backend in Node.js' },
   },
 ];

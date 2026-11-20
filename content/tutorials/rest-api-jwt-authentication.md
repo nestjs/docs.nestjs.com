@@ -1,6 +1,8 @@
-### Build a REST API with JWT authentication
+### Build a REST API with JWT authentication in Node.js
 
-This tutorial builds a REST API for personal notes, from one file to an application you can deploy. Users sign up with an email and a password, get a short-lived JWT access token and a rotating refresh token, and read and write only their own notes. Each building block has its own chapter in this documentation; this tutorial puts them together in the order a real project needs them, and links to the chapter whenever you want the details.
+Build a production-ready REST API with JWT authentication in Node.js and TypeScript with NestJS and PostgreSQL, from one file to a deployable app.
+
+The API stores personal notes. Users sign up with an email and a password, get a short-lived JWT access token and a rotating refresh token, and read and write only their own notes. Each building block has its own chapter in this documentation; this tutorial puts them together in the order a real project needs them, and links to the chapter whenever you want the details.
 
 By the end, the API will:
 

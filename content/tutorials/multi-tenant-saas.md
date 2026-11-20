@@ -1,6 +1,8 @@
-### Build a multi-tenant SaaS backend
+### Build a multi-tenant SaaS backend in Node.js
 
-This tutorial builds the backend of a multi-tenant SaaS application: organizations that users create and join, members with the roles owner, admin and member, and projects that belong to one organization and that nobody outside it can see. A multi-tenant backend is ordinary CRUD with one rule that must never break: a request only ever touches the data of its own tenant. This tutorial spends its time on that rule, and on the few places where getting it right takes more than a `WHERE` clause: invitations, role changes, and the last owner of an organization.
+Build a multi-tenant SaaS backend in Node.js with NestJS and PostgreSQL: organizations, roles, email invitations, and every query scoped to its tenant.
+
+The application has organizations that users create and join, members with the roles owner, admin and member, and projects that belong to one organization and that nobody outside it can see. A multi-tenant backend is ordinary CRUD with one rule that must never break: a request only ever touches the data of its own tenant. This tutorial spends its time on that rule, and on the few places where getting it right takes more than a `WHERE` clause: invitations, role changes, and the last owner of an organization.
 
 By the end, the API will:
 

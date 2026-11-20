@@ -1,6 +1,8 @@
-### Build an AI chat backend that streams answers
+### Build an AI chat backend in Node.js that streams answers
 
-This tutorial builds a chat assistant for a notes API: a signed-in user asks about their notes, the model looks them up with tools that run as that user, and the answer streams to the browser as the model writes it. Calling a model takes a few lines. The work is in what surrounds the call: the model must never read another user's notes, a browser that closes mid-answer must stop the paid call, the history sent to the model must stay within a budget, and a double-clicked send must not start two answers. This tutorial spends its time on those parts.
+Build an AI chatbot backend in Node.js with NestJS: tools that read only the user's own data, answers streamed to the browser, and saved conversations.
+
+The assistant works over a notes API: a signed-in user asks about their notes, the model looks them up with tools that run as that user, and the answer streams to the browser as the model writes it. Calling a model takes a few lines. The work is in what surrounds the call: the model must never read another user's notes, a browser that closes mid-answer must stop the paid call, the history sent to the model must stay within a budget, and a double-clicked send must not start two answers. This tutorial spends its time on those parts.
 
 By the end, the API will:
 

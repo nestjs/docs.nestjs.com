@@ -1,6 +1,8 @@
-### Build a project-management API
+### Build a project-management API in Node.js
 
-This tutorial builds the API of a project-management tool for teams: projects with members, tasks with a status, an assignee and a due date, comments, live updates in the browser, and reminders before tasks are due. Most of it is CRUD. The parts that aren't are where several people work on the same records at once, so this tutorial spends its time there: permissions checked against each record, status changes that can't overwrite each other, a task list that pages correctly while it changes, and a stream that carries only a user's own projects.
+Build a project-management API in Node.js with NestJS: projects, tasks and comments, per-record permissions, live updates over SSE, and due-date reminders.
+
+The API serves a project-management tool for teams: projects with members, tasks with a status, an assignee and a due date, comments, live updates in the browser, and reminders before tasks are due. Most of it is CRUD. The parts that aren't are where several people work on the same records at once, so this tutorial spends its time there: permissions checked against each record, status changes that can't overwrite each other, a task list that pages correctly while it changes, and a stream that carries only a user's own projects.
 
 By the end, the API will:
 

@@ -2,6 +2,8 @@
 
 This chapter covers files in both directions: receiving files that clients upload, and [streaming files](#streaming-files) back to clients.
 
+> info **Hint** For a complete upload service with type and size checks, S3 storage, quotas and expiring links, follow [Build a file upload service in Node.js](/tutorials/file-uploads).
+
 To handle file uploads, Nest provides a built-in module based on the [multer](https://github.com/expressjs/multer) middleware package for Express. Multer handles data posted in the `multipart/form-data` format, which is primarily used to upload files with an HTTP `POST` request. The module is fully configurable, so you can adjust its behavior to your application's requirements.
 
 > warning **Warning** Multer cannot process data that is not in the `multipart/form-data` format.

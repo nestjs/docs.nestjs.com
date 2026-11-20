@@ -1,6 +1,8 @@
-### Build a file upload service
+### Build a file upload service in Node.js
 
-This tutorial builds a file upload service: users upload images and PDF documents, download them through the API or through links that expire after five minutes, and delete them, each user within a storage quota of their own. Uploading a file looks like one line of code, and most of what goes wrong happens around it: a file that claims to be a PNG and is an HTML page, a 2 GB upload held in memory, two uploads that both fit in the last free megabyte, and bytes left on the disk that nothing points to. This tutorial handles each of these, with the same code on a laptop folder and on S3.
+Build a file upload service in Node.js with NestJS: streamed uploads with type and size checks, S3 storage, per-user quotas and expiring download links.
+
+Users upload images and PDF documents, download them through the API or through links that expire after five minutes, and delete them, each user within a storage quota of their own. Uploading a file looks like one line of code, and most of what goes wrong happens around it: a file that claims to be a PNG and is an HTML page, a 2 GB upload held in memory, two uploads that both fit in the last free megabyte, and bytes left on the disk that nothing points to. This tutorial handles each of these, with the same code on a laptop folder and on S3.
 
 By the end, the API will:
 

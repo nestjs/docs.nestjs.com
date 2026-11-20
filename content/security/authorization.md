@@ -2,6 +2,8 @@
 
 `@nestjs/authorization` expresses permissions as **policies**: classes whose methods answer "may this user do this?". A policy is an ordinary provider, so it can inject services, and every check is type-checked against the policy method it calls. Policies work on any data shape, including the plain objects that Prisma, Drizzle and Kysely return.
 
+> info **Hint** To see policies in complete applications, follow [Build an e-commerce backend in Node.js](/tutorials/ecommerce-backend), where only staff edit the catalog, or [Build a project-management API in Node.js](/tutorials/project-management-api), where permissions are checked record by record.
+
 In this tutorial, you'll add permissions to the API of an online store for cat food and supplies:
 
 - Guests and customers browse published products. Staff also see drafts, and only staff edit the catalog.

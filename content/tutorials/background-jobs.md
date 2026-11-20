@@ -1,6 +1,8 @@
-### Send emails and run background jobs
+### Send emails and run background jobs in Node.js
 
-This tutorial adds email to the notes API of the JWT tutorial: a welcome email after sign-up, and an evening digest of the notes each user changed that day, sent from a BullMQ queue so that no request waits for a mail server. Sending an email is one call. Sending it from the background, reliably, is where the work is: the job must not be lost between the database and the queue, a job that runs twice must not send twice, a scheduled job must run once however many instances the API has, and a deploy must not cut a send in half.
+Send emails and run background jobs in Node.js with NestJS and BullMQ: retries, emails that never go out twice, scheduled jobs, and clean shutdown.
+
+It adds email to the notes API of the JWT tutorial: a welcome email after sign-up, and an evening digest of the notes each user changed that day, sent from a BullMQ queue so that no request waits for a mail server. Sending an email is one call. Sending it from the background, reliably, is where the work is: the job must not be lost between the database and the queue, a job that runs twice must not send twice, a scheduled job must run once however many instances the API has, and a deploy must not cut a send in half.
 
 By the end, the API will:
 

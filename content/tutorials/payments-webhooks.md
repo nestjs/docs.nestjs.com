@@ -1,6 +1,8 @@
-### Accept payments with webhooks
+### Accept payments with webhooks in Node.js
 
-This tutorial adds payments to an e-commerce backend: the API creates a payment for each order at a payment provider, and an order becomes paid when the provider's signed webhook says so, never because the browser came back from the payment page. It continues [Build an e-commerce backend](/tutorials/ecommerce-backend). Taking the money is the provider's job. The API's job is to ask for it once, to believe only what the provider signed, and to apply each of the provider's events exactly once, whatever order they arrive in and however often.
+Accept payments in Node.js with NestJS: payment provider webhooks such as Stripe's, signature checks, idempotency keys, events applied exactly once.
+
+It adds payments to an e-commerce backend: the API creates a payment for each order at a payment provider, and an order becomes paid when the provider's signed webhook says so, never because the browser came back from the payment page. It continues [Build an e-commerce backend](/tutorials/ecommerce-backend). Taking the money is the provider's job. The API's job is to ask for it once, to believe only what the provider signed, and to apply each of the provider's events exactly once, whatever order they arrive in and however often.
 
 By the end, the API will:
 

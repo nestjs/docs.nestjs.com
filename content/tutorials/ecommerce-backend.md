@@ -1,6 +1,8 @@
-### Build an e-commerce backend
+### Build an e-commerce backend in Node.js
 
-This tutorial builds the backend of an online shop: a product catalog that staff manage, a cart for every customer, and a checkout that turns the cart into an order without ever selling more than is in stock. Most of an e-commerce backend is ordinary CRUD. The parts that aren't are where money and stock change hands, so this tutorial spends its time there: prices in integer cents, prices frozen into each order, stock taken in the same statement that checks it, and checkouts that are safe when a customer double-clicks or a thousand customers want the last item.
+Build an e-commerce backend in Node.js with NestJS and PostgreSQL: a product catalog, shopping carts, and a checkout that never oversells stock.
+
+The shop has a product catalog that staff manage, a cart for every customer, and a checkout that turns the cart into an order without ever selling more than is in stock. Most of an e-commerce backend is ordinary CRUD. The parts that aren't are where money and stock change hands, so this tutorial spends its time there: prices in integer cents, prices frozen into each order, stock taken in the same statement that checks it, and checkouts that are safe when a customer double-clicks or a thousand customers want the last item.
 
 By the end, the API will:
 
