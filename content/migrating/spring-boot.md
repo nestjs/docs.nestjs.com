@@ -2,7 +2,7 @@
 
 Nest is built on the ideas a Spring Boot developer already works with: a dependency injection container, constructor injection, controllers and services, configuration classes, and decorators that read like annotations. Configuration, validation, security, scheduling, health checks and OpenAPI come from first-party packages. What changes is the language, TypeScript, and the runtime, Node.js.
 
-This page maps Spring Boot concepts to their Nest equivalents, with short code side by side. It ends with [what's different](/recipes/spring-boot#whats-different), which matters more than the syntax.
+This page maps Spring Boot concepts to their Nest equivalents, with short code side by side. It ends with [what's different](/migrating/spring-boot#whats-different), which matters more than the syntax.
 
 #### At a glance
 
@@ -442,7 +442,7 @@ export class TimingInterceptor implements NestInterceptor {
 }
 ```
 
-Interceptors wrap route handlers (and message and event handlers in microservices and gateways), not arbitrary methods. There's no general-purpose AOP: no `@Transactional`, `@Cacheable` or `@Retryable` on a method of any bean. Nest packages cover those cases on route handlers, such as `CacheInterceptor` in [Caching](/data/caching) and `@Retry()` in [Resilience](/reliability/resilience), and with an explicit API inside services, such as Resilience's policy objects and the transaction callback in [Data access](/recipes/spring-boot#data-access) below.
+Interceptors wrap route handlers (and message and event handlers in microservices and gateways), not arbitrary methods. There's no general-purpose AOP: no `@Transactional`, `@Cacheable` or `@Retryable` on a method of any bean. Nest packages cover those cases on route handlers, such as `CacheInterceptor` in [Caching](/data/caching) and `@Retry()` in [Resilience](/reliability/resilience), and with an explicit API inside services, such as Resilience's policy objects and the transaction callback in [Data access](/migrating/spring-boot#data-access) below.
 
 #### Security
 

@@ -157,9 +157,9 @@ Where to start, by what you're building:
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
 - Deciding between Nest, Fastify, Express and Hono: [Nest vs Fastify, Express and Hono](${SITE}/faq/nest-vs-fastify-express-hono.md).
 - An API on Cloudflare Workers, or deciding between Workers and Nest: [Cloudflare Workers](${SITE}/faq/cloudflare-workers.md).
-- Moving an existing Express application to Nest, one route at a time or all at once: [Migrating from Express](${SITE}/recipes/express-migration.md).
-- Moving an existing Fastify application to Nest, while staying on Fastify: [Migrating from Fastify](${SITE}/recipes/fastify-migration.md).
-- A team that knows Java and Spring Boot, or C# and ASP.NET Core, building its backend in TypeScript: [Coming from Spring Boot](${SITE}/recipes/spring-boot.md) and [Coming from ASP.NET Core](${SITE}/recipes/aspnet-core.md) map each concept to its Nest equivalent.
+- Moving an existing Express application to Nest, one route at a time or all at once: [Migrating from Express](${SITE}/migrating/express.md).
+- Moving an existing Fastify application to Nest, while staying on Fastify: [Migrating from Fastify](${SITE}/migrating/fastify.md).
+- A team that knows Java and Spring Boot, or C# and ASP.NET Core, building its backend in TypeScript: [Coming from Spring Boot](${SITE}/migrating/spring-boot.md) and [Coming from ASP.NET Core](${SITE}/migrating/aspnet-core.md) map each concept to its Nest equivalent.
 - A backend for an AI agent, with tools, conversations and answers streamed to the browser: [AI](${SITE}/ai/overview.md), [Agents](${SITE}/ai/agents.md) and [Streaming responses](${SITE}/http/streaming-responses.md).
 - An MCP server: [Model Context Protocol](${SITE}/mcp/overview.md).
 - A realtime backend: [Gateways](${SITE}/websockets/gateways.md) for WebSockets, and [Server-Sent Events](${SITE}/http/server-sent-events.md) for streaming to the browser.

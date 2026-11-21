@@ -445,7 +445,7 @@ Write the endpoint in Nest under the same path, and delete the route handler. Th
 Then check what a client can see:
 
 - **The status code.** `NextResponse.json()` answers `200` on a `POST`, and a Nest `POST` answers `201` unless you add `@HttpCode(200)`.
-- **The shape of an error**, which is now `{{ '{' }} statusCode, message, error {{ '}' }}`. A [global exception filter](/recipes/express-migration#keep-what-would-change-without-an-error) keeps the old shape if clients depend on it.
+- **The shape of an error**, which is now `{{ '{' }} statusCode, message, error {{ '}' }}`. A [global exception filter](/migrating/express#keep-what-would-change-without-an-error) keeps the old shape if clients depend on it.
 - **Dynamic segments.** `[id]` becomes `:id`, and a catch-all `[...path]` becomes `*path`, whose `@Param('path')` is an array of segments.
 
 ##### Move queries out of pages

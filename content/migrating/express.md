@@ -14,7 +14,7 @@ An Express application can move to Nest one route at a time, with both serving r
 | What about existing middleware? | It keeps running, for Nest's routes too | It moves to Nest with everything else |
 | How long are there two styles in the code? | Until the last route moves | Never |
 
-Move one route at a time when the application is large, when several people work on it, or when it can't wait. Move it all at once when it's small enough to review as one change and you can pin what it does with tests. That also suits a [coding agent](/recipes/express-migration#give-it-to-a-coding-agent), which can translate a whole application in one go, but can't tell on its own what must stay the same.
+Move one route at a time when the application is large, when several people work on it, or when it can't wait. Move it all at once when it's small enough to review as one change and you can pin what it does with tests. That also suits a [coding agent](/migrating/express#give-it-to-a-coding-agent), which can translate a whole application in one go, but can't tell on its own what must stay the same.
 
 #### One route at a time
 
@@ -412,7 +412,7 @@ Either approach works with a coding agent, and all at once is the better fit whe
 
 ```bash
 Migrate this Express application to NestJS all at once, following
-https://docs.nestjs.com/recipes/express-migration.md.
+https://docs.nestjs.com/migrating/express.md.
 
 1. Before changing anything, write black-box HTTP tests that cover every
    route: status codes, bodies and important headers, failures included.

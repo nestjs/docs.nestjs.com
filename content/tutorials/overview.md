@@ -38,5 +38,5 @@ The AI chat tutorial runs without a model provider's API key: it uses a scripted
 #### More
 
 - Deciding whether Nest fits your project: [Nest vs Fastify, Express and Hono](/faq/nest-vs-fastify-express-hono).
-- Moving an existing application: [Migrating from Express](/recipes/express-migration) and [Migrating from Fastify](/recipes/fastify-migration).
+- Moving an existing application: [Migrating from Express](/migrating/express) and [Migrating from Fastify](/migrating/fastify).
 - Seeing what your API does in production: [NestJS Observe](/observability/overview).
