@@ -1405,6 +1405,8 @@ async disable(
 
 #### Add "Sign in with Google"
 
+> info **Hint** This section signs a browser in with a session cookie. For an API with bearer tokens, where the web or mobile app gets an ID token from Google's own sign-in library and the API exchanges it for its own JWTs, follow [Add Google login to a Node.js API](/tutorials/google-login).
+
 In the Google Cloud console, create an OAuth client ID of type **Web application**, and add this authorized redirect URI (and the production one, when you deploy):
 
 ```bash
