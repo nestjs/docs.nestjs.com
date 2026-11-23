@@ -154,7 +154,7 @@ export class ModelUnavailableFilter implements ExceptionFilter {
 
 #### Policies of your own
 
-`resilience` takes a policy, or the name of a preset of `ResilienceService`, in place of generated `retry` and `timeout` policies. It follows the call > model > module `defaults` precedence; a call-level policy replaces any model or module policy entirely. The selected policy replaces lower-priority `retry` and `timeout` settings. An explicit `retry` or `timeout` at the same or a higher-priority level throws `AiConfigurationError` before a provider request; explicit `false` values count as settings too. Fallback models are still tried around the policy, so a call to a model whose breaker is open goes on to the next one:
+`resilience` takes a policy, or the name of a preset of `ResilienceService`, in place of generated `retry` and `timeout` policies. It follows the call > model > module `defaults` precedence; a call-level policy replaces any model or module policy entirely. The selected policy replaces lower-priority `retry` and `timeout` settings. An explicit `retry` or `timeout` at the same or a higher-priority level throws `AiConfigurationError` before a provider request; explicit `false` values count as settings too. This check covers the model the call starts with: a fallback model with its own `resilience` keeps that policy, and the call's `retry` and `timeout` don't apply to it. Fallback models are still tried around the policy, so a call to a model whose breaker is open goes on to the next one:
 
 ```typescript
 @@filename(app.module)
