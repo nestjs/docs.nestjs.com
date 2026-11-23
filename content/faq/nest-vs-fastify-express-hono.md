@@ -13,7 +13,7 @@ Fastify, Express and Hono route requests to your handlers, and you choose or wri
 | A service that will stay a few routes, such as a proxy or a webhook receiver | Fastify or Hono | There's nothing to organize |
 | An API on Cloudflare Workers or another edge runtime | Hono | It's built on Web Standards and runs there natively. See [Cloudflare Workers](/faq/cloudflare-workers) |
 | A Next.js frontend sharing route types with its API, with no code generation | Hono | Its RPC client infers types from the routes. With Nest, [a shared package](/recipes/nextjs) holds the schemas and types instead |
-| An Express application that already works | Express, or Nest one route at a time | [Migrating from Express](/recipes/express-migration) runs both side by side |
+| An Express application that already works | Express, or Nest one route at a time | [Migrating from Express](/migrating/express) runs both side by side |
 | The highest request rate on routes that do very little | Fastify | It's a few percent ahead of Nest. See [Performance](/faq/nest-vs-fastify-express-hono#performance) |
 
 #### What comes with each
@@ -122,5 +122,5 @@ These routes do almost no work. A route that queries a database or calls other s
 
 The choice doesn't have to be final:
 
-- From Fastify, Nest runs on the same server through the `FastifyAdapter`, and your plugins keep working. See [Migrating from Fastify](/recipes/fastify-migration).
-- From Express, routes move one at a time with both serving requests, or all at once. See [Migrating from Express](/recipes/express-migration).
+- From Fastify, Nest runs on the same server through the `FastifyAdapter`, and your plugins keep working. See [Migrating from Fastify](/migrating/fastify).
+- From Express, routes move one at a time with both serving requests, or all at once. See [Migrating from Express](/migrating/express).

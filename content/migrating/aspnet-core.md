@@ -2,7 +2,7 @@
 
 Nest is built on the ideas an ASP.NET Core developer already works with: a dependency injection container with lifetimes, constructor injection, attribute-routed controllers, a request pipeline of middleware and filters, and typed options. Validation, authentication, authorization, configuration, background jobs, health checks and OpenAPI come from first-party packages. What changes is the language, TypeScript, and the runtime, Node.js.
 
-This page maps ASP.NET Core concepts to their Nest equivalents, with short code side by side. It ends with [what's different](/recipes/aspnet-core#whats-different), which matters more than the syntax.
+This page maps ASP.NET Core concepts to their Nest equivalents, with short code side by side. It ends with [what's different](/migrating/aspnet-core#whats-different), which matters more than the syntax.
 
 #### At a glance
 

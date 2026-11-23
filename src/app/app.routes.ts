@@ -203,6 +203,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'migrating',
+        loadChildren: () =>
+          import('./homepage/pages/migrating/migrating.routes').then(
+            (r) => r.MIGRATING_ROUTES,
+          ),
+      },
+      {
         path: 'faq',
         loadChildren: () =>
           import('./homepage/pages/faq/faq.routes').then(

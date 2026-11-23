@@ -8,7 +8,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
     selector: 'app-fastify-migration',
-    templateUrl: './fastify-migration.component.html',
+    templateUrl: './fastify.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [

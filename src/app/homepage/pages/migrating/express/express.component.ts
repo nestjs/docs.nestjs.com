@@ -8,7 +8,7 @@ import { ExtensionPipe } from '../../../../shared/pipes/extension.pipe';
 
 @Component({
     selector: 'app-express-migration',
-    templateUrl: './express-migration.component.html',
+    templateUrl: './express.component.html',
     changeDetection: ChangeDetectionStrategy.OnPush,
     standalone: true,
     imports: [

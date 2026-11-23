@@ -18,7 +18,11 @@
 # never reach the app.
 /application/http-module.md        /application/http-client.md  301
 /recipes/mikroorm.md               /data/mikroorm.md  301
+/recipes/aspnet-core.md            /migrating/aspnet-core.md  301
+/recipes/express-migration.md      /migrating/express.md  301
+/recipes/fastify-migration.md      /migrating/fastify.md  301
 /recipes/prisma.md                 /data/prisma.md  301
+/recipes/spring-boot.md            /migrating/spring-boot.md  301
 /recipes/terminus.md               /reliability/terminus.md  301
 /techniques/caching.md             /data/caching.md  301
 /techniques/compression.md         /http/compression.md  301

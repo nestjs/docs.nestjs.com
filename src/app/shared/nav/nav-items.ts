@@ -355,10 +355,16 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'Commander', path: '/recipes/nest-commander' },
       { title: 'Async local storage', path: '/recipes/async-local-storage' },
       { title: 'Socket activation', path: '/recipes/socket-activation' },
-      { title: 'Migrating from Fastify', path: '/recipes/fastify-migration' },
-      { title: 'Migrating from Express', path: '/recipes/express-migration' },
-      { title: 'Coming from Spring Boot', path: '/recipes/spring-boot' },
-      { title: 'Coming from ASP.NET Core', path: '/recipes/aspnet-core' },
+    ],
+  },
+  {
+    title: 'Coming to Nest',
+    isOpened: false,
+    children: [
+      { title: 'From Express', path: '/migrating/express' },
+      { title: 'From Fastify', path: '/migrating/fastify' },
+      { title: 'From Spring Boot', path: '/migrating/spring-boot' },
+      { title: 'From ASP.NET Core', path: '/migrating/aspnet-core' },
     ],
   },
   {

@@ -16,7 +16,7 @@ Nest runs on Fastify through the `FastifyAdapter`, so this isn't a change of ser
 | What about existing plugins? | They keep running, for Nest's routes too | You register them again on the Nest application |
 | How long are there two styles in the code? | Until the last route moves | Never |
 
-Move one route at a time when the application is large, when several people work on it, or when it can't wait. Move it all at once when it's small enough to review as one change and you can pin what it does with tests. That also suits a [coding agent](/recipes/fastify-migration#give-it-to-a-coding-agent).
+Move one route at a time when the application is large, when several people work on it, or when it can't wait. Move it all at once when it's small enough to review as one change and you can pin what it does with tests. That also suits a [coding agent](/migrating/fastify#give-it-to-a-coding-agent).
 
 #### One route at a time
 
@@ -129,7 +129,7 @@ export class MeController {
 }
 ```
 
-Read [Keep what would change without an error](/recipes/fastify-migration#keep-what-would-change-without-an-error) as you go. It applies to every moved route, and the response schema above is there because of it.
+Read [Keep what would change without an error](/migrating/fastify#keep-what-would-change-without-an-error) as you go. It applies to every moved route, and the response schema above is there because of it.
 
 ##### Finish the migration
 
@@ -289,7 +289,7 @@ Either approach works with a coding agent, and all at once is the better fit whe
 
 ```bash
 Migrate this Fastify application to NestJS all at once, on the FastifyAdapter,
-following https://docs.nestjs.com/recipes/fastify-migration.md.
+following https://docs.nestjs.com/migrating/fastify.md.
 
 1. Before changing anything, write black-box HTTP tests that cover every
    route: status codes, bodies and important headers, failures included.
