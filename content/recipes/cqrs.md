@@ -674,7 +674,7 @@ Unless `rethrowUnhandled` is set, a saga whose stream throws stops by default: t
 CqrsModule.forRoot({ sagaErrorStrategy: 'resubscribe' });
 ```
 
-The first resubscription happens after 100 ms, and the delay doubles with each error up to 30 seconds. It starts again from 100 ms when an error comes a minute or more after the previous one; a successful event doesn't reset it. Events published while the saga waits are missed, and operators that emit on subscription, such as `startWith`, run again on every resubscription.
+The first resubscription happens after 100 ms, and the delay doubles with each error up to 30 seconds. It starts again from 100 ms when an error comes a minute or more after the previous one; a successful event doesn't reset it. Events published while the saga waits are missed, and operators that emit on subscription, such as `startWith`, run again on every resubscription. With `rethrowUnhandled` set, the error is rethrown instead and the saga is not resubscribed.
 
 With either strategy, events still in flight inside the saga when it throws (for example, waiting in `delay` or in an asynchronous `mergeMap`) are dropped without being reported. To keep one bad event from affecting the others, catch errors per event inside the inner `mergeMap`:
 
