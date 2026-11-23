@@ -79,6 +79,14 @@ The `SwaggerModule` automatically reflects all of your endpoints.
 >
 > This exposes it at `http://localhost:3000/swagger/json`.
 
+> warning **Warning** `setup()` serves the Swagger UI at `/api`, and the document at `/api-json` and `/api-yaml` (or the paths you set with `jsonDocumentUrl` and `yamlDocumentUrl`), to anyone who can reach the application, in every environment. [Guards](/guards) don't run for these routes, so a global guard doesn't protect them, and with Express and the Node adapter, [middleware](/middleware) runs for them only if it's registered before `setup()` is called. Register `setup()` only outside production, or put your own middleware in front of all three paths, because `app.use('/api', ...)` alone leaves the other two open:
+>
+> ```typescript
+> if (process.env.NODE_ENV !== 'production') {
+>   SwaggerModule.setup('api', app, documentFactory);
+> }
+> ```
+
 > info **Hint** Swagger UI works with the default [Content Security Policy](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) of Nest's built-in [security headers](/security/helmet). If you add scripts through `customJs`/`customJsStr`, or serve Swagger UI over plain HTTP outside local development, see [Swagger UI and GraphQL IDEs](/security/helmet#swagger-ui-and-graphql-ides) for the directives to adjust.
 
 > warning **Warning** When you register `helmet` directly with Fastify instead, its [CSP](https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP) can block the Swagger UI. To resolve this conflict, configure the CSP as shown below:
