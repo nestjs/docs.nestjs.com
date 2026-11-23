@@ -200,6 +200,8 @@ export const NAV_ITEMS: NavItem[] = [
         title: 'REST API with JWT authentication',
         path: '/tutorials/rest-api-jwt-authentication',
       },
+      { title: 'Google login', path: '/tutorials/google-login' },
+      { title: 'MongoDB CRUD API', path: '/tutorials/mongodb-crud-api' },
       { title: 'E-commerce backend', path: '/tutorials/ecommerce-backend' },
       { title: 'Multi-tenant SaaS backend', path: '/tutorials/multi-tenant-saas' },
       { title: 'Project-management API', path: '/tutorials/project-management-api' },
@@ -209,6 +211,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'File upload service', path: '/tutorials/file-uploads' },
       { title: 'Payments with webhooks', path: '/tutorials/payments-webhooks' },
       { title: 'AI chat backend', path: '/tutorials/ai-chat-backend' },
+      { title: 'Microservices with RabbitMQ', path: '/tutorials/microservices-rabbitmq' },
     ],
   },
   {
