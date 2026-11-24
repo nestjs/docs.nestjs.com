@@ -2,7 +2,7 @@
 
 Cross-site request forgery (CSRF or XSRF) is an attack in which a malicious site makes a user's browser send unwanted, state-changing requests to your application. Because the browser attaches the user's cookies to those requests, the application treats them as if the user had sent them on purpose.
 
-Starting with NestJS v12.1, Nest has built-in CSRF protection. It works the same way on Express and Fastify, and needs no extra package, cookie, session, or change to your client code.
+Starting with NestJS v12.1, Nest has built-in CSRF protection. It works the same way on Express, Fastify and the [Node adapter](/http/performance#node-adapter), and needs no extra package, cookie, session, or change to your client code.
 
 #### How it works
 
@@ -32,7 +32,7 @@ The check runs for every request, including requests to routes that do not exist
 
 - Call `enableCsrfProtection()` before `app.init()` or `app.listen()`. Calling it afterwards, or calling it twice, throws an error.
 - Options are validated when you call the method, so a bad configuration fails at startup. For example, a misspelled option throws `Invalid CSRF protection options: unknown option "trustedOrigin" (expected "trustedOrigins", "exclude").`
-- The check is registered as a framework-level middleware (Express) or `onRequest` hook (Fastify) at the point where you call the method. Middleware registered with `app.use()` before that call runs first, so call `enableCsrfProtection()` right after `NestFactory.create()`.
+- The check is registered as a framework-level middleware (Express and the Node adapter) or `onRequest` hook (Fastify) at the point where you call the method. Middleware registered with `app.use()` before that call runs first, so call `enableCsrfProtection()` right after `NestFactory.create()`.
 - `app.useSecurityHeaders()` (see [Security headers](/security/helmet)) shares the same request hook. You can call the two methods in any order: the headers are always written before the CSRF check runs, so rejected requests carry them too.
 - `setGlobalPrefix()` and `enableVersioning()` can be called before or after `enableCsrfProtection()`, because exclusions are resolved when the application initializes.
 
@@ -136,7 +136,7 @@ app.enableCsrfProtection({
 });
 ```
 
-Instead of a list, `exclude` also accepts a predicate that receives the platform request object (an Express `Request` or a `FastifyRequest`) and returns `true` to skip the check. It is called only for requests that would otherwise be rejected.
+Instead of a list, `exclude` also accepts a predicate that receives the platform request object (an Express `Request`, a `FastifyRequest` or a `NodeRequest`) and returns `true` to skip the check. It is called only for requests that would otherwise be rejected.
 
 > warning **Warning** A predicate receives the raw request, so none of the matching rules above apply to it. For example, a predicate that tests whether `request.url` starts with `/public/` also skips the check for `/public/../account`, which a router or proxy may resolve to `/account`. Prefer a list of routes where you can.
 
