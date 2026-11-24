@@ -136,7 +136,7 @@ app.enableCsrfProtection({
 });
 ```
 
-Instead of a list, `exclude` also accepts a predicate that receives the platform request object (an Express `Request` or a `FastifyRequest`) and returns `true` to skip the check. It is called only for requests that would otherwise be rejected.
+Instead of a list, `exclude` also accepts a predicate that receives the platform request object (an Express `Request`, a `FastifyRequest` or a `NodeRequest`) and returns `true` to skip the check. It is called only for requests that would otherwise be rejected.
 
 > warning **Warning** A predicate receives the raw request, so none of the matching rules above apply to it. For example, a predicate that tests whether `request.url` starts with `/public/` also skips the check for `/public/../account`, which a router or proxy may resolve to `/account`. Prefer a list of routes where you can.
 
