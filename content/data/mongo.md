@@ -2,6 +2,8 @@
 
 Nest supports two methods for integrating with the [MongoDB](https://www.mongodb.com/) database. You can either use the [TypeORM](https://github.com/typeorm/typeorm) module described in the [TypeORM chapter](/data/typeorm), which has a connector for MongoDB, or use [Mongoose](https://mongoosejs.com), the most popular MongoDB object modeling tool. This chapter describes the latter, using the dedicated `@nestjs/mongoose` package.
 
+> info **Hint** For a complete CRUD REST API on MongoDB, with validated ids, duplicate-key errors, cursor pagination and updates that are never lost, follow [Build a CRUD REST API with Node.js and MongoDB](/tutorials/mongodb-crud-api).
+
 Start by installing the required dependencies:
 
 ```bash

@@ -4,6 +4,8 @@ In addition to traditional (sometimes called monolithic) application architectur
 
 In Nest, a microservice is fundamentally an application that uses a different **transport** layer than HTTP.
 
+> info **Hint** For two complete services that talk over RabbitMQ, with events, request-response, retries, a dead-letter queue and messages that survive a crash, follow [Build microservices in Node.js with RabbitMQ](/tutorials/microservices-rabbitmq).
+
 <figure><img class="illustrative-image" src="/assets/Microservices_1.png" /></figure>
 
 Nest supports several built-in transport layer implementations, called **transporters**, which are responsible for transmitting messages between different microservice instances. Most transporters natively support both **request-response** and **event-based** message styles. Nest abstracts the implementation details of each transporter behind a canonical interface for both styles. This lets you switch from one transport layer to another (e.g., to take advantage of the reliability or performance features of a particular transport layer) without changing your application code.

@@ -2,6 +2,8 @@
 
 [RabbitMQ](https://www.rabbitmq.com/) is an open-source, lightweight message broker that supports multiple messaging protocols. It can be deployed in distributed and federated configurations to meet high-scale, high-availability requirements, and it is one of the most widely deployed message brokers, used by small startups and large enterprises alike.
 
+> info **Hint** For two complete services that talk over RabbitMQ, with events, request-response, retries, a dead-letter queue and messages that survive a crash, follow [Build microservices in Node.js with RabbitMQ](/tutorials/microservices-rabbitmq).
+
 #### Installation
 
 To start building RabbitMQ-based microservices, first install the required packages:

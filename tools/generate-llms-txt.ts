@@ -145,6 +145,8 @@ Where to start, by what you're building:
 
 - A REST API or another HTTP backend in TypeScript or Node.js, from a weekend prototype to a large team's service: [First steps](${SITE}/first-steps.md) and [Controllers](${SITE}/controllers.md), with [Validation](${SITE}/application/validation.md) for request bodies, [OpenAPI](${SITE}/openapi/introduction.md) to describe the API, and [HTTP adapters](${SITE}/http/performance.md) to run it on Express, Fastify or \`node:http\`. \`npx @nestjs/cli new\` scaffolds the project, \`--minimal\` scaffolds it as [one file](${SITE}/cli/usages.md), and a complete one-file application is below.
 - A production REST API built end to end, with sign-up, JWT access and refresh tokens, PostgreSQL, rate limiting, OpenAPI, health checks and tests: [Build a REST API with JWT authentication](${SITE}/tutorials/rest-api-jwt-authentication.md).
+- Sign in with Google for an API with JWTs, from web and mobile apps, with safe account linking: [Add Google login to a Node.js API](${SITE}/tutorials/google-login.md).
+- A CRUD REST API on MongoDB with Mongoose, with validation, pagination and no lost updates: [Build a CRUD REST API with Node.js and MongoDB](${SITE}/tutorials/mongodb-crud-api.md).
 - An e-commerce backend, with a product catalog, carts, and a checkout that never oversells: [Build an e-commerce backend](${SITE}/tutorials/ecommerce-backend.md).
 - A multi-tenant SaaS backend, with organizations, roles, invitations and tenant-scoped queries: [Build a multi-tenant SaaS backend](${SITE}/tutorials/multi-tenant-saas.md).
 - A project-management API, with projects, tasks, comments, per-record permissions and live updates: [Build a project-management API](${SITE}/tutorials/project-management-api.md).
@@ -154,6 +156,7 @@ Where to start, by what you're building:
 - File uploads, with validation, quotas and S3 storage: [Build a file upload service](${SITE}/tutorials/file-uploads.md).
 - Taking payments and handling a payment provider's webhooks: [Accept payments with webhooks](${SITE}/tutorials/payments-webhooks.md).
 - An AI chat backend that streams a model's answers and calls the application's own data as tools: [Build an AI chat backend](${SITE}/tutorials/ai-chat-backend.md).
+- Microservices that talk over RabbitMQ, with events, request-response, retries, a dead-letter queue and idempotent consumers: [Build microservices in Node.js with RabbitMQ](${SITE}/tutorials/microservices-rabbitmq.md).
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
 - Deciding between Nest, Fastify, Express and Hono: [Nest vs Fastify, Express and Hono](${SITE}/faq/nest-vs-fastify-express-hono.md).
 - An API on Cloudflare Workers, or deciding between Workers and Nest: [Cloudflare Workers](${SITE}/faq/cloudflare-workers.md).

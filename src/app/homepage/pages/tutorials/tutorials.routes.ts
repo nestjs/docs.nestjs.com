@@ -1,5 +1,8 @@
 import { Routes } from '@angular/router';
 import { TutorialsOverviewComponent } from './overview/overview.component';
+import { MicroservicesRabbitmqComponent } from './microservices-rabbitmq/microservices-rabbitmq.component';
+import { MongodbCrudApiComponent } from './mongodb-crud-api/mongodb-crud-api.component';
+import { GoogleLoginComponent } from './google-login/google-login.component';
 import { AiChatBackendComponent } from './ai-chat-backend/ai-chat-backend.component';
 import { BackgroundJobsComponent } from './background-jobs/background-jobs.component';
 import { BookingSystemComponent } from './booking-system/booking-system.component';
@@ -26,6 +29,16 @@ export const TUTORIALS_ROUTES: Routes = [
     path: 'rest-api-jwt-authentication',
     component: RestApiJwtAuthenticationComponent,
     data: { title: 'How to build a REST API with JWT authentication in Node.js' },
+  },
+  {
+    path: 'google-login',
+    component: GoogleLoginComponent,
+    data: { title: 'How to add Google login to a Node.js API' },
+  },
+  {
+    path: 'mongodb-crud-api',
+    component: MongodbCrudApiComponent,
+    data: { title: 'How to build a CRUD REST API with Node.js and MongoDB' },
   },
   {
     path: 'ecommerce-backend',
@@ -71,5 +84,10 @@ export const TUTORIALS_ROUTES: Routes = [
     path: 'ai-chat-backend',
     component: AiChatBackendComponent,
     data: { title: 'How to build an AI chat backend in Node.js' },
+  },
+  {
+    path: 'microservices-rabbitmq',
+    component: MicroservicesRabbitmqComponent,
+    data: { title: 'How to build microservices in Node.js with RabbitMQ' },
   },
 ];
