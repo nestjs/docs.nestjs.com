@@ -2,7 +2,7 @@
 
 Security headers, such as the ones [Helmet](https://github.com/helmetjs/helmet) sets, tell browsers to turn on protections against well-known web attacks like cross-site scripting and clickjacking. Examples are `Content-Security-Policy`, `Strict-Transport-Security` and `X-Frame-Options`.
 
-Starting with NestJS v12.1, Nest can set these headers for you with `app.useSecurityHeaders()`. It uses the same defaults as Helmet 8, works the same way on Express and Fastify, and needs no extra package.
+Starting with NestJS v12.1, Nest can set these headers for you with `app.useSecurityHeaders()`. It uses the same defaults as Helmet 8, works the same way on Express, Fastify and the [Node adapter](/http/performance#node-adapter), and needs no extra package.
 
 #### Getting started
 
@@ -19,7 +19,7 @@ The headers are set on every response: route responses, `404` responses, error r
 
 - Call `useSecurityHeaders()` before `app.init()` or `app.listen()`. Calling it afterwards, or calling it twice, throws an error.
 - Options are validated when you call the method, so a bad configuration fails at startup (see [Configuring headers](/security/helmet#configuring-headers)).
-- The headers are written by a framework-level middleware (Express) or `onRequest` hook (Fastify), registered at the point where you call the method. Middleware registered with `app.use()` before that call runs first, and responses that such middleware sends itself don't carry the headers, so call `useSecurityHeaders()` right after `NestFactory.create()`.
+- The headers are written by a framework-level middleware (Express and the Node adapter) or `onRequest` hook (Fastify), registered at the point where you call the method. Middleware registered with `app.use()` before that call runs first, and responses that such middleware sends itself don't carry the headers, so call `useSecurityHeaders()` right after `NestFactory.create()`.
 - `app.enableCsrfProtection()` shares the same request hook. You can call the two methods in any order: the headers are always written before the CSRF check runs.
 
 #### Default headers
