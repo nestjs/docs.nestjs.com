@@ -1,6 +1,6 @@
 ### Node.js backend tutorials
 
-Step-by-step tutorials that build complete Node.js backends in TypeScript with NestJS: REST APIs, MongoDB, microservices, e-commerce, SaaS, chat and AI.
+Step-by-step tutorials that build complete Node.js backends in TypeScript with NestJS: REST APIs, MongoDB, microservices, MCP servers, e-commerce and AI.
 
 Each tutorial builds one application of the kind teams actually ship, from an empty project to code you could deploy, and links to the chapters of this documentation for the details of each part. They use the current APIs: validation with Zod schemas, the Node adapter, [`@nestjs/authentication`](/security/authentication), and Drizzle on PostgreSQL, or Mongoose on MongoDB. Every listing comes from an application that was built and tested, and every output on the pages comes from running it.
 
@@ -30,6 +30,7 @@ If you use MongoDB, start with [Build a CRUD REST API with Node.js and MongoDB](
 | [File upload service](/tutorials/file-uploads) | Uploads, downloads, expiring links and per-user quotas, on disk or S3 | Checking type and size while streaming, and quotas under concurrent uploads |
 | [Payments with webhooks](/tutorials/payments-webhooks) | Payments for the e-commerce backend, confirmed by the provider's signed webhooks | Applying each payment event exactly once, in any order |
 | [AI chat backend](/tutorials/ai-chat-backend) | A chatbot over the user's notes, with tools and answers streamed to the browser | Tools that see only the user's own data, and stopping the model when the browser goes away |
+| [MCP server](/tutorials/mcp-server) | An MCP server for a helpdesk: tools to search and reply to tickets, tickets as resources, a reply prompt, over Streamable HTTP and stdio | OAuth access tokens verified as a resource server, one team's token never reaching another team's tickets, and a write scope the model can't get around |
 | [Microservices with RabbitMQ](/tutorials/microservices-rabbitmq) | An orders API and a fulfillment worker in one monorepo, talking over RabbitMQ with events and request-response | Messages never lost to a crash or a broker outage, poison messages dead-lettered, each event handled once |
 
 #### What you need

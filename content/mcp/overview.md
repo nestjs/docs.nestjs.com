@@ -21,6 +21,8 @@ In this tutorial, you'll give the store's order API an MCP server:
 - [OAuth 2.1](/mcp/primitives#authorization) on the HTTP endpoint, with the store's identity provider, and a scope for changing orders.
 - The same server over [stdio](/mcp/transports#over-stdio), and [tests](/mcp/testing) that call it in memory.
 
+> info **Hint** To build a complete MCP server step by step, from an empty project to tested code with OAuth access tokens, per-team data and a stdio entry point, follow [Build an MCP server in Node.js](/tutorials/mcp-server).
+
 #### Installation
 
 Install the package, the MCP TypeScript SDK it builds on, and Zod, for the schemas:
