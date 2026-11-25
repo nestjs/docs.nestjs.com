@@ -46,6 +46,7 @@ export class AppModule {}
 | `unhandledExceptionPublisher` | The publisher used to publish unhandled exceptions to the `UnhandledExceptionBus`.                                           | `DefaultUnhandledExceptionPubSub` |
 | `eventIdProvider`             | Service that retrieves unique event IDs from event instances.                                                                | `DefaultEventIdProvider`          |
 | `rethrowUnhandled`            | Whether exceptions thrown by event handlers and sagas are rethrown instead of being published to the `UnhandledExceptionBus`. | `false`                           |
+| `sagaErrorStrategy`           | What a saga does after its stream throws: `'complete'` stops it, `'resubscribe'` subscribes to it again.                      | `'complete'`                      |
 
 #### Commands
 
@@ -664,6 +665,34 @@ export interface UnhandledExceptionInfo<
    * The cause of the exception (event or command reference).
    */
   cause: Cause;
+}
+```
+
+Unless `rethrowUnhandled` is set, a saga whose stream throws stops by default: the error is published and logged, and the saga ignores every later event. To subscribe to the saga's stream again instead, set the `sagaErrorStrategy` option to `'resubscribe'`:
+
+```typescript
+CqrsModule.forRoot({ sagaErrorStrategy: 'resubscribe' });
+```
+
+The first resubscription happens after 100 ms, and the delay doubles with each error up to 30 seconds. It starts again from 100 ms when an error comes a minute or more after the previous one; a successful event doesn't reset it. Events published while the saga waits are missed, and operators that emit on subscription, such as `startWith`, run again on every resubscription. With `rethrowUnhandled` set, the error is rethrown instead and the saga is not resubscribed.
+
+With either strategy, events still in flight inside the saga when it throws (for example, waiting in `delay` or in an asynchronous `mergeMap`) are dropped without being reported. To keep one bad event from affecting the others, catch errors per event inside the inner `mergeMap`:
+
+```typescript
+@Saga()
+dragonKilled = (events$: Observable<any>): Observable<ICommand> => {
+  return events$.pipe(
+    ofType(HeroKilledDragonEvent),
+    mergeMap((event) =>
+      of(event).pipe(
+        map((event) => new DropAncientItemCommand(event.heroId, fakeItemID)),
+        catchError((error) => {
+          // Handle the error for this event only
+          return EMPTY;
+        }),
+      ),
+    ),
+  );
 }
 ```
 
