@@ -28,7 +28,7 @@ You need Node.js 22 or later, and Docker to run MongoDB locally. The API has no 
 
 #### Create the project
 
-Create the project with the [Nest CLI](/cli/overview). `--minimal` generates an application whose code is one file, which this tutorial replaces:
+Create the project with the [Nest CLI](/cli/overview). `--minimal` generates an application whose code is one file, which this tutorial replaces. It also installs the [NestJS Observe SDK](/observability/sdk), `@nestjs/observe`, and wires it into that file; the application's own files keep it:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -604,13 +604,23 @@ import { Module, StandardSchemaValidationPipe } from '@nestjs/common';
 import { APP_FILTER, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { MongooseModule } from '@nestjs/mongoose';
+import { createObserveModule } from '@nestjs/observe';
 import { DuplicateKeyFilter } from './common/duplicate-key.filter.js';
 import { envSchema, type Env } from './config.js';
 import { HealthModule } from './health/health.module.js';
 import { ProductsModule } from './products/products.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'products-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     MongooseModule.forRootAsync({
       inject: [ConfigService],
@@ -637,8 +647,10 @@ export class AppModule {}
 - **`serverSelectionTimeoutMS`** is how long an operation waits for a reachable MongoDB server. With the driver's default of 30 seconds, a request during an outage would hang that long before its 500; with five, it gets its 500 after five.
 - **`autoIndex`** is on except in production, where [a release step](/tutorials/mongodb-crud-api#create-indexes-in-production) builds the indexes.
 - **The pipe and the filter are providers** of `AppModule` rather than calls in `main.ts`, so the tests, which boot `AppModule` without `main.ts`, get them too.
+- **`ObserveModule` comes first** in `imports`, as the [SDK's quick start](/observability/sdk#quick-start) does: modules shut down in reverse order, so it stops last, and sends what the others recorded (see [Shutdown](/observability/sdk#shutdown)). `createObserveModule()` returns it with `ObserveInstrument`, which `main.ts` passes to Nest.
+- **The key pair is empty until you link the project.** Without one, the SDK sends nothing, and says so at startup. `npx @nestjs/observe link` writes `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` into `.env`, and adds `--env-file .env` to the `start` script, so they're in the environment before `AppModule` is imported, when the SDK reads them (see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)).
 
-`main.ts` creates the application on the Node adapter, and adds what belongs at the edge of any API:
+`main.ts` creates the application on the Node adapter, and adds what belongs at the edge of any API. With an adapter, the application options, `instrument` among them, are the third argument:
 
 ```typescript
 @@filename(src/main)
@@ -647,11 +659,12 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NodeAdapter, type NestNodeApplication } from '@nestjs/platform-node';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module.js';
+import { AppModule, ObserveInstrument } from './app.module.js';
 import type { Env } from './config.js';
 
 const production = process.env.NODE_ENV === 'production';
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
   // One JSON object per line in production; readable text in development.
   logger: new ConsoleLogger({ json: production }),
 });
@@ -1108,7 +1121,7 @@ $ NODE_ENV=production npm run start:prod
 - **Point the platform's probes at the health checks**: liveness at `/health/live`, readiness at `/health/ready`. If MongoDB is unreachable at startup, `@nestjs/mongoose` tries nine times, three seconds apart, each attempt waiting `serverSelectionTimeoutMS`, and the process exits with the error about 70 seconds after it started.
 - **Collect the JSON logs from stdout** with your platform's log driver.
 - **Keep every value that reaches a filter behind a schema**, in every new route, cursor and header: that's what keeps operator injection out.
-- **See what the API does in production.** [NestJS Observe](/observability/overview) records every request with its latency and failure rate per route, and a trace of each one, so a list query that has lost its index shows up as a slow route before users complain.
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then records every request with its latency and failure rate per route, and a trace of each one, with the MongoDB queries it ran under the method that ran them, their values removed (see [Database queries and outbound HTTP](/observability/sdk#database-queries-and-outbound-http)). A list query that has lost its index shows up as a slow route before users complain.
 
 #### What's next
 

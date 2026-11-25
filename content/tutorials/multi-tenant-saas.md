@@ -100,6 +100,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { DrizzleModule } from '@nestjs/drizzle';
 import { LogMailTransport, MailModule } from '@nestjs/mail';
+import { createObserveModule } from '@nestjs/observe';
 import { ThrottlerGuard, ThrottlerModule, minutes, normalizeIp } from '@nestjs/throttler';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { accountEmail } from './auth/account-email.js';
@@ -112,8 +113,17 @@ import { ProjectsModule } from './projects/projects.module.js';
 import { OrganizationContextIdStrategy } from './tenancy/organization-context-id.strategy.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'saas-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -1700,7 +1710,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Delete expired invitations.** Accepting ignores them, but they stay in the table. A daily job with [`@nestjs/schedule`](/application/task-scheduling) that deletes rows past `expires_at` is enough.
 - **Keep the audit log append-only.** Nothing in the application updates or deletes audit events. Grant the application's database role `INSERT` and `SELECT` on `audit_events` only, so a bug or a stolen connection can't rewrite history either.
 - **Keep membership transactions short.** They hold the organization's lock until they commit. Nothing in them waits on anything but the database, and the invitation mail goes out after the commit; keep it that way.
-- **See which users and tenants are affected in production.** [NestJS Observe](/observability/overview) records every request with a trace of its spans, SQL statements included. Its `getUserId` option populates the **Users** view with per-user activity (see [Associating users with telemetry](/observability/sdk#associating-users-with-telemetry)), and a tag on the request's span, added with `TracerService`, makes the organization id visible in the dashboard (see [Tags and custom attributes](/observability/sdk#tags-and-custom-attributes)).
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then records every request with a trace of its spans, SQL statements included. To see which users and tenants are affected, its `getUserId` option populates the **Users** view with per-user activity (see [Associating users with telemetry](/observability/sdk#associating-users-with-telemetry)), and a tag on the request's span, added with `TracerService`, makes the organization id visible in the dashboard (see [Tags and custom attributes](/observability/sdk#tags-and-custom-attributes)).
 
 #### What's next
 

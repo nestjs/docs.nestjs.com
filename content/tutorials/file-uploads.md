@@ -258,6 +258,7 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { DrizzleModule } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { StorageModule } from '@nestjs/storage';
 import { ThrottlerGuard, ThrottlerModule, minutes, normalizeIp } from '@nestjs/throttler';
 import { drizzle } from 'drizzle-orm/node-postgres';
@@ -269,8 +270,17 @@ import { HealthModule } from './health/health.module.js';
 import { createStorageOptions } from './storage/storage.config.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'files-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -1056,7 +1066,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Raise the request timeout for large files.** The Node adapter keeps Node's default `requestTimeout` of 300 seconds (see [Server timeouts](/http/performance#server-timeouts)): a 10 MiB upload on a slow mobile connection fits, a 1 GB one may not. A proxy in front of the API usually has a body size limit of its own, too.
 - **Never serve uploads from your API's origin inline.** `serveFile()` sends `attachment` unless you ask for `inline`, and then only for types that can't run script, with `nosniff`. Keep it that way: an uploaded HTML or SVG file, shown inline, runs with your site's cookies.
 - **Keep links short-lived.** Five minutes is plenty for a link that a page uses right away. For the local disk in development and CI, keep the signing key in a secret, and rotate it by putting the new key first in `keys`.
-- **See where uploads spend their time.** [NestJS Observe](/observability/overview) records outbound `fetch` calls as spans, nested under the method that made them, next to the SQL statements (see [Database queries and outbound HTTP](/observability/sdk#database-queries-and-outbound-http)). `S3Disk` uses `fetch`, so a slow upload shows whether it waited on S3 or on PostgreSQL.
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then records outbound `fetch` calls as spans, nested under the method that made them, next to the SQL statements (see [Database queries and outbound HTTP](/observability/sdk#database-queries-and-outbound-http)). `S3Disk` uses `fetch`, so a slow upload shows whether it waited on S3 or on PostgreSQL.
 
 The [file storage chapter's checklist](/application/file-storage#production-checklist) covers public files behind a CDN, encryption with your own KMS key, and CORS for uploads from a browser.
 

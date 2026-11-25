@@ -132,6 +132,7 @@ import { BullModule } from '@nestjs/bullmq';
 import { DrizzleModule, getDrizzleToken } from '@nestjs/drizzle';
 import { LocksModule } from '@nestjs/locks';
 import { MailModule } from '@nestjs/mail';
+import { createObserveModule } from '@nestjs/observe';
 import { OutboxModule, OutboxStorage } from '@nestjs/outbox';
 import { fromDrizzle, PostgresOutboxStore } from '@nestjs/outbox/postgres';
 import { ScheduleModule } from '@nestjs/schedule';
@@ -148,8 +149,17 @@ import { RedisLockStore } from './redis/redis-lock.store.js';
 import { RedisModule } from './redis/redis.module.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'notes-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -856,10 +866,10 @@ Everything so far runs in one process: the API, the workers, the relay and the s
 ```typescript
 @@filename(src/worker)
 import { NestFactory } from '@nestjs/core';
-import { AppModule } from './app.module.js';
+import { AppModule, ObserveInstrument } from './app.module.js';
 
 // The same application without the HTTP server: it runs the email jobs, the outbox relay and the digest.
-const app = await NestFactory.createApplicationContext(AppModule);
+const app = await NestFactory.createApplicationContext(AppModule, { instrument: ObserveInstrument });
 app.enableShutdownHooks();
 ```
 
@@ -1211,7 +1221,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Watch the failed set and the dead letters.** A job that used up its attempts stays in BullMQ's failed set for a week, and a message the outbox couldn't hand over moves to its dead letters. Alert on both.
 - **Prune what grows.** `sent_emails` gains a row per email, and the outbox's inbox a row per message: delete old rows from a scheduled job, keeping more than any redelivery window. Once notes grow, index `notes.updated_at` for the digest's query.
 - **Send at the rate your provider allows.** BullMQ's worker can take a rate limit (see [Rate limiting](https://docs.bullmq.io/guide/rate-limiting) in the BullMQ documentation); `concurrency` alone bounds parallel sends, not sends per second.
-- **See the jobs in production.** [NestJS Observe](/observability/dashboard) records queue consumers and cron runs as jobs, with their queue wait time, attempt number and failure reason next to their duration, and a **job silence** rule alerts when a named job, such as the digest, hasn't reported for longer than you allow.
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the environment of the API and the worker processes: `start:prod` and `start:worker` don't load `.env`. [NestJS Observe](/observability/dashboard) then records the email jobs and the digest's cron runs as jobs, with their queue wait time, attempt number and failure reason next to their duration, and a **job silence** rule alerts when a named job, such as the digest, hasn't reported for longer than you allow. `ObserveModule` comes before `BullModule` in `imports`, so a job still running at a deploy's `SIGTERM` is reported too (see [Shutdown](/observability/sdk#shutdown)).
 
 #### What's next
 

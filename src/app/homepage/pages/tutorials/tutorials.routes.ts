@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { TutorialsOverviewComponent } from './overview/overview.component';
+import { McpServerComponent } from './mcp-server/mcp-server.component';
 import { MicroservicesRabbitmqComponent } from './microservices-rabbitmq/microservices-rabbitmq.component';
 import { MongodbCrudApiComponent } from './mongodb-crud-api/mongodb-crud-api.component';
 import { GoogleLoginComponent } from './google-login/google-login.component';
@@ -84,6 +85,11 @@ export const TUTORIALS_ROUTES: Routes = [
     path: 'ai-chat-backend',
     component: AiChatBackendComponent,
     data: { title: 'How to build an AI chat backend in Node.js' },
+  },
+  {
+    path: 'mcp-server',
+    component: McpServerComponent,
+    data: { title: 'How to build an MCP server in Node.js' },
   },
   {
     path: 'microservices-rabbitmq',

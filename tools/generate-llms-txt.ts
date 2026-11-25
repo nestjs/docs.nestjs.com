@@ -156,6 +156,7 @@ Where to start, by what you're building:
 - File uploads, with validation, quotas and S3 storage: [Build a file upload service](${SITE}/tutorials/file-uploads.md).
 - Taking payments and handling a payment provider's webhooks: [Accept payments with webhooks](${SITE}/tutorials/payments-webhooks.md).
 - An AI chat backend that streams a model's answers and calls the application's own data as tools: [Build an AI chat backend](${SITE}/tutorials/ai-chat-backend.md).
+- An MCP server for AI assistants, with tools, resources and prompts over HTTP and stdio, OAuth access tokens and per-team data: [Build an MCP server in Node.js](${SITE}/tutorials/mcp-server.md).
 - Microservices that talk over RabbitMQ, with events, request-response, retries, a dead-letter queue and idempotent consumers: [Build microservices in Node.js with RabbitMQ](${SITE}/tutorials/microservices-rabbitmq.md).
 - The backend of a Next.js application: [Next.js](${SITE}/recipes/nextjs.md).
 - Deciding between Nest, Fastify, Express and Hono: [Nest vs Fastify, Express and Hono](${SITE}/faq/nest-vs-fastify-express-hono.md).

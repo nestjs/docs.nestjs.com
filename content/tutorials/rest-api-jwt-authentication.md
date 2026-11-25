@@ -30,7 +30,7 @@ You need Node.js 22 or later, and a PostgreSQL server for the second section onw
 
 #### Start with one file
 
-Create the project with the [Nest CLI](/cli/overview). `--minimal` generates an application whose code is a single file, `src/main.ts` (see [One-file projects](/cli/usages#one-file-projects)):
+Create the project with the [Nest CLI](/cli/overview). `--minimal` generates an application whose code is a single file, `src/main.ts` (see [One-file projects](/cli/usages#one-file-projects)). It also installs the [NestJS Observe SDK](/observability/sdk), `@nestjs/observe`, and wires it into that file; the application's own files keep it:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -64,8 +64,11 @@ import {
   StandardSchemaValidationPipe,
 } from '@nestjs/common';
 import { NestFactory } from '@nestjs/core';
+import { createObserveModule } from '@nestjs/observe';
 import { NodeAdapter } from '@nestjs/platform-node';
 import { z } from 'zod';
+
+const { ObserveModule, ObserveInstrument } = createObserveModule();
 
 const title = z.string().trim().min(1).max(200);
 const body = z.string().max(10_000);
@@ -156,16 +159,25 @@ class NotesController {
 
 const app = await NestFactory.create(
   {
+    imports: [
+      ObserveModule.forRoot({
+        // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+        appKey: process.env.OBSERVE_APP_KEY ?? '',
+        appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+        serviceId: 'notes-api',
+      }),
+    ],
     controllers: [NotesController],
     providers: [NotesService],
   },
   new NodeAdapter(),
+  { instrument: ObserveInstrument },
 );
 app.useGlobalPipes(new StandardSchemaValidationPipe());
 await app.listen(process.env.PORT ?? 3000);
 ```
 
-- There's no module class: `NestFactory.create()` takes the root module's metadata directly (see [Root module from metadata](/modules#root-module-from-metadata)). The class comes back in the next section, when the application has modules to import.
+- There's no module class: `NestFactory.create()` takes the root module's metadata directly (see [Root module from metadata](/modules#root-module-from-metadata)). The class comes back in the next section, when the application has modules of its own to import. With an adapter, the application options, `instrument` among them, are the third argument.
 - `StandardSchemaValidationPipe` validates every parameter that declares a `schema`, with Zod or any other [Standard Schema](https://standardschema.dev/) library, and passes the schema's output to the handler, so `body` defaults to an empty string and `title` arrives trimmed. Each schema's inferred type is the parameter's type, so there are no DTO classes to keep in sync. See [Schema-based validation](/application/validation#schema-based-validation).
 - `updateNoteSchema` is built from the same field schemas, not with `createNoteSchema.partial()`. Zod still applies a default inside `partial()`, so a `PATCH` that only renames a note would reset its body to the empty string.
 - Optional fields aren't nullable. A `PATCH` with a `null` title gets a 400, rather than reaching the database's `NOT NULL` constraint as a 500.
@@ -420,12 +432,22 @@ import { Module, StandardSchemaValidationPipe } from '@nestjs/common';
 import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DrizzleModule } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { envSchema, type Env } from './config.js';
 import { NotesModule } from './notes/notes.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'notes-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -441,17 +463,22 @@ import { NotesModule } from './notes/notes.module.js';
 export class AppModule {}
 ```
 
-The pipe moved from `main.ts` to an `APP_PIPE` provider. It still applies to every route, and it's now part of `AppModule`, so the end-to-end tests at the end of this tutorial get it too, without repeating the `main.ts` setup.
+- **`ObserveModule` comes first** in `imports`, as the [SDK's quick start](/observability/sdk#quick-start) does: modules shut down in reverse order, so it stops last, and sends what the others recorded (see [Shutdown](/observability/sdk#shutdown)). `createObserveModule()` returns it with `ObserveInstrument`, which `main.ts` passes to Nest.
+- **The key pair is empty until you link the project.** Without one, the SDK sends nothing, and says so at startup. `npx @nestjs/observe link` writes `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` into `.env`, and adds `--env-file .env` to the `start` scripts, so they're in the environment before `AppModule` is imported, when the SDK reads them: `ConfigModule` loads the file too late for that (see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)). An empty value falls back to the environment, as the placeholders `nest new` writes do (see [Reading the key pair from the environment](/observability/sdk#reading-the-key-pair-from-the-environment)).
+
+The pipe moved from `main.ts` to an `APP_PIPE` provider. It still applies to every route, and it's now part of `AppModule`, so the end-to-end tests at the end of this tutorial get it too, without repeating the `main.ts` setup. `main.ts` imports `ObserveInstrument` from the root module, and passes it in the application options:
 
 ```typescript
 @@filename(src/main)
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NodeAdapter, type NestNodeApplication } from '@nestjs/platform-node';
-import { AppModule } from './app.module.js';
+import { AppModule, ObserveInstrument } from './app.module.js';
 import type { Env } from './config.js';
 
-const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
+const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
+});
 app.enableShutdownHooks();
 
 const config = app.get<ConfigService<Env, true>>(ConfigService);
@@ -953,6 +980,9 @@ import { UsersModule } from './users/users.module.js';
 
 @Module({
   imports: [
+    ObserveModule.forRoot({
+      // ...
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       // ...
@@ -1231,7 +1261,9 @@ Two more settings belong at the edge of any API that browsers call. Security hea
 @@filename(src/main)
 // ...
 
-const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
+const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
+});
 app.useSecurityHeaders();
 app.enableShutdownHooks();
 
@@ -1325,7 +1357,9 @@ Build the document and serve Swagger UI from `main.ts`. `addSecurityRequirements
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 // ...
 
-const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter());
+const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
+});
 app.useSecurityHeaders();
 // ...
 
@@ -1477,6 +1511,7 @@ import { ConsoleLogger } from '@nestjs/common';
 
 const production = process.env.NODE_ENV === 'production';
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
   logger: new ConsoleLogger({
     // One JSON object per line in production; readable text in development.
     json: production,
@@ -1710,7 +1745,7 @@ $ TEST_DATABASE_URL=postgres://postgres:notes@localhost:5432/notes_test npm run 
 - **Use shared storage for the throttler** once you run more than one instance, and pass `trustProxy` to `NodeAdapter` behind a load balancer.
 - **Size the servers for scrypt.** Each hash at the default cost uses 128 MiB, on the libuv thread pool (four threads unless you set `UV_THREADPOOL_SIZE`). Sign-in bursts queue behind each other; the throttler bounds them.
 - **Point the platform's probes at the health checks**: liveness at `/health/live`, readiness at `/health/ready`. Shutdown hooks are on, so a deploy's `SIGTERM` closes the server and the pool before the process exits.
-- **See what the API does in production.** [NestJS Observe](/observability/overview) instruments the application through the `instrument` option of `NestFactory.create()`: requests per route with their latency and failure rate, a trace of each one, and unhandled errors grouped into defects, with an email when a new one appears. `npx @nestjs/observe link` sets it up.
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then records requests per route with their latency and failure rate, a trace of each one with its SQL queries, and unhandled errors grouped into defects, with an email when a new one appears (see [Error monitoring](/observability/error-monitoring)). Shutdown hooks are on, so the SDK sends its last batch on a deploy's `SIGTERM`.
 - **Decide what a password reset or a stolen device ends.** `TokenService.revokeAll()` revokes every refresh token of a user, and access tokens that were already issued expire within 15 minutes.
 
 The [authentication chapter's checklist](/security/authentication#production-checklist) covers the rest, for when the API adds sessions for a web app, email verification or two-factor authentication.

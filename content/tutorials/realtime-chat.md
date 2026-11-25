@@ -749,6 +749,7 @@ import { APP_GUARD, APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { DrizzleModule } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { ThrottlerGuard, ThrottlerModule, minutes, normalizeIp } from '@nestjs/throttler';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { accountEmail } from './auth/account-email.js';
@@ -759,8 +760,17 @@ import { envSchema, type Env } from './config.js';
 import { HealthModule } from './health/health.module.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'chat-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -1253,7 +1263,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Bound what one client can send.** The Zod schema caps a message at 4,000 characters, and the throttler caps the rate. The `IoAdapter` also limits how many messages of one client are handled at once (see [Limits](/websockets/adapter#limits)).
 - **Allow the web app's origin if it uses long-polling.** WebSocket connections aren't subject to CORS, but Socket.IO's long-polling requests are: pass a `cors` option with your web app's origin to `@WebSocketGateway()` if clients don't connect with `transports: ['websocket']`.
 - **Keep the history query on its index.** `messages_room_id_id_idx` serves every page. A history that filters on anything else, such as an author or a search, needs an index of its own, or a search engine.
-- **See what the gateway does in production.** [NestJS Observe](/observability/overview) reports each message handled by `@SubscribeMessage()` as a request with the `ws` protocol, under an operation id such as `ChatGateway:message`, next to the REST routes. Connections and disconnections aren't reported (see [WebSocket gateways](/observability/sdk#websocket-gateways)).
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then reports each message handled by `@SubscribeMessage()` as a request with the `ws` protocol, under an operation id of the gateway class and the pattern, such as `ChatGateway:message`. Connections and disconnections aren't reported (see [WebSocket gateways](/observability/sdk#websocket-gateways)).
 
 #### What's next
 

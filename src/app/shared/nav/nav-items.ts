@@ -211,6 +211,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'File upload service', path: '/tutorials/file-uploads' },
       { title: 'Payments with webhooks', path: '/tutorials/payments-webhooks' },
       { title: 'AI chat backend', path: '/tutorials/ai-chat-backend' },
+      { title: 'MCP server', path: '/tutorials/mcp-server' },
       { title: 'Microservices with RabbitMQ', path: '/tutorials/microservices-rabbitmq' },
     ],
   },

@@ -958,7 +958,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **List only your own production client IDs** in `GOOGLE_CLIENT_IDS`, and your production origins, with `https://`, in the Google client and in `CORS_ORIGINS`.
 - **Let the API reach `www.googleapis.com` over HTTPS.** Keys are cached for 10 minutes, and the last ones fetched keep serving when a refresh fails; with none at all, the route answers 503.
 - **Add password resets before launch**, so the owner of an address someone else signed up with can take the account back, and a Google user can add a password. See [Reset forgotten passwords](/security/authentication#reset-forgotten-passwords).
-- **Watch the route's failures.** A mobile release that asks Google for tokens for a client ID the API doesn't list shows up as 401s on `POST /auth/google`. [NestJS Observe](/observability/overview) records requests per route with their failure rate, so the rise is visible.
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. Then watch the route's failures: a mobile release that asks Google for tokens for a client ID the API doesn't list shows up as 401s on `POST /auth/google`, and [NestJS Observe](/observability/overview) records requests per route with their failure rate, so the rise is visible.
 
 #### What's next
 

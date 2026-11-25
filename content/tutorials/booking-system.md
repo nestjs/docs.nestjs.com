@@ -239,6 +239,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { AuthorizationModule } from '@nestjs/authorization';
 import { DrizzleModule } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { ThrottlerGuard, ThrottlerModule, minutes, normalizeIp } from '@nestjs/throttler';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { accountEmail } from './auth/account-email.js';
@@ -249,8 +250,17 @@ import { HealthModule } from './health/health.module.js';
 import { ResourcesModule } from './resources/resources.module.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'booking-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -1088,7 +1098,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Clean up overlaps before adding the constraint to an existing table.** `ALTER TABLE ... ADD CONSTRAINT` fails, naming the two conflicting rows, if any confirmed bookings already overlap.
 - **Keep times in UTC end to end.** Store `timestamptz`, return ISO 8601 with `Z`, and convert to a local time only for display, in the client. Keep time zones as IANA names, never as fixed offsets such as `+01:00`, which are wrong for half the year.
 - **Map only your constraint's violation to a 409.** Every other database error is a defect and should stay a 500, so it's reported as one.
-- **Know what a 409 means in production.** [NestJS Observe](/observability/error-monitoring) lists every failed request in its Errors view, but an exception your code throws on purpose, such as this `ConflictException`, doesn't count as a new defect, and 4xx responses don't count against the error rate. A busy slot that many users try to book shows up as 409s, not as an alert. An unmapped `23P01`, or a `40P01` deadlock, is a 500, and does.
+- **Give production its own Observe key pair, and know what a 409 means there.** Create the pair on the project's **API Keys** page, and set it as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/error-monitoring) then lists every failed request in its Errors view, but an exception your code throws on purpose, such as this `ConflictException`, doesn't count as a new defect, and 4xx responses don't count against the error rate. A busy slot that many users try to book shows up as 409s, not as an alert. An unmapped `23P01`, or a `40P01` deadlock, is a 500, and does.
 - **Watch the lock under load.** Bookings of one popular resource wait for each other on its row, for the length of one `INSERT`. Observe records the average and p95 latency of every route, so `POST /bookings` slowing down under a rush is visible.
 
 #### What's next

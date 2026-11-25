@@ -281,6 +281,7 @@ When the customer has paid, or the card was declined, the provider sends a webho
 @@filename(src/main)
 // ...
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
   // Webhooks are verified on the bytes the provider signed, not on a re-serialized body.
   rawBody: true,
   logger: new ConsoleLogger({
@@ -300,6 +301,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { AuthorizationModule } from '@nestjs/authorization';
 import { DrizzleModule, getDrizzleToken } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { OutboxModule, OutboxStorage } from '@nestjs/outbox';
 import { fromDrizzle, PostgresOutboxStore } from '@nestjs/outbox/postgres';
 import { WebhooksModule } from '@nestjs/webhooks';
@@ -315,8 +317,17 @@ import { PaymentsModule } from './payments/payments.module.js';
 import { ProductsModule } from './products/products.module.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'shop-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -1123,7 +1134,7 @@ Everything in the e-commerce tutorial's [checklist](/tutorials/ecommerce-backend
 - **Apply the outbox's migrations before a deploy**, with `npx @nestjs/outbox migrate`, next to `npx drizzle-kit migrate`. With `NODE_ENV=production`, the store doesn't migrate at startup.
 - **Prune the inbox** with `OutboxInbox.prune()` from a cron job, on a window longer than the provider's retry schedule (Stripe retries for three days). A redelivery that arrives after its id was pruned runs the handler again, and only the conditional update stops it.
 - **Keep the handler short.** The provider waits for the answer, and times out. Anything slow belongs in an outbox handler, after the commit.
-- **See the provider in your traces.** [NestJS Observe](/observability/overview) records each request with a trace of its spans, and the call to the provider's API shows up in it as an outbound request under the method that made it, so a slow provider shows up in the trace of `POST /orders/:id/payment` (see [Queries, outbound calls, and captured requests](/observability/dashboard#queries-outbound-calls-and-captured-requests)).
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. Then see the provider in your traces: [NestJS Observe](/observability/overview) records each request with a trace of its spans, and the call to the provider's API shows up in it as an outbound request under the method that made it, so a slow provider shows up in the trace of `POST /orders/:id/payment` (see [Queries, outbound calls, and captured requests](/observability/dashboard#queries-outbound-calls-and-captured-requests)).
 
 #### What's next
 
