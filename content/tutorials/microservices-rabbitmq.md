@@ -39,11 +39,13 @@ Create a project with the [Nest CLI](/cli/overview), then add a second applicati
 
 ```bash
 $ npm i -g @nestjs/cli
-$ nest new orders --directory shop --no-observe
+$ nest new orders --directory shop
 $ cd shop
 $ nest generate app fulfillment
 $ nest generate library contracts --prefix @app
 ```
+
+`nest new` installs the [NestJS Observe SDK](/observability/sdk), `@nestjs/observe`, in the workspace's `package.json`, and wires it into the orders application it generates. `nest generate app` keeps the dependency, but doesn't wire the SDK into the application it adds. The services' own files below wire it into both, each with a `serviceId` of its own, so each service reports under its own name.
 
 Both services build and run from the workspace's root, with the dependencies of its one `package.json`. Install the [Node adapter](/http/performance#node-adapter) and the packages of the JWT tutorial, then `@nestjs/microservices` with the two packages its RabbitMQ transport needs, and `@nestjs/outbox`. The Express adapter and supertest that the CLI installed aren't needed:
 
@@ -407,7 +409,7 @@ import { HealthController } from './health.controller.js';
 export class HealthModule {}
 ```
 
-`main.ts` sets the security headers, CORS from `CORS_ORIGINS`, JSON logs in production and the OpenAPI document, as in the JWT tutorial (see [Set security headers and CORS](/tutorials/rest-api-jwt-authentication#set-security-headers-and-cors)):
+`main.ts` sets the security headers, CORS from `CORS_ORIGINS`, JSON logs in production and the OpenAPI document, as in the JWT tutorial (see [Set security headers and CORS](/tutorials/rest-api-jwt-authentication#set-security-headers-and-cors)). It passes `ObserveInstrument`, which the root module of [the next section](/tutorials/microservices-rabbitmq#publish-events-with-the-transactional-outbox) exports, in the application options, the third argument with an adapter:
 
 ```typescript
 @@filename(apps/orders/src/main)
@@ -416,10 +418,11 @@ import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NodeAdapter, type NestNodeApplication } from '@nestjs/platform-node';
 import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
-import { AppModule } from './app.module.js';
+import { AppModule, ObserveInstrument } from './app.module.js';
 import type { Env } from './config.js';
 
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
   // One JSON object per line in production; readable text in development.
   logger: new ConsoleLogger({ json: process.env.NODE_ENV === 'production' }),
 });
@@ -509,6 +512,7 @@ import { APP_PIPE } from '@nestjs/core';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DrizzleModule, getDrizzleToken } from '@nestjs/drizzle';
 import { ClientsModule, Transport } from '@nestjs/microservices';
+import { createObserveModule } from '@nestjs/observe';
 import { ClientProxyTransport, OutboxModule, OutboxStorage } from '@nestjs/outbox';
 import { fromDrizzle, PostgresOutboxStore } from '@nestjs/outbox/postgres';
 import { FULFILLMENT_EVENTS_QUEUE, fulfillmentEventsQueueOptions } from '@app/contracts';
@@ -519,8 +523,17 @@ import { OrdersModule } from './orders/orders.module.js';
 
 export const FULFILLMENT_EVENTS = 'FULFILLMENT_EVENTS';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'orders',
+    }),
     ConfigModule.forRoot({ isGlobal: true, envFilePath: 'apps/orders/.env', validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -577,6 +590,8 @@ export class AppModule {}
 - **The client takes the shared queue and its options**, so it declares `fulfillment.events` exactly as the worker does. `persistent: true` asks the broker to keep each message on disk: the client's default is `false`.
 - **`ClientsModule` is in the outbox's `imports`**, because `ClientProxyTransport(FULFILLMENT_EVENTS)` is a class that Nest instantiates inside `OutboxModule`, where it injects the client by its name.
 - **`retry`** keeps a message for 30 to 60 minutes of attempts, enough for a broker restart or a short outage. After that, the message moves to the outbox's own dead letters, where `OutboxDeadLetters` can requeue it (see [Retries and the dead-letter queue](/reliability/outbox#retries-and-the-dead-letter-queue)).
+- **`ObserveModule` comes first** in `imports`, as the [SDK's quick start](/observability/sdk#quick-start) does: modules shut down in reverse order, so it stops last, and sends what the others recorded (see [Shutdown](/observability/sdk#shutdown)). `createObserveModule()` returns it with `ObserveInstrument`, which `main.ts` passes to Nest.
+- **The key pair is empty until you link the project.** Without one, the SDK sends nothing, and says so at startup. `npx @nestjs/observe link`, run in the workspace's root, writes `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` into the root `.env`, and adds `--env-file .env` to the `nest start` scripts, so they're in the environment before `AppModule` is imported, when the SDK reads them: `ConfigModule` loads `apps/orders/.env` too late for that (see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)). Keys are scoped to a project, so the fulfillment service, started by the same script, uses the same pair (see [First project](/observability/overview#first-project)).
 
 Start the orders service. It's the workspace's default project, so `nest start` without a name starts it:
 
@@ -957,7 +972,7 @@ export const requestsServer = (config: Config): RmqOptions => ({
 - **`gracefulShutdown`** makes closing the server cancel its consumer first, then wait up to `gracePeriod` for the events being handled, before it closes the channel. See [Run several workers](/tutorials/microservices-rabbitmq#run-several-workers).
 - **Requests are acknowledged automatically** (`noAck` keeps its default). A request lost in a crash costs nothing: its caller times out and can ask again. An event lost in a crash is a shipment that never happens.
 
-The worker's root module registers its database and the dead-letter queue. Its `health/` folder is a copy of the orders service's, since both check their own database:
+The worker's root module registers an `ObserveModule` of its own, its database and the dead-letter queue. Its `health/` folder is a copy of the orders service's, since both check their own database:
 
 ```bash
 $ cp -r apps/orders/src/health apps/fulfillment/src/health
@@ -970,14 +985,24 @@ Its root module:
 import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DrizzleModule } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { envSchema, type Env } from './config.js';
 import { HealthModule } from './health/health.module.js';
 import { DeadLetterQueue } from './messaging/dead-letter-queue.js';
 import { ShipmentsModule } from './shipments/shipments.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'fulfillment',
+    }),
     ConfigModule.forRoot({ isGlobal: true, envFilePath: 'apps/fulfillment/.env', validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -994,7 +1019,7 @@ import { ShipmentsModule } from './shipments/shipments.module.js';
 export class AppModule {}
 ```
 
-The worker is a [hybrid application](/faq/hybrid-application): an HTTP server for the platform's health checks, and the two RabbitMQ servers. `listen()` comes before `startAllMicroservices()`, so every module has finished initializing, and the dead-letter queue exists, before the first message arrives:
+The worker is a [hybrid application](/faq/hybrid-application): an HTTP server for the platform's health checks, and the two RabbitMQ servers. `listen()` comes before `startAllMicroservices()`, so every module has finished initializing, and the dead-letter queue exists, before the first message arrives. `instrument` goes in the options of `NestFactory.create()`, the call that creates the application, which `connectMicroservice()` then adds the RabbitMQ servers to:
 
 ```typescript
 @@filename(apps/fulfillment/src/main)
@@ -1002,11 +1027,12 @@ import { ConsoleLogger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NodeAdapter, type NestNodeApplication } from '@nestjs/platform-node';
-import { AppModule } from './app.module.js';
+import { AppModule, ObserveInstrument } from './app.module.js';
 import type { Env } from './config.js';
 import { eventsServer, requestsServer } from './messaging/transport.js';
 
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
   logger: new ConsoleLogger({ json: process.env.NODE_ENV === 'production' }),
 });
 // On SIGTERM: stop consuming, finish the messages in flight, then close the pool.
@@ -1860,7 +1886,7 @@ The JWT tutorial's [checklist](/tutorials/rest-api-jwt-authentication#production
 - **Watch the queue's depth and the outbox's lag.** A growing `fulfillment.events` means the workers can't keep up: add instances. A growing `lagMs` from `OutboxRelay.stats()` means the orders service can't publish (see [Run several instances](/reliability/outbox#run-several-instances)).
 - **Version the contracts.** During a rolling deploy, old and new versions of both services exchange messages. Add fields as optional, remove them only once no producer sends them, and give a breaking change a new topic, such as `order.placed.v2`.
 - **Size `gracePeriod` below the platform's shutdown timeout**, and keep handlers well under it.
-- **See a request across both services.** With [NestJS Observe](/observability/overview) in both, the RabbitMQ transport carries the trace id in each message's headers, so `GET /orders/:id/shipment` and the fulfillment service's answer show up as one trace (see [Distributed tracing](/observability/distributed-tracing#tcp-redis-nats-and-other-microservice-transports)).
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in each service's environment on the platform: `start:prod` doesn't load `.env`. With [NestJS Observe](/observability/overview) in both services, the RabbitMQ transport carries the trace id in each message's headers, so `GET /orders/:id/shipment` and the fulfillment service's answer show up as one trace (see [Distributed tracing](/observability/distributed-tracing#tcp-redis-nats-and-other-microservice-transports)).
 
 #### What's next
 

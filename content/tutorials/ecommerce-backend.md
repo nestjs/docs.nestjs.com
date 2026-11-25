@@ -26,7 +26,7 @@ These are the endpoints, and the section that adds each one:
 
 #### Start from the JWT API
 
-Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`:
+Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`. `nest new` also installs the [NestJS Observe SDK](/observability/sdk), `@nestjs/observe`, and wires it in; the application's own files keep it:
 
 ```bash
 $ npm i -g @nestjs/cli
@@ -222,6 +222,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { AuthorizationModule } from '@nestjs/authorization';
 import { DrizzleModule } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { ThrottlerGuard, ThrottlerModule, minutes, normalizeIp } from '@nestjs/throttler';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { accountEmail } from './auth/account-email.js';
@@ -233,8 +234,17 @@ import { OrdersModule } from './orders/orders.module.js';
 import { ProductsModule } from './products/products.module.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'shop-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -283,6 +293,9 @@ import { UsersModule } from './users/users.module.js';
 })
 export class AppModule {}
 ```
+
+- **`ObserveModule` comes first** in `imports`, as the [SDK's quick start](/observability/sdk#quick-start) does: modules shut down in reverse order, so it stops last, and sends what the others recorded (see [Shutdown](/observability/sdk#shutdown)). `main.ts`, from the JWT tutorial, passes `ObserveInstrument` to Nest.
+- **The key pair is empty until you link the project.** Without one, the SDK sends nothing, and says so at startup. `npx @nestjs/observe link` writes `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` into `.env`, and adds `--env-file .env` to the `start` scripts, so they're in the environment before `AppModule` is imported, when the SDK reads them (see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)).
 
 The authorization guard **denies by default**: a route runs only if it declares who may call it, with `@Can()` for a policy check, `@Can.Anyone()` for any caller that authentication let through, or `@Public()`, which counts as `@Can.Anyone()`. A route whose declaration was forgotten is closed, not open, and the module logs every such route at startup. The routes from the JWT tutorial under `/auth` and `/health` are `@Public()` already. `GET /me` is for any signed-in user:
 
@@ -1047,7 +1060,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Take payment with an idempotency key.** A checkout is safe to retry because the cart is gone after the first one. A payment isn't: a retried charge charges twice. The provider's API takes a key; send the order's id. To make your own payment endpoint safe to retry, see [Idempotency keys](/reliability/idempotency).
 - **Never trust a price from the client.** The order's prices come from the `products` table at the moment of checkout. A client that sends a price or a total is ignored by construction here; keep it that way when you add discounts.
 - **Keep deactivating products instead of deleting them.** Order items refer to them.
-- **Watch checkout in production.** Lock waits on a popular product show up as slow checkouts, not as errors. [NestJS Observe](/observability/overview) records every request with a trace of its spans, SQL statements included, and p95 latency per route, so a checkout that slows down under a sale is visible before customers complain.
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. Then watch checkout: lock waits on a popular product show up as slow checkouts, not as errors. [NestJS Observe](/observability/overview) records every request with a trace of its spans, SQL statements included, and p95 latency per route, so a checkout that slows down under a sale is visible before customers complain.
 - **Give staff accounts a second factor.** A staff token can rewrite the catalog's prices. See [Add two-factor authentication](/security/authentication#add-two-factor-authentication), and require it on staff routes with `@Authenticate()`.
 
 #### What's next

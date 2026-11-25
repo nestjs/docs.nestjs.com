@@ -122,6 +122,7 @@ import { AiModule } from '@nestjs/ai';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { AuthenticationModule } from '@nestjs/authentication';
 import { DrizzleModule } from '@nestjs/drizzle';
+import { createObserveModule } from '@nestjs/observe';
 import { ThrottlerGuard, ThrottlerModule, hours, minutes, normalizeIp } from '@nestjs/throttler';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { accountEmail } from './auth/account-email.js';
@@ -132,8 +133,17 @@ import { HealthModule } from './health/health.module.js';
 import { NotesModule } from './notes/notes.module.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'notes-assistant',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -1253,7 +1263,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Meter what each user spends.** Give the model its `pricing`, and record the usage events of each call per user, with the call's `onUsage` (see [Usage, cost and budgets](/ai/models#usage-cost-and-budgets)).
 - **Decide how long conversations live.** A turn keeps what its tools returned, so a deleted note stays in the conversations that read it, until they're deleted too. Delete conversations past a retention period, and when a user asks.
 - **Keep the tools to what the user may do anyway.** Text in a note, written by the user or pasted from anywhere, reaches the model and can steer it. The tools run as the user, so the worst it can do is what the user could do. Leave out tools that destroy data, or make them wait for a person's approval, as [Durable agent runs](/ai/agents#durable-agent-runs) do.
-- **See what the model calls do in production.** Since `@nestjs/observe` 0.3.20, [NestJS Observe](/observability/overview) records every call to a model provider on its outbound span in the request's trace, with the model, the input, output and cached tokens, and for a stream the time to its first event; prompts and answers are never sent to Observe (see [Model calls](/observability/sdk#model-calls)). A [production rule](/observability/production-rules) can bound how many model calls a request makes.
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then records every call to a model provider on its outbound span in the request's trace, with the model, the input, output and cached tokens, and for a stream the time to its first event; prompts and answers are never sent to Observe (see [Model calls](/observability/sdk#model-calls)). A [production rule](/observability/production-rules) can bound how many model calls a request makes.
 
 #### What's next
 

@@ -255,6 +255,7 @@ import { AuthorizationModule } from '@nestjs/authorization';
 import { DrizzleModule } from '@nestjs/drizzle';
 import { EventEmitterModule } from '@nestjs/event-emitter';
 import { LocksModule } from '@nestjs/locks';
+import { createObserveModule } from '@nestjs/observe';
 import { ScheduleModule } from '@nestjs/schedule';
 import { ThrottlerGuard, ThrottlerModule, minutes, normalizeIp } from '@nestjs/throttler';
 import { drizzle } from 'drizzle-orm/node-postgres';
@@ -268,8 +269,17 @@ import { ProjectsModule } from './projects/projects.module.js';
 import { TasksModule } from './tasks/tasks.module.js';
 import { UsersModule } from './users/users.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'projects-api',
+    }),
     ConfigModule.forRoot({ isGlobal: true, validationSchema: envSchema }),
     DrizzleModule.forRootAsync({
       inject: [ConfigService],
@@ -1599,7 +1609,7 @@ Everything in the JWT tutorial's [checklist](/tutorials/rest-api-jwt-authenticat
 - **Set `NODE_ENV` to `production`**, as the JWT tutorial's checklist says. `LocksModule` then refuses to start without a registered lock store, as the authentication module does without its refresh-token store, instead of running every job on every instance.
 - **Run the lock store's contract suite in CI.** `lockStoreContract()` from `@nestjs/locks/testing` checks every rule of [the store contract](/reliability/locks#the-store-contract), races included with `concurrent: true`, against the PostgreSQL version you run.
 - **Remove members carefully.** The assignee foreign key refuses to delete a membership while that member has tasks assigned. Unassign them in the same transaction as the removal, and close the member's open streams, which checked membership once, when they opened.
-- **Watch the task list and the reminder job.** [NestJS Observe](/observability/overview) reports the latency of every route, its average and p95, so a filter combination that misses its index shows up as a slow `GET /projects/:projectId/tasks`. It reports cron runs as jobs, with their duration and outcome, and a job silence alert fires when the reminder job stops reporting, which a crashed scheduler never tells you itself (see [Knowing a cron job actually ran](/application/task-scheduling#knowing-a-cron-job-actually-ran)).
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then reports the latency of every route, its average and p95, so a filter combination that misses its index shows up as a slow `GET /projects/:projectId/tasks`. It reports cron runs as jobs, with their duration and outcome, and a job silence alert fires when the reminder job stops reporting, which a crashed scheduler never tells you itself (see [Knowing a cron job actually ran](/application/task-scheduling#knowing-a-cron-job-actually-ran)).
 
 #### What's next
 
