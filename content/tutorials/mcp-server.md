@@ -14,6 +14,7 @@ By the end, the server will:
 - Scope every query to the team named in the token, and require a `tickets:write` scope to reply.
 - Refuse requests from web pages on other sites, and with a `Host` it doesn't answer to.
 - Serve the same tools over [stdio](/mcp/transports#over-stdio), for an assistant that launches it locally.
+- Report every call to [NestJS Observe](/observability/overview), named after its tool, resource or prompt.
 - Prove all of it against PostgreSQL, with the SDK's own client, in memory, over HTTP and over stdio.
 
 The server exposes these, and this is the section that adds each one:
@@ -29,11 +30,11 @@ You need Node.js 22.18 or later (the development token script runs TypeScript di
 
 #### Create the project
 
-Create the project with the [Nest CLI](/cli/overview). `--minimal` generates an application whose code is one file, which this tutorial replaces:
+Create the project with the [Nest CLI](/cli/overview). `--minimal` generates an application whose code is one file, which this tutorial replaces. It also installs the [NestJS Observe SDK](/observability/sdk), `@nestjs/observe`, and wires it into that file; the application's own files keep it:
 
 ```bash
 $ npm i -g @nestjs/cli
-$ nest new helpdesk-mcp --minimal --no-observe
+$ nest new helpdesk-mcp --minimal
 $ cd helpdesk-mcp
 ```
 
@@ -638,6 +639,7 @@ import { Module } from '@nestjs/common';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { DrizzleModule } from '@nestjs/drizzle';
 import { McpModule } from '@nestjs/mcp';
+import { createObserveModule } from '@nestjs/observe';
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { fileURLToPath } from 'node:url';
 import { AccessTokenVerifier } from './auth/access-token.verifier.js';
@@ -645,8 +647,17 @@ import { AuthModule } from './auth/auth.module.js';
 import { envSchema, type Env } from './config.js';
 import { TicketsModule } from './tickets/tickets.module.js';
 
+export const { ObserveModule, ObserveInstrument } = createObserveModule();
+
 @Module({
   imports: [
+    // First, so it shuts down last and still sends what the other modules did.
+    ObserveModule.forRoot({
+      // Empty until `npx @nestjs/observe link` writes the key pair into .env: the SDK then sends nothing.
+      appKey: process.env.OBSERVE_APP_KEY ?? '',
+      appSecret: process.env.OBSERVE_APP_SECRET ?? '',
+      serviceId: 'helpdesk-mcp',
+    }),
     ConfigModule.forRoot({
       isGlobal: true,
       validationSchema: envSchema,
@@ -691,8 +702,10 @@ export class AppModule {}
 - **The protected resource metadata** ([RFC 9728](https://datatracker.ietf.org/doc/html/rfc9728)), which tells clients where to sign in, is served by the module at `/.well-known/oauth-protected-resource/mcp`.
 - **`allowedHosts`** answers other `Host` headers with 403. Without it, a web page whose domain resolves to `127.0.0.1` could reach a server on `localhost` (DNS rebinding). The `Origin` check is on by default: pages on any site but localhost get 403, while assistants and CLIs, which send no `Origin`, pass (see [The HTTP endpoint](/mcp/transports#the-http-endpoint)).
 - **`envFilePath`** finds the project's `.env` from the compiled file, whichever directory a desktop client starts the stdio server in.
+- **`ObserveModule` comes first** in `imports`, as the [SDK's quick start](/observability/sdk#quick-start) does: modules shut down in reverse order, so it stops last, and sends what the others recorded (see [Shutdown](/observability/sdk#shutdown)). `createObserveModule()` returns it with `ObserveInstrument`, which `main.ts` and `stdio.ts` pass to Nest.
+- **The key pair is empty until you link the project.** Without one, the SDK sends nothing, and says so at startup. `npx @nestjs/observe link` writes `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` into `.env`, and adds `--env-file .env` to the `start` script, so they're in the environment before `AppModule` is imported, when the SDK reads them (see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)). An empty value and the `'YOUR_APP_KEY'` placeholders `nest new` writes both fall back to the environment (see [Reading the key pair from the environment](/observability/sdk#reading-the-key-pair-from-the-environment)); `enabled: false` outside production would also silence a development machine you linked on purpose.
 
-`main.ts` starts the HTTP application on the Node adapter:
+`main.ts` starts the HTTP application on the Node adapter. With an adapter, the application options, `instrument` among them, are the third argument:
 
 ```typescript
 @@filename(src/main)
@@ -700,11 +713,12 @@ import { ConsoleLogger } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 import { NodeAdapter, type NestNodeApplication } from '@nestjs/platform-node';
-import { AppModule } from './app.module.js';
+import { AppModule, ObserveInstrument } from './app.module.js';
 import type { Env } from './config.js';
 
 const production = process.env.NODE_ENV === 'production';
 const app = await NestFactory.create<NestNodeApplication>(AppModule, new NodeAdapter(), {
+  instrument: ObserveInstrument,
   // One JSON object per line in production; readable text in development.
   logger: new ConsoleLogger({ json: production, redact: ['authorization', 'token'] }),
 });
@@ -718,7 +732,14 @@ await app.listen(config.get('PORT', { infer: true }));
 - **JSON logs in production** (see [JSON logging](/application/logger#json-logging)), with tokens redacted from logged objects, and [security headers](/security/helmet) on every response.
 - **No CORS.** Assistants don't call from a browser. A browser-based client on another origin needs its hostname in `allowedOrigins` and in your CORS configuration (see [The HTTP endpoint](/mcp/transports#the-http-endpoint)).
 
-The endpoint is at `http://localhost:3000/mcp`, and every request needs a token.
+The endpoint is at `http://localhost:3000/mcp`, and every request needs a token. Until the project is linked, the server logs that Observe sends nothing:
+
+```bash
+$ npm run start
+...
+WARN [ObserveAgentWorker] Observe is installed but sends nothing: appKey and appSecret are not set, and the hosted collector accepts no telemetry without a key and a secret. If they come from the environment, check that OBSERVE_APP_KEY and OBSERVE_APP_SECRET reach this process, then restart it. To get a pair, run npx @nestjs/observe link or create one at https://observe.nestjs.com.
+LOG [NestApplication] Nest application successfully started
+```
 
 #### Get a token for development
 
@@ -813,13 +834,7 @@ Dev issuer http://localhost:3001: keys at http://localhost:3001/jwks.json, token
 
 #### Try it
 
-Start the server in another terminal:
-
-```bash
-$ npm run start
-```
-
-A request without a token gets 401, with a `WWW-Authenticate` challenge that names the scope every request needs and points at the metadata (some headers omitted here and below):
+Start the server in another terminal, with `npm run start`. A request without a token gets 401, with a `WWW-Authenticate` challenge that names the scope every request needs and points at the metadata (some headers omitted here and below):
 
 ```bash
 $ curl -i localhost:3000/mcp -H 'content-type: application/json' -H 'accept: application/json, text/event-stream' -d '{"jsonrpc":"2.0","id":1,"method":"tools/list"}'
@@ -938,15 +953,18 @@ An assistant on the user's machine (Claude Desktop, Claude Code, an IDE) can als
 @@filename(src/stdio)
 import { NestFactory } from '@nestjs/core';
 import { McpStdioLogger, McpStdioServer } from '@nestjs/mcp';
-import { AppModule } from './app.module.js';
+import { AppModule, ObserveInstrument } from './app.module.js';
 
 // stdout carries the protocol: every log line goes to stderr.
-const app = await NestFactory.createApplicationContext(AppModule, { logger: new McpStdioLogger() });
+const app = await NestFactory.createApplicationContext(AppModule, {
+  instrument: ObserveInstrument,
+  logger: new McpStdioLogger(),
+});
 await app.get(McpStdioServer).listen();
 await app.close();
 ```
 
-`McpStdioLogger` writes every log level to stderr: stdout carries the protocol, and Nest's default logger writes there. `listen()` resolves when the client closes stdin (see [Over stdio](/mcp/transports#over-stdio)).
+`McpStdioLogger` writes every log level to stderr: stdout carries the protocol, and Nest's default logger writes there. Observe's SDK logs through Nest's logger, so its lines go to stderr too. `listen()` resolves when the client closes stdin (see [Over stdio](/mcp/transports#over-stdio)).
 
 Over stdio, the process belongs to one user, and the spec takes credentials from the environment, not OAuth. There is no token, so `scopes` aren't checked, and the team comes from `HELPDESK_TEAM`. The database URL in `.env` is the real access control there: whoever has it has the data anyway.
 
@@ -964,7 +982,7 @@ Clients take a command, run from a directory of their choosing: `node` with the 
 }
 ```
 
-The rest of the configuration comes from the project's `.env`. The tests launch the server with this command and environment, and so does the Inspector's command line, here for the shipping team (the server's log, on stderr, is omitted):
+The rest of the configuration comes from the project's `.env`, but not Observe's key pair, which the SDK reads from the environment before `ConfigModule` loads the file: to report stdio calls, add `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` to the client's `env`. The tests launch the server with this command and environment, and so does the Inspector's command line, here for the shipping team (the server's log, on stderr, is omitted):
 
 ```bash
 $ npx @modelcontextprotocol/inspector --cli -e HELPDESK_TEAM=shipping node dist/stdio.js --method tools/call --tool-name search-tickets
@@ -980,20 +998,69 @@ $ npx @modelcontextprotocol/inspector --cli -e HELPDESK_TEAM=shipping node dist/
 
 #### Connect an assistant
 
-Clients that implement MCP's authorization sign the user in themselves: on the 401, they read the metadata, find the identity provider, register with it or use a client ID you give them, and open its sign-in page. Claude Code does, and so do Claude Desktop's custom connectors. That needs a real authorization server, with a sign-in page, which the development issuer is not: with it, give the client the token in a header.
+Most MCP clients can sign the user in themselves: on the 401, they read the metadata, find the identity provider, register with it or use a client ID you configure, and open its sign-in page. That needs a real authorization server, which the development issuer is not: with it, give the client the token as an `Authorization` header, or run the stdio command.
 
-> warning **Warning** The commands in this section weren't run for this tutorial, which was tested with the SDK's client and the MCP Inspector's command line. They follow the clients' documentation at the time of writing.
+> warning **Warning** None of this section was run for this tutorial, which was tested with the SDK's client and the MCP Inspector's command line. It follows each client's documentation at the time of writing.
 
-[Claude Code](https://code.claude.com/docs/en/mcp) takes the header, and then doesn't try to sign in. The stdio server takes its environment with `--env`, before the server's name:
+| Client | Remote server with a header | stdio command | Signs in with OAuth |
+| --- | --- | --- | --- |
+| Claude Code | `claude mcp add --transport http ... --header` | `claude mcp add --env ... -- node ...` | Yes, with `/mcp` |
+| Claude Desktop | Custom connectors, reached from Anthropic's cloud: a public URL only | `mcpServers` in `claude_desktop_config.json` | Yes, custom connectors |
+| Cursor | `mcpServers` in `.cursor/mcp.json`: `url`, `headers` | The same file: `command`, `args`, `env` | Yes |
+| VS Code (Copilot) | `servers` in `.vscode/mcp.json`: `"type": "http"`, `url`, `headers` | The same file: `"type": "stdio"` | Yes |
+| Windsurf | `mcpServers` in `mcp_config.json`: `serverUrl`, `headers` | The same file | Yes |
+| Cline | `mcpServers` in `cline_mcp_settings.json`: `"type": "streamableHttp"`, `url`, `headers` | The same file | Not documented |
+| Zed | `context_servers` in its settings: `url`, `headers` | The same key: `command`, `args`, `env` | Yes, without a header |
+| Gemini CLI | `gemini mcp add --transport http --header`, or `httpUrl` and `headers` in `settings.json` | `gemini mcp add -e ...` | Yes |
+| Codex CLI | `[mcp_servers.helpdesk]` in `config.toml`: `url`, `bearer_token_env_var` | `codex mcp add --env ... -- node ...` | Yes, with `codex mcp login` |
+| ChatGPT | No: it sends no custom headers, and needs a public URL | No | Yes, OAuth only |
+
+Claude Code, Gemini CLI and Codex CLI add a server from the command line. Claude Code and Gemini CLI take the header itself; Codex reads the token from the environment variable you name:
 
 ```bash
 $ claude mcp add --transport http helpdesk http://localhost:3000/mcp --header "Authorization: Bearer $TOKEN"
 $ claude mcp add --env HELPDESK_TEAM=billing --transport stdio helpdesk-local -- node /path/to/helpdesk-mcp/dist/stdio.js
+$ gemini mcp add --transport http --header "Authorization: Bearer $TOKEN" helpdesk http://localhost:3000/mcp
+$ codex mcp add helpdesk-local --env HELPDESK_TEAM=billing -- node /path/to/helpdesk-mcp/dist/stdio.js
 ```
 
-With a real identity provider, leave the header out, and run `/mcp` to sign in: Claude Code registers through dynamic client registration or a Client ID Metadata Document, if the provider supports one, or uses a client you registered, with `--client-id` (and `--callback-port` for its redirect URI).
+Most editors take the `mcpServers` shape of [the previous section](/tutorials/mcp-server#serve-the-same-tools-over-stdio), with a `url` and `headers` for a remote server. In Cursor's `.cursor/mcp.json`, the header can read the token from your environment instead of the file:
 
-Claude Desktop launches local servers from `claude_desktop_config.json`, with the configuration of the previous section. Its custom connectors, for remote servers, are reached from Anthropic's cloud, not your computer, so they need a URL reachable from the internet. Development tokens expire after an hour: ask for a new one, and update the header.
+```json
+{
+  "mcpServers": {
+    "helpdesk": {
+      "url": "http://localhost:3000/mcp",
+      "headers": { "Authorization": "Bearer ${env:HELPDESK_TOKEN}" }
+    }
+  }
+}
+```
+
+The other clients rename keys, as the table shows: Windsurf's `serverUrl`, Gemini's `httpUrl` (its `url` means the older SSE transport), and Cline's `"type": "streamableHttp"`, without which it falls back to SSE. VS Code's `.vscode/mcp.json` lists `servers`, and can prompt for the token once and keep it in its secret storage:
+
+```json
+{
+  "inputs": [{ "type": "promptString", "id": "helpdesk-token", "password": true }],
+  "servers": {
+    "helpdesk": {
+      "type": "http",
+      "url": "http://localhost:3000/mcp",
+      "headers": { "Authorization": "Bearer ${input:helpdesk-token}" }
+    }
+  }
+}
+```
+
+Codex CLI configures a remote server in `~/.codex/config.toml`, with the name of the variable that holds the token:
+
+```toml
+[mcp_servers.helpdesk]
+url = "http://localhost:3000/mcp"
+bearer_token_env_var = "HELPDESK_TOKEN"
+```
+
+With a real identity provider, leave the header out, and let the client sign in. Development tokens expire after an hour: ask the issuer for a new one, and update the header or the variable.
 
 #### Use a real identity provider
 
@@ -1276,10 +1343,11 @@ describe.skipIf(!url)('Helpdesk MCP server (e2e)', () => {
 });
 ```
 
-The second file launches the built `stdio.js` as a desktop client would. The SDK's client skips stdout lines that aren't JSON, so a log line there wouldn't fail a call: the test checks that the logs are on stderr instead:
+The second file launches the built `stdio.js` as a desktop client would, then once more with stdout read raw: the SDK's client skips stdout lines that aren't JSON, so only a raw read shows that nothing else, a log line of Nest's or Observe's, reaches it:
 
 ```typescript
 @@filename(test/stdio.e2e-spec)
+import { spawn } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { Client } from '@modelcontextprotocol/client';
 import { StdioClientTransport } from '@modelcontextprotocol/client/stdio';
@@ -1287,6 +1355,7 @@ import { Pool } from 'pg';
 import { resetDatabase } from './fixtures.js';
 
 const url = process.env.TEST_DATABASE_URL;
+const stdioJs = fileURLToPath(new URL('../dist/stdio.js', import.meta.url));
 
 describe.skipIf(!url)('stdio entry point (e2e)', () => {
   it('serves the tools to a client that launches it, for the team in its environment', async () => {
@@ -1297,26 +1366,39 @@ describe.skipIf(!url)('stdio entry point (e2e)', () => {
     // What a desktop client runs: node, the built stdio.js, and the env of its configuration.
     // The rest of the configuration comes from the project's .env; DATABASE_URL points at the test database.
     const client = new Client({ name: 'stdio-e2e', version: '1.0.0' });
-    const transport = new StdioClientTransport({
-      command: 'node',
-      args: [fileURLToPath(new URL('../dist/stdio.js', import.meta.url))],
-      env: { HELPDESK_TEAM: 'billing', DATABASE_URL: url! },
-      stderr: 'pipe',
-    });
-    // The SDK's client skips stdout lines that aren't JSON, other clients don't: the logs must be on stderr.
-    let logs = '';
-    transport.stderr?.on('data', (chunk) => (logs += chunk));
-    await client.connect(transport);
+    await client.connect(
+      new StdioClientTransport({ command: 'node', args: [stdioJs], env: { HELPDESK_TEAM: 'billing', DATABASE_URL: url! } }),
+    );
     try {
       const { tools } = await client.listTools();
       expect(tools.map((tool) => tool.name)).toEqual(['search-tickets', 'reply-to-ticket']);
       const found = await client.callTool({ name: 'search-tickets', arguments: {} });
       const ids = JSON.parse((found.content as { text: string }[])[0].text).map((ticket: { id: number }) => ticket.id);
       expect(ids).toEqual([billingTicket]);
-      expect(logs).toContain('Starting Nest application');
     } finally {
       await client.close();
     }
+  });
+
+  it('writes nothing but protocol messages to stdout, from start to exit', async () => {
+    // The SDK's client skips stdout lines that aren't JSON; other clients don't. So read stdout raw.
+    const server = spawn('node', [stdioJs], { env: { ...process.env, HELPDESK_TEAM: 'billing', DATABASE_URL: url } });
+    let stdout = '';
+    let stderr = '';
+    server.stderr.on('data', (chunk) => (stderr += chunk));
+    server.stdout.on('data', (chunk) => {
+      stdout += chunk;
+      // The answer is in: close stdin, as a client does when it quits.
+      if (stdout.includes('\n')) server.stdin.end();
+    });
+    const initialize = { protocolVersion: '2025-11-25', capabilities: {}, clientInfo: { name: 'raw', version: '1.0.0' } };
+    server.stdin.write(`${JSON.stringify({ jsonrpc: '2.0', id: 1, method: 'initialize', params: initialize })}\n`);
+    await new Promise((resolve) => server.on('exit', resolve));
+
+    expect(stdout.trim().split('\n').map((line) => JSON.parse(line).id)).toEqual([1]);
+    // The logs went to stderr, Observe's warning about its missing key pair included.
+    expect(stderr).toContain('Starting Nest application');
+    expect(stderr).toContain('Observe is installed but sends nothing');
   });
 });
 ```
@@ -1328,10 +1410,10 @@ $ docker exec helpdesk-db psql -U postgres -c "CREATE DATABASE helpdesk_test"
 $ TEST_DATABASE_URL=postgres://postgres:helpdesk@localhost:5432/helpdesk_test npm run test:e2e
 ...
  Test Files  2 passed (2)
-      Tests  11 passed (11)
+      Tests  12 passed (12)
 ```
 
-Each guarantee fails its test when the code is removed: the `tickets:write` scope, the team condition in each of `search()`, `findOne()` and `reply()`, the `max()` on `ticketId`, the audience and `type` checks (with `audience: false`), `allowedHosts`, the `Origin` check (with `allowedOrigins: false`), and `McpStdioLogger`. Expired and wrongly signed tokens are refused by `JwtVerifier` itself.
+Each guarantee fails its test when the code is removed: the `tickets:write` scope, the team condition in each of `search()`, `findOne()` and `reply()`, the `max()` on `ticketId`, the audience and `type` checks (with `audience: false`), `allowedHosts`, the `Origin` check (with `allowedOrigins: false`), and `McpStdioLogger` (Nest's startup logs land on stdout). Expired and wrongly signed tokens are refused by `JwtVerifier` itself.
 
 #### Production checklist
 
@@ -1342,7 +1424,7 @@ Each guarantee fails its test when the code is removed: the `tickets:write` scop
 - **Run `drizzle-kit migrate` as a release step**, and never the seed script: it empties the tables.
 - **Keep access tokens short-lived.** The server accepts a token until it expires, without asking the provider; a user you disable keeps access until then.
 - **Keep the descriptions honest.** The model knows the tools only by their names, descriptions and schemas, and `readOnlyHint` decides which calls run without asking the user.
-- **See each call in production.** With [NestJS Observe](/observability/overview) in the application, every MCP call is named after what it does, `tools/call search-tickets`, rather than `POST /mcp`, with nothing to configure (see [NestJS Observe](/mcp/transports#nestjs-observe)).
+- **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. Every MCP call is then recorded under its operation, `tools/call search-tickets` or `resources/read` with the template, rather than `POST /mcp` (see [NestJS Observe](/mcp/transports#nestjs-observe)), and `enableShutdownHooks()` lets the SDK send its last batch on a deploy's `SIGTERM`.
 
 #### What's next
 
