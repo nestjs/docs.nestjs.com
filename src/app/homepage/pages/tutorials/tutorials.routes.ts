@@ -1,5 +1,6 @@
 import { Routes } from '@angular/router';
 import { TutorialsOverviewComponent } from './overview/overview.component';
+import { GraphqlApiComponent } from './graphql-api/graphql-api.component';
 import { McpServerComponent } from './mcp-server/mcp-server.component';
 import { MicroservicesRabbitmqComponent } from './microservices-rabbitmq/microservices-rabbitmq.component';
 import { MongodbCrudApiComponent } from './mongodb-crud-api/mongodb-crud-api.component';
@@ -40,6 +41,11 @@ export const TUTORIALS_ROUTES: Routes = [
     path: 'mongodb-crud-api',
     component: MongodbCrudApiComponent,
     data: { title: 'How to build a CRUD REST API with Node.js and MongoDB' },
+  },
+  {
+    path: 'graphql-api',
+    component: GraphqlApiComponent,
+    data: { title: 'How to build a GraphQL API in Node.js' },
   },
   {
     path: 'ecommerce-backend',

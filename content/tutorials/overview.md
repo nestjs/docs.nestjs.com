@@ -1,6 +1,6 @@
 ### Node.js backend tutorials
 
-Step-by-step tutorials that build complete Node.js backends in TypeScript with NestJS: REST APIs, MongoDB, microservices, MCP servers, e-commerce and AI.
+Step-by-step tutorials that build complete Node.js backends in TypeScript with NestJS: REST and GraphQL APIs, MongoDB, microservices, MCP servers and AI.
 
 Each tutorial builds one application of the kind teams actually ship, from an empty project to code you could deploy, and links to the chapters of this documentation for the details of each part. They use the current APIs: validation with Zod schemas, the Node adapter, [`@nestjs/authentication`](/security/authentication), and Drizzle on PostgreSQL, or Mongoose on MongoDB. Every listing comes from an application that was built and tested, and every output on the pages comes from running it.
 
@@ -21,6 +21,7 @@ If you use MongoDB, start with [Build a CRUD REST API with Node.js and MongoDB](
 | [REST API with JWT authentication](/tutorials/rest-api-jwt-authentication) | A notes API with sign-up, access and refresh tokens, PostgreSQL, OpenAPI, health checks and tests | Refresh-token reuse, sign-in timing that reveals accounts, writes that race |
 | [Google login](/tutorials/google-login) | Sign in with Google for the notes API: ID tokens from the web and mobile apps, exchanged for the API's own JWTs, and connected accounts | Never handing an account to whoever signed up with its email first, and one account however many first sign-ins race |
 | [CRUD REST API with MongoDB](/tutorials/mongodb-crud-api) | A product catalog on MongoDB through Mongoose: create, list, get, partial update and delete | Malformed ids and duplicate SKUs that aren't 500s, operator injection, pages that never repeat or skip a product, and edits that don't overwrite each other |
+| [GraphQL API](/tutorials/graphql-api) | A GraphQL API for a blog: posts with drafts, comments, cursor pagination, sign-in mutations and a comment subscription, on Apollo and PostgreSQL | N+1 queries batched per request, drafts and emails hidden on every path, error codes a client can act on, and a WebSocket held to the same checks as HTTP |
 | [E-commerce backend](/tutorials/ecommerce-backend) | A catalog that only staff edit, carts, checkout, cancelling and shipping | Never selling more than is in stock, however many customers check out at once |
 | [Multi-tenant SaaS backend](/tutorials/multi-tenant-saas) | Organizations, roles, email invitations, tenant-owned projects, an audit log | Keeping every query inside its tenant, and never losing an organization's last owner |
 | [Project-management API](/tutorials/project-management-api) | Projects, tasks and comments, live updates over Server-Sent Events, due-date reminders | Permissions checked record by record, and status changes that don't overwrite each other |

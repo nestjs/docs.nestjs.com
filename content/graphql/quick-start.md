@@ -6,6 +6,8 @@ This chapter assumes a basic understanding of GraphQL and focuses on working wit
 
 You can also build your own driver (see [Creating a custom driver](/graphql/other-features#creating-a-custom-driver)).
 
+> info **Hint** To build a complete GraphQL API step by step, with authentication, batched nested fields, per-field authorization and subscriptions, follow [Build a GraphQL API in Node.js](/tutorials/graphql-api).
+
 #### Installation
 
 Start by installing the required packages:
