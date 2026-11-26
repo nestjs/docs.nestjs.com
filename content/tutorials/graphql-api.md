@@ -1137,8 +1137,8 @@ export class GraphqlConfig implements GqlOptionsFactory<ApolloDriverConfig> {
   }
 
   /**
-   * graphql-ws runs operations outside Apollo Server: its `introspection` setting and its
-   * plugins don't apply. The socket serves subscriptions only; queries and mutations go over HTTP.
+   * graphql-ws runs operations outside Apollo Server, whose plugins don't apply to them.
+   * The socket serves subscriptions only; queries and mutations go over HTTP.
    */
   private checkSocketOperation({ query, operationName }: SubscribePayload) {
     let document;
@@ -1159,7 +1159,7 @@ export class GraphqlConfig implements GqlOptionsFactory<ApolloDriverConfig> {
 - **`fieldResolverEnhancers`** makes Nest run guards, interceptors and filters on field resolvers too (see [Execute enhancers at the field resolver level](/graphql/other-features#execute-enhancers-at-the-field-resolver-level)). The guard gives them `@CurrentUser()`. The filters log what they throw: without them, an error in `Post.author` reaches the client without a line in the logs.
 - **`formatError` hides unexpected errors in production.** Apollo Server leaves out the stack trace there, but keeps the message, such as a database error naming a host.
 - **The socket is authenticated once, when it opens.** A browser can't set headers on a WebSocket, so clients send the token in `connectionParams`. `authenticateSocket()` copies it to the upgrade request, and checks it with `WsAuthenticator`, which runs the guard's providers. `false` closes the socket with 4403 before any operation.
-- **The socket serves subscriptions only.** `graphql-ws` executes what it receives itself: Apollo Server's plugins never see it, and neither does its `introspection` setting. With `NODE_ENV=production` and no `onSubscribe`, an introspection query and a mutation both run over the socket. `checkSocketOperation()` refuses everything but subscriptions, so the only way to send a query or a mutation is HTTP, with Apollo Server's checks.
+- **The socket serves subscriptions only.** `graphql-ws` executes what it receives itself, outside Apollo Server, so Apollo Server's plugins never see it, and it runs a query or a mutation as readily as a subscription. The Apollo driver applies the `introspection` setting to the socket since `@nestjs/apollo` 14.2.2; before that, an introspection query got the schema over the socket even in production. `checkSocketOperation()` refuses everything but subscriptions, so the only way to send a query or a mutation is HTTP, with Apollo Server's checks.
 
 #### Push new comments with subscriptions
 
