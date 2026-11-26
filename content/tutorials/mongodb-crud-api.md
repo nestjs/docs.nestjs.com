@@ -11,7 +11,7 @@ By the end, the API will:
 - Answer 400 for a malformed ObjectId, 404 for an unknown one, and 409 for a duplicate SKU.
 - Update only the fields a request sends, and refuse an update made from a stale copy, with a version number.
 - Page through the catalog with a cursor, filtered by category, price and stock, in one of the sorts it has an index for.
-- Refuse to start when its configuration is invalid, or when the unique index it relies on is missing.
+- Refuse to start when its configuration is invalid, or when the unique index it relies on is missing or can't be built.
 - Send security headers, accept browser requests only from the origins you list, describe itself in an OpenAPI document, answer health checks, and write JSON logs in production.
 - Prove the concurrency guarantees in tests against a real MongoDB server.
 
@@ -259,10 +259,8 @@ export class ProductsService implements OnModuleInit {
   constructor(@InjectModel(Product.name) private readonly productModel: Model<Product>) {}
 
   async onModuleInit() {
-    // With autoIndex (development, tests), Mongoose builds the indexes in the background:
-    // waiting for them means no request is served before the unique index on `sku` exists.
-    await this.productModel.init();
-    // Without it (production), a release step builds them: refuse to start if it didn't.
+    // In development and tests, the model arrives with its indexes built (waitForModelInit in AppModule).
+    // With autoIndex off (production), a release step builds them: refuse to start if it didn't.
     const { toCreate } = await this.productModel.diffIndexes();
     if (toCreate.length > 0) {
       throw new Error(`Missing indexes on products: ${JSON.stringify(toCreate)}. Run npm run db:indexes.`);
@@ -310,7 +308,7 @@ function notFound(): never {
 }
 ```
 
-- **`onModuleInit()` waits for the indexes.** Mongoose builds them in the background, and Nest doesn't wait, so the application can serve requests before the unique index on `sku` exists. Worse, when the collection already holds a duplicate SKU, the build fails without a log line, the application starts anyway, and it accepts duplicates from then on. `init()` returns the build's promise: awaiting it holds the startup until the indexes exist, and a failed build stops the application with the error. `diffIndexes()` covers production, where a release step builds the indexes: if one is missing, the application refuses to start.
+- **`onModuleInit()` checks the indexes.** `diffIndexes()` compares the schema's indexes with the collection's, and the application refuses to start if one is missing. It matters in production, where Mongoose builds no index and [a release step](/tutorials/mongodb-crud-api#create-indexes-in-production) does. Elsewhere, Mongoose has already built them by the time the service is created, since the connection's `waitForModelInit` option waits for the build (see [Assemble the application](/tutorials/mongodb-crud-api#assemble-the-application)).
 - **`findOne()` answers 404** when `findById()` finds nothing. The id was already validated, so this is the "valid but unknown" case.
 - **`remove()` checks `deletedCount`**, from the same statement that deletes, rather than reading the product first.
 
@@ -632,6 +630,8 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
         serverSelectionTimeoutMS: 5_000,
         // Builds the schemas' indexes at startup. Production builds them in a release step instead.
         autoIndex: config.get('NODE_ENV', { infer: true }) !== 'production',
+        // Every model waits for its collection and indexes before it's injected.
+        waitForModelInit: true,
       }),
     }),
     ProductsModule,
@@ -648,6 +648,7 @@ export class AppModule {}
 - **`forRootAsync()`** reads the URI from `ConfigService`, after `ConfigModule` validated it, and closes the connection when the application shuts down (see [Async configuration](/data/mongodb#async-configuration)).
 - **`serverSelectionTimeoutMS`** is how long an operation waits for a reachable MongoDB server. With the driver's default of 30 seconds, a request during an outage would hang that long before its 500; with five, it gets its 500 after five.
 - **`autoIndex`** is on except in production, where [a release step](/tutorials/mongodb-crud-api#create-indexes-in-production) builds the indexes.
+- **`waitForModelInit`** makes each model wait for `model.init()`, which creates the collection and builds the indexes, before it's injected. Without it, Mongoose builds them in the background: the application can serve requests before the unique index on `sku` exists, and if the collection already holds a duplicate SKU, the build fails without a log line and the application accepts duplicates from then on. With it, a failed build stops the startup with the MongoDB error. It needs `@nestjs/mongoose` 12.0.2 or later (see [Wait for indexes](/data/mongodb#wait-for-indexes)).
 - **The pipe and the filter are providers** of `AppModule` rather than calls in `main.ts`, so the tests, which boot `AppModule` without `main.ts`, get them too.
 - **`ObserveModule` comes first** in `imports`, as the [SDK's quick start](/observability/sdk#quick-start) does: modules shut down in reverse order, so it stops last, and sends what the others recorded (see [Shutdown](/observability/sdk#shutdown)). `createObserveModule()` returns it with `ObserveInstrument`, which `main.ts` passes to Nest.
 - **The key pair is empty until you link the project.** Without one, the SDK sends nothing, and says so at startup. `npx @nestjs/observe link` writes `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` into `.env`, and adds `--env-file .env` to the `start` script, so they're in the environment before `AppModule` is imported, when the SDK reads them (see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)).
@@ -1056,7 +1057,7 @@ $ TEST_MONGODB_URI=mongodb://localhost:27017/catalog_test npm run test:e2e
       Tests  8 passed (8)
 ```
 
-Remove `version` from the filter of `findOneAndUpdate()` in `update()`, and the first concurrency test fails: all ten updates succeed, each overwriting the one before. Drop the `_id` from the cursor's condition in `list()`, and the pagination test fails: products that share a price at a page boundary are skipped.
+Remove `version` from the filter of `findOneAndUpdate()` in `update()`, and the first concurrency test fails: all ten updates succeed, each overwriting the one before. Drop the `_id` from the cursor's condition in `list()`, and the pagination test fails: products that share a price at a page boundary are skipped. Remove `waitForModelInit` from `AppModule`, and `onModuleInit()` can check the indexes while Mongoose is still building them: the application refuses to start, and both files fail before their first test.
 
 #### Create indexes in production
 
