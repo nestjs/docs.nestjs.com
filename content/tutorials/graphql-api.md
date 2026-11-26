@@ -563,8 +563,9 @@ The resolver maps the queries, mutations and fields of `Post` to the service (se
 @@filename(src/posts/posts.resolver)
 import { Authenticate, CurrentUser } from '@nestjs/authentication';
 import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { Loaders } from '../graphql/loaders.js';
 import { User } from '../users/user.model.js';
+import { UsersLoader } from '../users/users.loader.js';
+import { CommentsLoader } from './comments.loader.js';
 import { Comment } from './comment.model.js';
 import { Post, PostConnection } from './post.model.js';
 import { CreatePostInput, FirstArgs, PostArgs, PostsArgs, UpdatePostInput } from './posts.inputs.js';
@@ -576,7 +577,8 @@ import { PostsService } from './posts.service.js';
 export class PostsResolver {
   constructor(
     private readonly postsService: PostsService,
-    private readonly loaders: Loaders,
+    private readonly usersLoader: UsersLoader,
+    private readonly commentsLoader: CommentsLoader,
   ) {}
 
   @Query(() => PostConnection)
@@ -591,12 +593,12 @@ export class PostsResolver {
 
   @ResolveField(() => User)
   author(@Parent() post: Post) {
-    return this.loaders.user(post.authorId);
+    return this.usersLoader.load(post.authorId);
   }
 
   @ResolveField(() => [Comment])
   comments(@Parent() post: Post, @Args() { first }: FirstArgs) {
-    return this.loaders.comments(post.id, first);
+    return this.commentsLoader.load(post.id, first);
   }
 
   @Authenticate({ optional: false })
@@ -621,123 +623,172 @@ export class PostsResolver {
 
 - **Reads are open to everyone.** `@nestjs/authentication`'s global guard requires a user on every operation, unless it says otherwise. With `optional`, anonymous readers get through, and `@CurrentUser()` still gets the user when the request has a valid token, so authors see their drafts. A `@Public()` operation runs no authentication, and `@CurrentUser()` is always `null` there.
 - **Mutations require a user again**, with `optional` set to `false`: method options are merged over the class's.
-- **`author` and `comments` load through `Loaders`**, which the next section writes.
+- **`author` and `comments` go through `UsersLoader` and `CommentsLoader`**, which the next section writes.
 
 #### Batch nested fields with DataLoader
 
-A query for 50 posts with their authors runs the `author` resolver 50 times, and if each one sent its own query, the request would send 51: the N+1 problem. [DataLoader](https://github.com/graphql/dataloader), a small library from the GraphQL project that this documentation doesn't otherwise cover, collects the keys that resolvers ask for in the same tick, and loads them with one call of a batch function:
+A query for 50 posts with their authors runs the `author` resolver 50 times, and if each one sent its own query, the request would send 51: the N+1 problem. [DataLoader](https://github.com/graphql/dataloader), a small library from the GraphQL project that this documentation doesn't otherwise cover, collects the keys resolvers ask for in one tick, and loads them with one call of a batch function. Each table has its own loader, in its feature's folder: a new field adds a method to the loader of the table it reads, not to a shared class. Users by id:
 
 ```typescript
-@@filename(src/graphql/loaders)
+@@filename(src/users/users.loader)
+import { Injectable, Scope } from '@nestjs/common';
+import { InjectDrizzle } from '@nestjs/drizzle';
+import DataLoader from 'dataloader';
+import { getColumns, inArray } from 'drizzle-orm';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { users } from '../database/schema.js';
+import type { User } from './user.model.js';
+
+const { passwordHash: _, ...columns } = getColumns(users);
+
+/** Users by id, for one request. */
+@Injectable({ scope: Scope.REQUEST })
+export class UsersLoader {
+  // Batching without a cache: a subscription is one request for as long as it runs,
+  // and each of its events must see the rows as they are now.
+  private readonly byId = new DataLoader<string, User | undefined>(
+    async (ids) => {
+      const rows = await this.db.select(columns).from(users).where(inArray(users.id, [...ids]));
+      return ids.map((id) => rows.find((row) => row.id === id));
+    },
+    { cache: false },
+  );
+
+  constructor(@InjectDrizzle() private readonly db: NodePgDatabase) {}
+
+  load(id: string): Promise<User | undefined> {
+    return this.byId.load(id);
+  }
+}
+```
+
+- **Request-scoped.** Nest creates a new instance for every request (see [Injection scopes](/fundamentals/provider-scopes)), so a request's batches never mix with another viewer's, and nothing it loaded outlives it. The scope bubbles up: the resolvers that inject a loader are request-scoped too. In GraphQL, a request is one operation, and a subscription is one request for as long as it runs, whatever else its socket carries.
+- **No cache.** With DataLoader's cache on, the subscription's later events would be served the rows its first event loaded: a comment that arrives after its author publishes a post would still list the author's posts as they were.
+
+The first comments of each post: `row_number()` numbers each post's comments separately, where a `LIMIT` would count all of them together, and each `first` gets its own DataLoader, since it changes the query:
+
+```typescript
+@@filename(src/posts/comments.loader)
+import { Injectable, Scope } from '@nestjs/common';
+import { InjectDrizzle } from '@nestjs/drizzle';
+import DataLoader from 'dataloader';
+import { getColumns, inArray, lte, sql } from 'drizzle-orm';
+import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
+import { comments, type CommentRow } from '../database/schema.js';
+
+/** The first comments of each post, oldest first, for one request. */
+@Injectable({ scope: Scope.REQUEST })
+export class CommentsLoader {
+  // One DataLoader per `first`.
+  private readonly byFirst = new Map<number, DataLoader<string, CommentRow[]>>();
+
+  constructor(@InjectDrizzle() private readonly db: NodePgDatabase) {}
+
+  load(postId: string, first: number): Promise<CommentRow[]> {
+    let loader = this.byFirst.get(first);
+    if (!loader) {
+      // No cache, as in UsersLoader.
+      loader = new DataLoader((postIds) => this.firstOfEach([...postIds], first), { cache: false });
+      this.byFirst.set(first, loader);
+    }
+    return loader.load(postId);
+  }
+
+  private async firstOfEach(postIds: string[], first: number): Promise<CommentRow[][]> {
+    const ranked = this.db
+      .select({
+        ...getColumns(comments),
+        rank: sql<number>`row_number() over (partition by ${comments.postId} order by ${comments.createdAt}, ${comments.id})`.as('rank'),
+      })
+      .from(comments)
+      .where(inArray(comments.postId, postIds))
+      .as('ranked');
+    const rows = await this.db.select().from(ranked).where(lte(ranked.rank, first)).orderBy(ranked.rank);
+    return postIds.map((id) => rows.filter((row) => row.postId === id));
+  }
+}
+```
+
+The latest posts of each author that the viewer may see. A request has one viewer, so the key leaves it out; a singleton would keep the first viewer it saw:
+
+```typescript
+@@filename(src/posts/posts.loader)
 import { Injectable, Scope } from '@nestjs/common';
 import { InjectDrizzle } from '@nestjs/drizzle';
 import DataLoader from 'dataloader';
 import { and, getColumns, inArray, lte, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { comments, posts, users, type CommentRow, type PostRow } from '../database/schema.js';
-import { visibleTo } from '../posts/visibility.js';
-import type { User } from '../users/user.model.js';
+import { posts, type PostRow } from '../database/schema.js';
+import { visibleTo } from './visibility.js';
 
-const { passwordHash: _, ...userColumns } = getColumns(users);
-
-/**
- * Batches the nested fields of one request: `author` for 50 posts is one query, not 50.
- * Request-scoped: a new instance for every request, so no batch mixes two requests or two users.
- */
+/** The latest posts of each author that the viewer may see, for one request. */
 @Injectable({ scope: Scope.REQUEST })
-export class Loaders {
-  private readonly loaders = new Map<string, DataLoader<string, unknown>>();
+export class PostsLoader {
+  // One DataLoader per `first`; a request has one viewer.
+  private readonly byFirst = new Map<number, DataLoader<string, PostRow[]>>();
 
   constructor(@InjectDrizzle() private readonly db: NodePgDatabase) {}
 
-  user(id: string): Promise<User | undefined> {
-    return this.load('users', id, async (ids) => {
-      const rows = await this.db.select(userColumns).from(users).where(inArray(users.id, ids));
-      return ids.map((id) => rows.find((row) => row.id === id));
-    });
-  }
-
-  /** The first comments of each post, oldest first. */
-  comments(postId: string, first: number): Promise<CommentRow[]> {
-    return this.load(`comments:${first}`, postId, async (postIds) => {
-      // row_number() starts again at 1 for each post: one query, `first` comments per post.
-      const ranked = this.db
-        .select({
-          ...getColumns(comments),
-          rank: sql<number>`row_number() over (partition by ${comments.postId} order by ${comments.createdAt}, ${comments.id})`.as('rank'),
-        })
-        .from(comments)
-        .where(inArray(comments.postId, postIds))
-        .as('ranked');
-      const rows = await this.db.select().from(ranked).where(lte(ranked.rank, first)).orderBy(ranked.rank);
-      return postIds.map((id) => rows.filter((row) => row.postId === id));
-    });
-  }
-
-  /** The latest posts of each author that the viewer may see: drafts first, for the author. */
-  posts(authorId: string, first: number, viewerId: string | null): Promise<PostRow[]> {
-    return this.load(`posts:${first}:${viewerId}`, authorId, async (authorIds) => {
-      const ranked = this.db
-        .select({
-          ...getColumns(posts),
-          rank: sql<number>`row_number() over (partition by ${posts.authorId} order by ${posts.publishedAt} desc nulls first, ${posts.id} desc)`.as('rank'),
-        })
-        .from(posts)
-        .where(and(inArray(posts.authorId, authorIds), visibleTo(viewerId)))
-        .as('ranked');
-      const rows = await this.db.select().from(ranked).where(lte(ranked.rank, first)).orderBy(ranked.rank);
-      return authorIds.map((id) => rows.filter((row) => row.authorId === id));
-    });
-  }
-
-  /** One DataLoader per kind of batch, created on first use: `first` and the viewer are part of the kind. */
-  private load<V>(kind: string, key: string, batch: (keys: string[]) => Promise<V[]>): Promise<V> {
-    let loader = this.loaders.get(kind) as DataLoader<string, V> | undefined;
+  load(authorId: string, first: number, viewerId: string | null): Promise<PostRow[]> {
+    let loader = this.byFirst.get(first);
     if (!loader) {
-      // Batching without a cache: a subscription is one request, which keeps these loaders
-      // for as long as it runs, and every event must see the rows as they are now.
-      loader = new DataLoader<string, V>((keys) => batch([...keys]), { cache: false });
-      this.loaders.set(kind, loader);
+      // No cache, as in UsersLoader.
+      loader = new DataLoader((authorIds) => this.latestOfEach([...authorIds], first, viewerId), { cache: false });
+      this.byFirst.set(first, loader);
     }
-    return loader.load(key);
+    return loader.load(authorId);
+  }
+
+  private async latestOfEach(authorIds: string[], first: number, viewerId: string | null): Promise<PostRow[][]> {
+    const ranked = this.db
+      .select({
+        ...getColumns(posts),
+        rank: sql<number>`row_number() over (partition by ${posts.authorId} order by ${posts.publishedAt} desc nulls first, ${posts.id} desc)`.as('rank'),
+      })
+      .from(posts)
+      .where(and(inArray(posts.authorId, authorIds), visibleTo(viewerId)))
+      .as('ranked');
+    const rows = await this.db.select().from(ranked).where(lte(ranked.rank, first)).orderBy(ranked.rank);
+    return authorIds.map((id) => rows.filter((row) => row.authorId === id));
   }
 }
 ```
 
-- **Request-scoped.** Nest creates a new instance for every request (see [Injection scopes](/fundamentals/provider-scopes)), so a request's batches never mix with another viewer's, and nothing it loaded outlives it. The scope bubbles up: the resolvers that inject `Loaders` are request-scoped too. In GraphQL, a request is one operation, and a subscription is one request for as long as it runs, whatever else its socket carries.
-- **No cache.** With DataLoader's cache on, the subscription's later events would be served the rows its first event loaded: a comment that arrives after its author publishes a post would still list the author's posts as they were.
-- **One query for every post's first comments.** `row_number()` numbers the comments of each post separately; a `LIMIT` would apply to all of them together. `first` and the viewer are part of the kind of batch, since they change the query.
-
-A module provides it to the posts and users modules:
+`User.posts` reads posts, so its resolver lives in the posts folder: `PostsModule` imports `UsersModule` for `UsersLoader`, and never the reverse, so the modules don't import each other:
 
 ```typescript
-@@filename(src/graphql/loaders.module)
-import { Module } from '@nestjs/common';
-import { Loaders } from './loaders.js';
+@@filename(src/posts/user-posts.resolver)
+import { Authenticate, CurrentUser } from '@nestjs/authentication';
+import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql';
+import { User } from '../users/user.model.js';
+import { Post } from './post.model.js';
+import { FirstArgs } from './posts.inputs.js';
+import { PostsLoader } from './posts.loader.js';
 
-@Module({
-  providers: [Loaders],
-  exports: [Loaders],
-})
-export class LoadersModule {}
+// A field of User, resolved here, in the posts feature: PostsModule imports UsersModule, never the reverse.
+@Authenticate({ optional: true })
+@Resolver(() => User)
+export class UserPostsResolver {
+  constructor(private readonly postsLoader: PostsLoader) {}
+
+  @ResolveField(() => [Post])
+  posts(@Parent() user: User, @Args() { first }: FirstArgs, @CurrentUser('id') viewerId: string | null) {
+    return this.postsLoader.load(user.id, first, viewerId ?? null);
+  }
+}
 ```
 
-The user resolver has `me` and the fields of `User`:
+The user resolver has `me` and `email`:
 
 ```typescript
 @@filename(src/users/users.resolver)
 import { Authenticate, CurrentUser } from '@nestjs/authentication';
-import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import { Loaders } from '../graphql/loaders.js';
-import { Post } from '../posts/post.model.js';
-import { FirstArgs } from '../posts/posts.inputs.js';
+import { Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
 import { User } from './user.model.js';
 
 @Authenticate({ optional: true })
 @Resolver(() => User)
 export class UsersResolver {
-  constructor(private readonly loaders: Loaders) {}
-
   @Authenticate({ optional: false })
   @Query(() => User)
   me(@CurrentUser() user: User) {
@@ -749,19 +800,10 @@ export class UsersResolver {
   email(@Parent() user: User, @CurrentUser('id') viewerId: string | null) {
     return user.id === viewerId ? user.email : null;
   }
-
-  @ResolveField(() => [Post])
-  posts(
-    @Parent() user: User,
-    @Args() { first }: FirstArgs,
-    @CurrentUser('id') viewerId: string | null,
-  ) {
-    return this.loaders.posts(user.id, first, viewerId ?? null);
-  }
 }
 ```
 
-`email` is `null` to anyone but the user. A [field middleware](/graphql/field-middleware) only has the context, and over `graphql-ws` its `req.user` is whichever operation of the socket authenticated last (see [GraphQL and WebSockets](/security/authentication#graphql-and-websockets)). A field resolver gets `@CurrentUser()`, the user of its own operation.
+`email` is a field resolver, not a [field middleware](/graphql/field-middleware): middleware only has the context, whose `req.user` over `graphql-ws` is the socket's last authenticated operation's (see [GraphQL and WebSockets](/security/authentication#graphql-and-websockets)), and `@CurrentUser()` is this operation's.
 
 #### Sign users in with mutations
 
@@ -813,19 +855,18 @@ export class UsersRepository {
 export const normalize = (email: string) => email.trim().normalize('NFC').toLowerCase();
 ```
 
-The users module provides it to the authentication code:
+The users module provides it to the authentication code, and `UsersLoader` to the posts feature:
 
 ```typescript
 @@filename(src/users/users.module)
 import { Module } from '@nestjs/common';
-import { LoadersModule } from '../graphql/loaders.module.js';
+import { UsersLoader } from './users.loader.js';
 import { UsersRepository } from './users.repository.js';
 import { UsersResolver } from './users.resolver.js';
 
 @Module({
-  imports: [LoadersModule],
-  providers: [UsersRepository, UsersResolver],
-  exports: [UsersRepository],
+  providers: [UsersRepository, UsersLoader, UsersResolver],
+  exports: [UsersRepository, UsersLoader],
 })
 export class UsersModule {}
 ```
@@ -1120,7 +1161,7 @@ export class GraphqlConfig implements GqlOptionsFactory<ApolloDriverConfig> {
 
 #### Push new comments with subscriptions
 
-Two resolvers serve comments: one for the `author` field, which injects `Loaders`, and one for the `addComment` mutation and the `commentAdded` subscription (see [Subscriptions](/graphql/subscriptions)). Nest requires a resolver with a `@Subscription()` to be a singleton, so it can't inject a request-scoped provider:
+Two resolvers serve comments: one for the `author` field, which injects `UsersLoader`, and one for the `addComment` mutation and the `commentAdded` subscription (see [Subscriptions](/graphql/subscriptions)). Nest requires a resolver with a `@Subscription()` to be a singleton, so it can't inject a request-scoped provider:
 
 ```typescript
 @@filename(src/posts/comments.resolver)
@@ -1129,21 +1170,21 @@ import { Authenticate, CurrentUser } from '@nestjs/authentication';
 import { Args, Mutation, Parent, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { notFound } from '../graphql/errors.js';
-import { Loaders } from '../graphql/loaders.js';
 import { User } from '../users/user.model.js';
+import { UsersLoader } from '../users/users.loader.js';
 import { Comment } from './comment.model.js';
 import { AddCommentInput, CommentAddedArgs } from './posts.inputs.js';
 import { PostsService, PUB_SUB, commentAddedTopic } from './posts.service.js';
 
-// Request-scoped, since it injects Loaders.
+// Request-scoped, since it injects UsersLoader.
 @Authenticate({ optional: true })
 @Resolver(() => Comment)
 export class CommentAuthorResolver {
-  constructor(private readonly loaders: Loaders) {}
+  constructor(private readonly usersLoader: UsersLoader) {}
 
   @ResolveField(() => User)
   author(@Parent() comment: Comment) {
-    return this.loaders.user(comment.authorId);
+    return this.usersLoader.load(comment.authorId);
   }
 }
 
@@ -1176,27 +1217,35 @@ export class CommentsResolver {
 - **Someone else's draft is `NOT_FOUND`.** Drafts take no comments, but any other answer would tell the client the draft exists.
 - **One topic per post**, rather than one topic and a [`filter`](/graphql/subscriptions#filtering-subscriptions), which would run for every subscriber of every post on every comment.
 
-The posts module provides the three resolvers, the service and the `PubSub`, and imports `LoadersModule`:
+The posts module provides the four resolvers, the service, the two loaders and the `PubSub`:
 
 ```typescript
 @@filename(src/posts/posts.module)
 import { Module } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
-import { LoadersModule } from '../graphql/loaders.module.js';
+import { UsersModule } from '../users/users.module.js';
 import { CommentAuthorResolver, CommentsResolver } from './comments.resolver.js';
+import { CommentsLoader } from './comments.loader.js';
+import { PostsLoader } from './posts.loader.js';
 import { PostsResolver } from './posts.resolver.js';
 import { PostsService, PUB_SUB } from './posts.service.js';
+import { UserPostsResolver } from './user-posts.resolver.js';
 
 @Module({
-  imports: [LoadersModule],
+  // For UsersLoader. UsersModule imports nothing of the posts feature.
+  imports: [UsersModule],
   providers: [
     PostsResolver,
     CommentsResolver,
     CommentAuthorResolver,
+    UserPostsResolver,
     PostsService,
+    PostsLoader,
+    CommentsLoader,
     // In memory, in this process: see the production checklist.
     { provide: PUB_SUB, useValue: new PubSub() },
   ],
+  exports: [PostsLoader, CommentsLoader],
 })
 export class PostsModule {}
 ```
@@ -1404,7 +1453,7 @@ In development, GraphiQL is at `http://localhost:3000/graphql`, the API's own UR
 
 ```bash
 $ curl localhost:3000/graphql --json '{"query":"mutation ($input: SignInInput!) { signIn(input: $input) { accessToken refreshToken expiresIn } }","variables":{"input":{"email":"ada@example.com","password":"correct horse battery"}}}'
-{"data":{"signIn":{"accessToken":"eyJhbGciOiJIUzI1NiIs...","refreshToken":"i-HFe17EwUU3ufp7...","expiresIn":900}}}
+{"data":{"signIn":{"accessToken":"eyJhbGciOiJIUzI1NiIs...","refreshToken":"I-NorWBT--e6Jkit...","expiresIn":900}}}
 $ ADA=eyJhbGciOiJIUzI1NiIs...
 $ BOB=eyJhbGciOiJIUzI1NiIs... # the same, with bob@example.com
 ```
@@ -1413,8 +1462,8 @@ The first page of published posts, then the next one, which starts after `endCur
 
 ```bash
 $ curl localhost:3000/graphql --json '{"query":"{ posts(first: 2) { edges { node { title author { name email } comments(first: 1) { body } } } pageInfo { hasNextPage endCursor } } }"}'
-{"data":{"posts":{"edges":[{"node":{"title":"Post 12","author":{"name":"Bob","email":null},"comments":[{"body":"About Post 12"}]}},...],"pageInfo":{"hasNextPage":true,"endCursor":"MTc5NTY3NjA3NTQxNTo1MTg1NzZlZC1iYTY4LTRmNzItYjNmOC0xNTg5NTM4Mjk1Y2Y"}}}}
-$ curl localhost:3000/graphql --json '{"query":"query ($after: String) { posts(first: 2, after: $after) { edges { node { title } } } }","variables":{"after":"MTc5NTY3NjA3NTQxNTo1MTg1NzZlZC1iYTY4LTRmNzItYjNmOC0xNTg5NTM4Mjk1Y2Y"}}'
+{"data":{"posts":{"edges":[{"node":{"title":"Post 12","author":{"name":"Bob","email":null},"comments":[{"body":"About Post 12"}]}},...],"pageInfo":{"hasNextPage":true,"endCursor":"MTc5NTY3Njg0NzQzMTo3NTYwM2RiNC0xZjJlLTQ1MDYtOTVjNy0wNzM3MmY0NjdiMzc"}}}}
+$ curl localhost:3000/graphql --json '{"query":"query ($after: String) { posts(first: 2, after: $after) { edges { node { title } } } }","variables":{"after":"MTc5NTY3Njg0NzQzMTo3NTYwM2RiNC0xZjJlLTQ1MDYtOTVjNy0wNzM3MmY0NjdiMzc"}}'
 {"data":{"posts":{"edges":[{"node":{"title":"Post 10"}},{"node":{"title":"Post 9"}}]}}}
 ```
 
@@ -1422,17 +1471,17 @@ Ada's own list starts with her draft. Bob gets `null` for it, as for an id that 
 
 ```bash
 $ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"{ me { posts(first: 2) { id title publishedAt } } }"}'
-{"data":{"me":{"posts":[{"id":"2add117c-7a0f-4d28-a47e-4a0246e8e0f4","title":"Ada's draft","publishedAt":null},{"id":"518576ed-ba68-4f72-b3f8-1589538295cf","title":"Post 11",...}]}}}
-$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"query ($id: ID!) { post(id: $id) { title } }","variables":{"id":"2add117c-7a0f-4d28-a47e-4a0246e8e0f4"}}'
+{"data":{"me":{"posts":[{"id":"5761230b-00cd-4fbd-aedc-7a751770daa9","title":"Ada's draft","publishedAt":null},{"id":"75603db4-1f2e-4506-95c7-07372f467b37","title":"Post 11",...}]}}}
+$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"query ($id: ID!) { post(id: $id) { title } }","variables":{"id":"5761230b-00cd-4fbd-aedc-7a751770daa9"}}'
 {"data":{"post":null}}
 ```
 
 Errors carry a code: Bob can't change Ada's post, and a title can't be `null`. In development, `extensions` also has a stack trace:
 
 ```bash
-$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: \"Mine now\" }) { title } }","variables":{"id":"518576ed-ba68-4f72-b3f8-1589538295cf"}}'
+$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: \"Mine now\" }) { title } }","variables":{"id":"75603db4-1f2e-4506-95c7-07372f467b37"}}'
 {"errors":[{"message":"Only the author can change this post",...,"extensions":{"code":"FORBIDDEN",...}}],"data":null}
-$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: null }) { title } }","variables":{"id":"518576ed-ba68-4f72-b3f8-1589538295cf"}}'
+$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: null }) { title } }","variables":{"id":"75603db4-1f2e-4506-95c7-07372f467b37"}}'
 {"errors":[{"message":"title must be longer than or equal to 1 characters; title must be a string",...,"extensions":{"code":"BAD_USER_INPUT","fields":{"title":[...]},...}}],"data":null}
 ```
 
@@ -1469,17 +1518,17 @@ try {
 Run it in a second terminal, with the id of Ada's `Post 11` and Bob's token, and add a comment as Ada in the first. The script prints it, and with a wrong token the server closes the socket before any subscription:
 
 ```bash
-$ node scripts/watch-comments.ts 518576ed-ba68-4f72-b3f8-1589538295cf $BOB
+$ node scripts/watch-comments.ts 75603db4-1f2e-4506-95c7-07372f467b37 $BOB
 {"data":{"commentAdded":{"body":"Thanks for reading!","author":{"name":"Ada"}}}}
-$ node scripts/watch-comments.ts 518576ed-ba68-4f72-b3f8-1589538295cf not-a-token
+$ node scripts/watch-comments.ts 75603db4-1f2e-4506-95c7-07372f467b37 not-a-token
 Closed: 4403 Forbidden
 ```
 
 The comment, added as Ada from the first terminal:
 
 ```bash
-$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($input: AddCommentInput!) { addComment(input: $input) { id } }","variables":{"input":{"postId":"518576ed-ba68-4f72-b3f8-1589538295cf","body":"Thanks for reading!"}}}'
-{"data":{"addComment":{"id":"72b3cb4f-92ec-48f7-9862-1cfd5a8cabcd"}}}
+$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($input: AddCommentInput!) { addComment(input: $input) { id } }","variables":{"input":{"postId":"75603db4-1f2e-4506-95c7-07372f467b37","body":"Thanks for reading!"}}}'
+{"data":{"addComment":{"id":"c7ca2df6-811b-4292-9b9b-067281eab611"}}}
 ```
 
 #### Test it
@@ -1659,7 +1708,8 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)('Blog API (e2e)', () => {
   it('batches nested fields: the number of SQL queries stays flat as the posts grow', async () => {
     const queriesFor = async () => {
       const before = t.sqlCount();
-      const { data } = await gql(t.app, '{ posts(first: 50) { edges { node { author { name } comments(first: 5) { author { name } } } } } }');
+      const query = '{ posts(first: 50) { edges { node { author { name posts(first: 2) { id } } comments(first: 5) { author { name } } } } } }';
+      const { data } = await gql(t.app, query);
       return { posts: data.posts.edges.length, queries: t.sqlCount() - before };
     };
     const addPosts = async (count: number) => {
@@ -1678,8 +1728,8 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)('Blog API (e2e)', () => {
 
     expect(many.posts).toBe(few.posts + 20);
     expect(many.queries).toBe(few.queries);
-    // At most the posts, their authors, their comments and the comments' authors.
-    expect(many.queries).toBeLessThanOrEqual(4);
+    // At most the posts, their authors, the authors' posts, the comments and their authors.
+    expect(many.queries).toBeLessThanOrEqual(5);
   });
 
   it('refuses a WebSocket without a valid token, before any operation', async () => {
@@ -1716,7 +1766,7 @@ $ TEST_DATABASE_URL=postgres://postgres:blog@localhost:5432/blog_test npm run te
       Tests  12 passed (12)
 ```
 
-Each test fails without the code it protects. Without the DataLoader in `Loaders.user()`, the SQL count grows with the posts. Without `onConnect`, a socket without a token opens. Without `onSubscribe`, an introspection query and a mutation run over the socket.
+Each test fails without the code it protects. Without the DataLoader in any of the three loaders, the SQL count grows with the posts. Without `onConnect`, a socket without a token opens. Without `onSubscribe`, an introspection query and a mutation run over the socket.
 
 #### Production checklist
 
