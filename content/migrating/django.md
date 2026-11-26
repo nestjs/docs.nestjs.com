@@ -80,6 +80,8 @@ import { OrdersService } from './orders.service.js';
 export class OrdersModule {}
 ```
 
+The root module imports the feature modules, as `INSTALLED_APPS` lists the apps:
+
 ```typescript
 @@filename(app.module)
 import { Module } from '@nestjs/common';
@@ -330,6 +332,8 @@ class CreateOrderSerializer(serializers.Serializer):
     note = serializers.CharField(max_length=500, required=False)
 ```
 
+The same rules as a Zod schema, which also gives the DTO's type:
+
 ```typescript
 @@filename(orders/create-order.schema)
 import { z } from 'zod';
@@ -403,6 +407,8 @@ class IsOrderOwnerOrStaff(permissions.BasePermission):
         user = request.user
         return user.is_staff or obj.customer_id == user.customer.id
 ```
+
+The same check as a policy, with a staff-only refund next to it:
 
 ```typescript
 @@filename(orders/order.policy)
@@ -484,6 +490,8 @@ def send_order_confirmation(order):
     )
 ```
 
+In Nest, the mail class returns the subject, the template's name and the values the template reads:
+
 ```typescript
 @@filename(notifications/order-confirmation.mail)
 import { Injectable } from '@nestjs/common';
@@ -501,6 +509,8 @@ export class OrderConfirmationMail implements Mailable<{ order: Order }> {
   }
 }
 ```
+
+A service sends it with `mailer.send()`, and the type of `data` comes from the mail class:
 
 ```typescript
 @@filename(orders/orders.service)
@@ -559,6 +569,8 @@ def generate_invoice(order_id):
 generate_invoice.delay(order.id)
 ```
 
+In Nest, a processor class takes the queue's jobs:
+
 ```typescript
 @@filename(invoices/invoice.processor)
 import { Processor, WorkerHost } from '@nestjs/bullmq';
@@ -571,6 +583,8 @@ export class InvoiceProcessor extends WorkerHost {
   }
 }
 ```
+
+A service adds a job to the queue it injects, as `delay()` does in Celery:
 
 ```typescript
 @@filename(orders/orders.service)
