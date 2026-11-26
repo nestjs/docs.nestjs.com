@@ -24,6 +24,8 @@ These are the endpoints of the orders service, and the section that adds each on
 | `POST /orders`, `GET /orders/:id`, `GET /health/live`, `GET /health/ready`, `GET /docs` | [Build the orders API](/tutorials/microservices-rabbitmq#build-the-orders-api) |
 | `GET /orders/:id/shipment` | [Ask another service with request-response](/tutorials/microservices-rabbitmq#ask-another-service-with-request-response) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-microservices-rabbitmq](https://github.com/nestjs/example-microservices-rabbitmq), with its tests and a CI workflow.
+
 And these are the messages between the services:
 
 | Message | Style | Queue | Section |
@@ -762,6 +764,8 @@ export class RmqAckInterceptor implements NestInterceptor {
 - **The last attempt goes to the dead-letter queue**, the same way, with the error in an `x-error` header, so whoever reads the dead letter sees why it failed.
 - **The backoff holds the message.** Waiting before the retry keeps one of the instance's prefetch slots busy. When the database is down, that's what you want: the worker slows down instead of burning through its attempts in milliseconds. A delay queue (a queue with a message TTL that dead-letters back into `fulfillment.events`) frees the slot instead, at the cost of more queues to declare.
 - **A closed channel is caught.** If the connection dropped while the handler ran, `ack()` throws, and the broker has already put the message back for another consumer.
+
+> info **Hint** If dead-lettering a failed message straight away is enough, without retries, the transport can do it for you: the `nackOnInternalError` option of `@nestjs/microservices` 12.6.1 and later rejects a message, without requeue, when its handler fails with an internal error (see [Message acknowledgement](/microservices/rabbitmq#message-acknowledgement)). This service retries an event first, so it settles messages itself.
 
 A validation failure is a different kind of failure: retrying a message that breaks its contract can't fix it. The validation pipe throws this exception, which the interceptor moves to the dead-letter queue at once:
 

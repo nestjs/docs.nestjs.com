@@ -25,6 +25,8 @@ These are the endpoints, and the section that adds each one:
 | `GET /tasks/:taskId/comments`, `POST /tasks/:taskId/comments`, `PATCH /comments/:id` | [Comment on tasks](/tutorials/project-management-api#comment-on-tasks) |
 | `GET /projects/:projectId/events` | [Stream changes with server-sent events](/tutorials/project-management-api#stream-changes-with-server-sent-events) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-project-management-api](https://github.com/nestjs/example-project-management-api), with its tests and a CI workflow.
+
 #### Start from the JWT API
 
 Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`, `@nestjs/event-emitter`, `@nestjs/schedule` and `@nestjs/locks`:

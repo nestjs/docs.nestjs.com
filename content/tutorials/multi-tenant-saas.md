@@ -26,6 +26,8 @@ These are the endpoints, and the section that adds each one:
 | `GET /orgs/:orgId/members`, `PATCH /orgs/:orgId/members/:userId`, `DELETE /orgs/:orgId/members/:userId` | [Never lose the last owner](/tutorials/multi-tenant-saas#never-lose-the-last-owner) |
 | `POST /orgs/:orgId/invitations`, `POST /invitations/accept` | [Invite members by email](/tutorials/multi-tenant-saas#invite-members-by-email) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-multi-tenant-saas](https://github.com/nestjs/example-multi-tenant-saas), with its tests and a CI workflow.
+
 #### Start from the JWT API
 
 Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/mail`:

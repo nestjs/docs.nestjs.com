@@ -24,6 +24,8 @@ These are the endpoints and WebSocket events, and the section that adds each one
 | `POST /rooms`, `GET /rooms`, `POST /rooms/:id/members`, `DELETE /rooms/:id/members/me`, `GET /rooms/:id/messages` | [Expose rooms and history over REST](/tutorials/realtime-chat#expose-rooms-and-history-over-rest) |
 | `join`, `leave`, `message` and `typing` events, sent by clients; `message`, `presence`, `typing` and `exception` events, sent by the server | [Add the WebSocket gateway](/tutorials/realtime-chat#add-the-websocket-gateway) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-realtime-chat](https://github.com/nestjs/example-realtime-chat), with its tests and a CI workflow.
+
 #### Start from the JWT API
 
 Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus [`@nestjs/websockets`](/websockets/gateways) with its Socket.IO platform, and `socket.io-client` for the tests:

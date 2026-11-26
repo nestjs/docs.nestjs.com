@@ -2,7 +2,7 @@
 
 Step-by-step tutorials that build complete Node.js backends in TypeScript with NestJS: REST and GraphQL APIs, MongoDB, microservices, MCP servers and AI.
 
-Each tutorial builds one application of the kind teams actually ship, from an empty project to code you could deploy, and links to the chapters of this documentation for the details of each part. They use the current APIs: validation with Zod schemas, the Node adapter, [`@nestjs/authentication`](/security/authentication), and Drizzle on PostgreSQL, or Mongoose on MongoDB. Every listing comes from an application that was built and tested, and every output on the pages comes from running it.
+Each tutorial builds one application of the kind teams actually ship, from an empty project to code you could deploy, and links to the chapters of this documentation for the details of each part. They use the current APIs: validation with Zod schemas, the Node adapter, [`@nestjs/authentication`](/security/authentication), and Drizzle on PostgreSQL, or Mongoose on MongoDB. Every listing comes from an application that was built and tested, and every output on the pages comes from running it. Each finished application is also on GitHub, as `nestjs/example-<slug>`: for example [nestjs/example-rest-api-jwt-authentication](https://github.com/nestjs/example-rest-api-jwt-authentication).
 
 Most of a backend is ordinary CRUD, so the tutorials spend their time on the parts that aren't: what happens when two requests arrive at once, when a client retries, or when a token is stolen. Each one tests those guarantees against a real database, not a mock.
 

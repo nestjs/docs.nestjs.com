@@ -69,6 +69,10 @@ The `options` property is specific to the chosen transporter. The <strong>Rabbit
     <td>If <code>false</code>, enables manual acknowledgment mode. Defaults to <code>true</code></td>
   </tr>
   <tr>
+    <td><code>nackOnInternalError</code></td>
+    <td>If <code>true</code> (and <code>noAck</code> is <code>false</code>), negatively acknowledges a message without requeue when its handler fails with an internal error, so a dead letter exchange receives it (see <a href="/microservices/rabbitmq#message-acknowledgement">Message acknowledgement</a>). Defaults to <code>false</code></td>
+  </tr>
+  <tr>
     <td><code>consumerTag</code></td>
     <td>A name the server uses to distinguish message deliveries for the consumer; it must not already be in use on the channel. It's usually easier to omit it, in which case the server creates a random name and supplies it in the reply (see <a href="https://amqp-node.github.io/amqplib/channel_api.html#channel_consume" rel="nofollow" target="_blank"><code>channel.consume()</code> in the amqplib documentation</a>)</td>
   </tr>
@@ -255,6 +259,30 @@ getNotifications(data, context) {
   channel.ack(originalMsg);
 }
 ```
+
+When a handler fails, the server leaves its message unacknowledged. The message keeps one of the `prefetchCount` slots until the channel closes, and the broker then delivers it again, so a payload that can never be handled comes back after every reconnect and never reaches a [dead letter exchange](https://www.rabbitmq.com/docs/dlx). To dead-letter such messages, set `nackOnInternalError` to `true` (available in `@nestjs/microservices` 12.6.1 and later):
+
+```typescript
+options: {
+  urls: ['amqp://localhost:5672'],
+  queue: 'orders',
+  noAck: false,
+  nackOnInternalError: true,
+  queueOptions: {
+    durable: true,
+    arguments: { 'x-dead-letter-exchange': 'orders.dlx' },
+  },
+},
+```
+
+With the option on, the server calls `nack(message, false, false)` when an event or request handler fails with an internal error: an exception other than an `RpcException`, which the default exception filter answers with "Internal server error". The message isn't requeued, so the queue's dead letter exchange receives it, or the broker drops it if the queue has none. A request still gets its error reply. The option leaves everything else as it was:
+
+- An `RpcException`, such as a "not found" from the handler or the "Forbidden resource" a guard throws, is a business error: the message stays unacknowledged.
+- A handler that succeeds still acknowledges its message itself.
+- A message the handler (or an interceptor) already acknowledged or rejected isn't settled a second time, which RabbitMQ would answer by closing the channel.
+- A custom exception filter that answers with its own payload, instead of calling `super.catch()` of `BaseRpcExceptionFilter`, doesn't count as an internal error.
+
+> info **Hint** Validation pipes throw a `BadRequestException`, which isn't an `RpcException`, so a payload that fails validation is dead-lettered: what you want for a poison message. To treat validation failures as business errors instead, give the pipe an `exceptionFactory` that returns an `RpcException`.
 
 #### Record builders
 

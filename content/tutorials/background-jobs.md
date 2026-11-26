@@ -21,6 +21,8 @@ It starts from the API of [Build a REST API with JWT authentication](/tutorials/
 | Welcome | `POST /auth/sign-up` commits | [Hand the welcome email to the queue](/tutorials/background-jobs#hand-the-welcome-email-to-the-queue) |
 | Digest | Every evening at 18:00 UTC, to each user who changed notes that day | [Send the digest from one instance](/tutorials/background-jobs#send-the-digest-from-one-instance) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-background-jobs](https://github.com/nestjs/example-background-jobs), with its tests and a CI workflow.
+
 #### Start from the JWT API
 
 Create the project, and install the JWT tutorial's packages, plus the five this tutorial adds: the mailer, BullMQ with its Nest module and its Redis client, the outbox, the scheduler and the locks:

@@ -19,6 +19,8 @@ These are the endpoints this tutorial adds:
 | `POST /auth/google` | [Sign in with a Google ID token](/tutorials/google-login#sign-in-with-a-google-id-token) |
 | `GET /me/identities`, `POST /me/identities/google`, `DELETE /me/identities/google` | [Connect Google to an existing account](/tutorials/google-login#connect-google-to-an-existing-account) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-google-login](https://github.com/nestjs/example-google-login), with its tests and a CI workflow.
+
 #### Start from the notes API
 
 This tutorial continues the JWT tutorial's finished application, notes included: they're what users sign in to. If you built it, keep working in that project and its database. Otherwise, create the project with the JWT tutorial's packages:

@@ -23,6 +23,8 @@ These are the endpoints, and the section that adds each one:
 | `POST /conversations`, `GET /conversations`, `GET /conversations/:id`, `DELETE /conversations/:id` | [Store conversations](/tutorials/ai-chat-backend#store-conversations) |
 | `POST /conversations/:id/messages` | [Stream the answer](/tutorials/ai-chat-backend#stream-the-answer) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-ai-chat-backend](https://github.com/nestjs/example-ai-chat-backend), with its tests and a CI workflow.
+
 You need Node.js 22 or later and a PostgreSQL server. For real answers you also need an API key of a model provider; this tutorial uses Anthropic's, as the [AI chapter](/ai/overview) does. Every model answer on this page comes from `FakeModel`, the scripted model of `@nestjs/ai/testing`: a real model writes different text, and decides for itself which tools to call, but the tools, the stream, the history and the limits around them run the same code.
 
 #### Start from the JWT API
