@@ -369,6 +369,7 @@ export const NAV_ITEMS: NavItem[] = [
       { title: 'From Fastify', path: '/migrating/fastify' },
       { title: 'From Spring Boot', path: '/migrating/spring-boot' },
       { title: 'From ASP.NET Core', path: '/migrating/aspnet-core' },
+      { title: 'From Django', path: '/migrating/django' },
     ],
   },
   {
