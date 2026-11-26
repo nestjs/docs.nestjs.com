@@ -4,6 +4,7 @@ import { FastifyMigrationComponent } from './fastify/fastify.component';
 import { SpringBootComponent } from './spring-boot/spring-boot.component';
 import { AspnetCoreComponent } from './aspnet-core/aspnet-core.component';
 import { DjangoComponent } from './django/django.component';
+import { FastapiComponent } from './fastapi/fastapi.component';
 
 export const MIGRATING_ROUTES: Routes = [
   {
@@ -30,5 +31,10 @@ export const MIGRATING_ROUTES: Routes = [
     path: 'django',
     component: DjangoComponent,
     data: { title: 'Coming from Django' },
+  },
+  {
+    path: 'fastapi',
+    component: FastapiComponent,
+    data: { title: 'Coming from FastAPI' },
   },
 ];
