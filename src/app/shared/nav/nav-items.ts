@@ -202,6 +202,7 @@ export const NAV_ITEMS: NavItem[] = [
       },
       { title: 'Google login', path: '/tutorials/google-login' },
       { title: 'MongoDB CRUD API', path: '/tutorials/mongodb-crud-api' },
+      { title: 'GraphQL API', path: '/tutorials/graphql-api' },
       { title: 'E-commerce backend', path: '/tutorials/ecommerce-backend' },
       { title: 'Multi-tenant SaaS backend', path: '/tutorials/multi-tenant-saas' },
       { title: 'Project-management API', path: '/tutorials/project-management-api' },
