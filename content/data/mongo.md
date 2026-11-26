@@ -720,6 +720,10 @@ class Person {
 
 In this example, the `fullName` virtual is derived from `firstName` and `lastName`. Even though it behaves like a normal property when accessed, it's never saved to the MongoDB document.
 
+#### Observability
+
+[NestJS Observe](https://www.observe.nestjs.com/?ref=docs-mongo 'NestJS Observe'), our official observability platform, records Mongoose queries with no configuration. The SDK instruments the `mongodb` driver underneath Mongoose (including the nested copy Mongoose installs when versions disagree), so every command shows up as a span under the provider method that ran it, and a slow request shows which query it was waiting on. See [Database queries and outbound HTTP](/observability/sdk#database-queries-and-outbound-http).
+
 #### Example
 
 A working example is available in the [nestjs/nest repository](https://github.com/nestjs/nest/tree/master/sample/06-mongoose).

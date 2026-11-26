@@ -22,6 +22,8 @@ In our benchmarks (`wrk` with 100 connections on Node.js 24, against a plain `GE
 
 Keep in mind that the adapter handles only a small part of each request. A route that queries a database or calls other services spends most of its time waiting for them, so the choice of adapter matters most for lightweight routes at high request rates.
 
+To see what switching adapters changes in your own application rather than in a benchmark, deploy the switch as its own release with [NestJS Observe](https://www.observe.nestjs.com/?ref=docs-http-adapters 'NestJS Observe') installed. Observe records requests the same way on all three adapters, and each release gets a verdict that compares latency and error rates per route before and after it, so a lightweight route that got faster and a heavy one that didn't move both show up (see [Releases and their verdicts](/observability/dashboard#releases-and-their-verdicts)).
+
 #### Node adapter
 
 The `NodeAdapter` runs Nest directly on the `node:http` module, with no other framework in between. First, install the required package:

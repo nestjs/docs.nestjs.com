@@ -630,6 +630,12 @@ async function bootstrap() {
 await bootstrap();
 ```
 
+#### Observability
+
+[NestJS Observe](https://www.observe.nestjs.com/?ref=docs-mikroorm 'NestJS Observe'), our official observability platform, records MikroORM queries with no configuration. On PostgreSQL, MySQL, and MongoDB, the SDK instruments the driver underneath (`pg`, `mysql2`, or `mongodb`, including a nested copy MikroORM installs when versions disagree), so every statement is a span under the provider method that ran it, with its values removed, and a slow request shows which query it was waiting on. MariaDB, SQLite, and SQL Server aren't covered yet. See [Database queries and outbound HTTP](/observability/sdk#database-queries-and-outbound-http).
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/sql.webp" alt="A query opened in the waterfall" /></figure>
+
 #### Example
 
 For complete applications that use NestJS with MikroORM, see the [nestjs-realworld-example-app](https://github.com/mikro-orm/nestjs-realworld-example-app) and [nestjs-example-app](https://github.com/mikro-orm/nestjs-example-app) repositories.

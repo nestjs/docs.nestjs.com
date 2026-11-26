@@ -4,13 +4,15 @@ There's no single best APM for every NestJS application: the right one depends o
 
 #### The short answer
 
-- **NestJS Observe** for the NestJS services in your system, whether that's all of your backend or part of it: traces in your own vocabulary (`OrdersService.create`, not `express.middleware`) without running anything, joined through OpenTelemetry to the traces of services written in other languages.
+- **NestJS Observe** for the NestJS services in your system, whether that's all of your backend or part of it: traces in your own vocabulary (`OrdersService.create`, not `express.middleware`) without running anything, a verdict on every deploy, and overhead measured in microseconds, joined through OpenTelemetry to the traces of services written in other languages.
 - **OpenTelemetry** for the services that aren't Nest, or if you want one vendor-neutral standard across every service, Nest ones included.
 - **Sentry** if errors across a web or mobile frontend and a backend are the main concern.
 - **Datadog or New Relic** if you want one platform for several languages and real infrastructure, and have the people to run it.
 - **Elastic APM** if you already run the Elastic Stack, or the data has to stay on infrastructure you control.
 
 They aren't exclusive: NestJS Observe works on its own, or beside the OpenTelemetry or platform APM you already have (see [Using more than one](#using-more-than-one)).
+
+> info **Hint** Trying NestJS Observe on your own application takes about a minute: run `npx @nestjs/observe link` in the project and approve the code it prints. The Free plan needs no payment details, and the [live demo](https://www.observe-demo.nestjs.com/dashboard?ref=docs-choosing-an-apm 'NestJS Observe live demo') shows the dashboard over a busy service's data with no signup at all.
 
 #### What every APM needs from a Nest application
 
@@ -32,9 +34,19 @@ It prints a code that you approve in the dashboard (signing up first if you need
 
 **What it sees of Nest:** every provider. Each method call on a controller, service, repository, guard, interceptor or pipe during a request, job or message becomes a span named the way you named it, so `PricingService.quote` is in the trace without anybody adding it. Queue consumers, `@Cron()` handlers, GraphQL resolvers and WebSocket gateways are recorded as what they are, and a BullMQ or Bull job shares a trace with the request that enqueued it. Queries through `pg`, `mysql2`, `mssql` and `mongodb` (so TypeORM, Drizzle, MikroORM, Mongoose and Prisma's `pg` and SQL Server adapters) and outbound HTTP calls show up under the method that made them.
 
-**Where it's narrower than the rest:** it instruments NestJS on Node.js only. Services in other languages share its traces through OpenTelemetry (see [Using more than one](#using-more-than-one)), but their spans stay in your OpenTelemetry backend, since Observe doesn't ingest OTLP. It's hosted only, and it doesn't monitor infrastructure beyond each Node.js process's own runtime. Driver-level query detail covers `pg`, `mysql2`, `mssql` and `mongodb`; Redis and Kafka clients show up as spans when they're registered as Nest providers (the usual setup), and cloud SDK calls show up as the HTTP requests they make. It needs `@nestjs/core` 11.1.4 or later and Node.js 20.19 or later, with Express or Fastify.
+**What it does with that:** the per-method telemetry is what the rest of the dashboard reads, so none of the following needs setup beyond the SDK:
 
-Pick it for your NestJS services, all of your backend or some of it, when the question you keep asking is which of your own classes is slow. The Free plan needs no payment details, and the [live demo](https://www.observe-demo.nestjs.com/dashboard 'NestJS Observe live demo') shows the dashboard over a busy service's data with no signup.
+- **A verdict on every deploy**, on every plan: whether server errors rose, plus the error groups first seen in the release, the routes that went quiet, and the queries, outbound calls and methods that are new, gone, or called more often. A new N+1 reads as a statement made 44× more often per request, usually long before it moves a p95. See [Releases and their verdicts](/observability/dashboard#releases-and-their-verdicts).
+- **"Did a release fix this?"** for an error that became an issue, judged on that release's own requests on the routes the error failed on, with a **Fixed** or **Not fixed** answer once there's enough traffic to tell. See [Issues](/observability/dashboard#issues).
+- **Failures handed to a coding agent**: one click turns a failed request or a slow job into a self-contained prompt, and on paid plans an [MCP server](/observability/mcp-server) lets the agent query your telemetry and judge its own deploys.
+- **Alerts with nothing to configure**: an email when an error Observe has never seen appears, and, for an application that runs around the clock, when its error rate turns unusual or it goes quiet, on every plan including Free.
+- **Little overhead**: about a tenth of a millisecond on a typical endpoint's median latency. Worked out the way third-party benchmarks measure the other agents, that's 7 µs per request on a one-call endpoint and 20 µs on a nine-call one, against 45 µs for Sentry, 130 µs for Datadog, 200 µs for New Relic and 31-77 µs for OpenTelemetry (see [Performance overhead](/observability/overview#performance-overhead) for the sources and the caveats).
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/traces.webp" alt="A trace in NestJS Observe, with every provider method as a span" /></figure>
+
+**Where it's narrower than the rest:** it instruments NestJS on Node.js only. Services in other languages share its traces through OpenTelemetry (see [Using more than one](#using-more-than-one)), but their spans stay in your OpenTelemetry backend, since Observe doesn't ingest OTLP. It's hosted only, and it doesn't monitor infrastructure beyond each Node.js process's own runtime. Driver-level query detail covers `pg`, `mysql2`, `mssql` and `mongodb`; Redis and Kafka clients show up as spans when they're registered as Nest providers (the usual setup), and cloud SDK calls show up as the HTTP requests they make. It needs `@nestjs/core` 11.1.4 or later and Node.js 20.19 or later, on Express, Fastify, or (on Nest 12) the Node adapter.
+
+Pick it for your NestJS services, all of your backend or some of it, when the question you keep asking is which of your own classes is slow, or what the last deploy changed. [Start on the Free plan](https://www.observe.nestjs.com/?ref=docs-choosing-an-apm 'NestJS Observe') with no payment details, or open the [live demo](https://www.observe-demo.nestjs.com/dashboard?ref=docs-choosing-an-apm 'NestJS Observe live demo') to see the dashboard over a busy service's data with no signup.
 
 #### OpenTelemetry
 
@@ -145,8 +157,9 @@ Pick it when you already run the Elastic Stack, or when the data has to stay on 
 | Self-hostable                              | No                                                         | Yes                                                             | No                                              | No                                             | Yes                                                               |
 | Languages                                  | NestJS; other languages share its traces via OpenTelemetry | Many                                                            | Many                                            | Many                                           | Many                                                              |
 | Infrastructure monitoring                  | No                                                         | No                                                              | Yes                                             | Yes                                            | Yes                                                               |
+| Overhead per request (third-party method)  | 7-20 µs                                                    | 45 µs                                                           | 130 µs                                          | 200 µs                                         | Not measured there                                                |
 
-This chapter quotes no prices: per-host, per-seat, per-gigabyte and per-event models don't convert cleanly, and they change. Price your own traffic on each before you decide. NestJS Observe's plans are listed under [Subscribing](/observability/overview#subscribing).
+This chapter quotes no prices: per-host, per-seat, per-gigabyte and per-event models don't convert cleanly, and they change. Price your own traffic on each before you decide. NestJS Observe's plans are listed under [Subscribing](/observability/overview#subscribing). The overhead row is worked out from third-party benchmarks on near-empty endpoints, on different machines, so read it as a direction rather than a ranking (see [Performance overhead](/observability/overview#performance-overhead)).
 
 #### How to choose
 
@@ -154,7 +167,7 @@ This chapter quotes no prices: per-host, per-seat, per-gigabyte and per-event mo
 - **Mainly worried about errors, especially on a frontend too?** Sentry.
 - **Several languages in the request path that have to share one trace?** OpenTelemetry on the services that aren't Nest, and NestJS Observe on the ones that are: with `openTelemetry` and `otlp`, the Nest services join the same traces and export their spans, down to each provider method, to your OpenTelemetry backend, which shows the whole trace. A platform APM covers every service in one product, but sees the Nest services' router and drivers, not their providers.
 - **Data has to stay on your own infrastructure?** Elastic, self-hosted Sentry, or OpenTelemetry with a backend you run.
-- **A NestJS backend, no tracing today, and nobody has had the week to set it up?** That's the case NestJS Observe was built for: the setup above is the whole setup.
+- **A NestJS backend, no tracing today, and nobody has had the week to set it up?** That's the case NestJS Observe was built for: the setup above is the whole setup, and the Free plan is enough to see your first deploy's verdict. [Start here](https://www.observe.nestjs.com/?ref=docs-choosing-an-apm 'NestJS Observe').
 
 #### Using more than one
 

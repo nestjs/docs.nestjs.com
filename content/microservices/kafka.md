@@ -758,3 +758,9 @@ To do so, use the `producer` and `consumer` properties exposed by the `ClientKaf
 const producer = this.client.producer;
 const consumer = this.client.consumer;
 ```
+
+#### Observability
+
+A message that fails three services downstream is hard to follow from logs. With [NestJS Observe](https://www.observe.nestjs.com/?ref=docs-kafka 'NestJS Observe'), our official observability platform, installed in each service, `@MessagePattern()` and `@EventPattern()` handlers are instrumented automatically, and from `@nestjs/microservices` 12.3.3 the trace id travels on each record as a header whenever the producer's `ClientKafka` is registered as a provider (for example, with `ClientsModule`). The producer's request and the consumer's handler land in one waterfall, with the queries and calls each side made, and no tracing code in either. See [Distributed tracing](/observability/distributed-tracing#tcp-redis-nats-and-other-microservice-transports).
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/service-flow.webp" alt="Trace correlation across services" /></figure>

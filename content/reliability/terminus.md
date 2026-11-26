@@ -971,6 +971,22 @@ await request(app.getHttpServer()).get('/health').expect(503);
 
 > info **Hint** `@nestjs/terminus` is published as ES modules. If your tests run on Jest, see the [migration guide](/migration-guide#testing-stack).
 
+#### Observability
+
+A health check answers one question for the orchestrator: should this instance get traffic? It doesn't tell you which route got slower after the last deploy, or what the instance that failed its readiness probe was busy with. [NestJS Observe](https://www.observe.nestjs.com/?ref=docs-terminus 'NestJS Observe'), our official observability platform, records the rest - requests, jobs, errors, queries, and traces, plus CPU, memory, and event loop delay sampled from inside each instance - and two of its settings work alongside the checks in this chapter.
+
+Probes call the health endpoint every few seconds, and left in, they bury real traffic in the request metrics. Leave them out with the SDK's `http.ignore` option (see [Ignoring noisy operations](/observability/sdk#ignoring-noisy-operations)):
+
+```typescript
+@@filename(app.module)
+ObserveModule.forRoot({
+  // ...
+  http: { ignore: ['/health'] },
+});
+```
+
+A passing liveness check also doesn't mean anything is being served. For an application that runs around the clock, a built-in alert emails you when it goes quiet or its error rate turns unusual, on every plan including the free tier. See the [Observability](/observability/overview) chapter.
+
 #### More examples
 
 The [kitchen sink sample](https://github.com/nestjs/terminus/tree/master/sample/000-kitchen-sink-app) is a small application that combines most of this chapter: a liveness and a readiness check, built-in and custom health indicators, the `'degraded'` state, and tests. It needs no database.

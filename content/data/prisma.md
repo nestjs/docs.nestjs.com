@@ -541,6 +541,12 @@ describe('UsersService', () => {
 
 The mock replaces `PrismaService` entirely, so its `onModuleInit()` hook doesn't run and the test never opens a database connection. When you test a module that imports `PrismaModule`, replace the provider with `overrideProvider(PrismaService)` instead. See [Testing](/fundamentals/testing) for more testing utilities.
 
+#### Observability
+
+[NestJS Observe](https://www.observe.nestjs.com/?ref=docs-prisma 'NestJS Observe'), our official observability platform, records Prisma queries through the driver adapter they run on. On PostgreSQL (`@prisma/adapter-pg`) and SQL Server (`@prisma/adapter-mssql`), every statement is a span under the provider method that ran it, with its values removed, so a slow request shows which query it was waiting on and an N+1 loop shows up as one statement repeated. The MySQL and MariaDB adapter (`@prisma/adapter-mariadb`) and the SQLite adapter run on drivers that aren't instrumented yet. See [Database queries and outbound HTTP](/observability/sdk#database-queries-and-outbound-http).
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/sql.webp" alt="A query opened in the waterfall" /></figure>
+
 #### Example
 
 Ready-to-run example projects for [REST](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest) and [GraphQL](https://github.com/prisma/prisma-examples/tree/b53fad046a6d55f0090ddce9fd17ec3f9b95cab3/orm/nest-graphql) are available in the [`prisma-examples`](https://github.com/prisma/prisma-examples/) repository. For more resources, see [NestJS & Prisma](https://www.prisma.io/nestjs) on the Prisma website.

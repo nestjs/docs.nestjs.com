@@ -542,6 +542,12 @@ SequelizeModule.forRootAsync({
 
 This construction works the same as `useClass` with one critical difference - `SequelizeModule` will lookup imported modules to reuse an existing `ConfigService` instead of instantiating a new one.
 
+#### Observability
+
+[NestJS Observe](https://www.observe.nestjs.com/?ref=docs-sequelize 'NestJS Observe'), our official observability platform, records Sequelize queries with no configuration. On PostgreSQL and MySQL, the SDK instruments the driver underneath (`pg` or `mysql2`), so every statement is a span under the provider method that ran it, with its values removed, and a slow request shows which query it was waiting on. The MariaDB, SQLite, and SQL Server dialects run on drivers that aren't instrumented yet (`mariadb`, `sqlite3`, and `tedious`). See [Database queries and outbound HTTP](/observability/sdk#database-queries-and-outbound-http).
+
+<figure><img src="https://www.observe.nestjs.com/docs/telemetry/sql.webp" alt="A query opened in the waterfall" /></figure>
+
 #### Example
 
 A working example is available [here](https://github.com/nestjs/nest/tree/master/sample/07-sequelize).
