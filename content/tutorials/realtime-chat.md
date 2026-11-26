@@ -996,7 +996,7 @@ import { Test } from '@nestjs/testing';
 import { drizzle } from 'drizzle-orm/pglite';
 import { migrate } from 'drizzle-orm/pglite/migrator';
 import { io, type Socket } from 'socket.io-client';
-import { AppModule } from '../src/app.module.js';
+import { AppModule, ObserveInstrument } from '../src/app.module.js';
 
 describe('Chat (e2e)', () => {
   const pglite = new PGlite(); // PostgreSQL in-process: no server to start
@@ -1007,7 +1007,11 @@ describe('Chat (e2e)', () => {
   beforeAll(async () => {
     const db = drizzle({ client: pglite });
     await migrate(db, { migrationsFolder: fileURLToPath(new URL('../drizzle', import.meta.url)) });
-    const moduleRef = await Test.createTestingModule({ imports: [AppModule] })
+    // Instrumented as in main.ts, so NestJS Observe sees the gateway's handlers.
+    const moduleRef = await Test.createTestingModule(
+      { imports: [AppModule] },
+      { instrument: ObserveInstrument },
+    )
       .overrideProvider(getDrizzleToken())
       .useValue(db)
       // scrypt at the default cost takes 128 MiB and a few hundred ms per hash.
@@ -1239,6 +1243,7 @@ describe('Chat (e2e)', () => {
 });
 ```
 
+- `createTestingModule()` takes the `instrument` option (in `@nestjs/testing` 12.6.3 and later), as `NestFactory.create()` does in `main.ts`. Without it, the gateway's handlers run uninstrumented, and NestJS Observe logs an error for each event that it can't trace.
 - `open()` returns the socket before it connects, so the first test listens for `disconnect` from the start. A socket the server refuses can get its `disconnect` before the code after an `await` on `connect` runs.
 - `send()` sets a timeout on the acknowledgment. A refused message never gets one, so without a timeout, a test that expects one would hang instead of failing.
 - `shortLivedToken()` signs a token the way the API's `accessToken` options do (HS256, the `chat-api` issuer and audience, the test's `JWT_SECRET`), which expires within two seconds of the handshake.
