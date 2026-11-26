@@ -234,29 +234,24 @@ const GOOGLE_ISSUERS = ['https://accounts.google.com', 'accounts.google.com'];
 @Injectable()
 export class GoogleIdTokenVerifier {
   private readonly logger = new Logger(GoogleIdTokenVerifier.name);
-  private readonly verifiers: Map<string, JwtVerifier>;
+  private readonly verifier: JwtVerifier;
 
   constructor(config: ConfigService<Env, true>) {
-    // One key set, fetched and cached for both verifiers.
-    const jwks = new JwksClient(config.get('GOOGLE_JWKS_URL', { infer: true }));
-    const verify = (issuer: string) =>
-      new JwtVerifier({
-        jwks,
-        issuer,
-        // Tokens issued to any other client of Google's are refused.
-        audience: config.get('GOOGLE_CLIENT_IDS', { infer: true }),
-        required: ['exp', 'sub'],
-        // Google's clock and this server's are never quite the same.
-        clockTolerance: '30s',
-      });
-    this.verifiers = new Map(GOOGLE_ISSUERS.map((issuer) => [issuer, verify(issuer)]));
+    this.verifier = new JwtVerifier({
+      jwks: new JwksClient(config.get('GOOGLE_JWKS_URL', { infer: true })),
+      // A token must name one of them.
+      issuer: GOOGLE_ISSUERS,
+      // Tokens issued to any other client of Google's are refused.
+      audience: config.get('GOOGLE_CLIENT_IDS', { infer: true }),
+      required: ['exp', 'sub'],
+      // Google's clock and this server's are never quite the same.
+      clockTolerance: '30s',
+    });
   }
 
   async verify(idToken: string): Promise<GoogleAccount> {
-    // Picks the verifier for the issuer the token names, which that verifier then checks.
-    const verifier = this.verifiers.get(unverifiedIssuer(idToken)) ?? this.verifiers.get(GOOGLE_ISSUERS[0])!;
     try {
-      const claims = await verifier.verify(idToken);
+      const claims = await this.verifier.verify(idToken);
       return {
         subject: claims.sub!,
         email: typeof claims.email === 'string' ? claims.email : undefined,
@@ -272,20 +267,10 @@ export class GoogleIdTokenVerifier {
     }
   }
 }
-
-/** The `iss` claim, read without verifying anything. */
-function unverifiedIssuer(token: string): string {
-  try {
-    const payload = JSON.parse(Buffer.from(token.split('.')[1] ?? '', 'base64url').toString());
-    return typeof payload?.iss === 'string' ? payload.iss : '';
-  } catch {
-    return '';
-  }
-}
 ```
 
 - **The audience is your client IDs.** Google signs every application's ID tokens with the same keys. Without the check, a token a user's browser gave another site would sign them in here, which is why `JwtVerifier` refuses a `jwks` without an `audience`.
-- **Two issuers, two verifiers.** Google documents both `https://accounts.google.com` and `accounts.google.com` as an ID token's `iss`, and the `issuer` option takes one value. The verifiers share one `JwksClient`, so the keys are fetched once. Reading `iss` unverified is safe: it only picks the verifier that then checks it.
+- **Both of Google's issuers.** Google documents both `https://accounts.google.com` and `accounts.google.com` as an ID token's `iss`. The `issuer` option takes a list of the values it accepts (in `@nestjs/authentication` 0.1.8 and later), and a token naming any other issuer is refused.
 - **A bad token is a 401, an outage a 503.** A `JwtError` says why a token failed. When Google's keys can't be fetched, the client should retry later, not sign the user out.
 
 > info **Hint** An ID token is valid for about an hour, and whoever copies one can exchange it here until then. Google's libraries put a `nonce` of yours in the token (the `nonce` option of the web `initialize()` call, `setNonce()` on Android). An API that issues a random nonce per sign-in and accepts each once stops replays; `verify()` returns every claim, so the check is a comparison of `claims.nonce`. It needs an endpoint and a table of its own, so this tutorial leaves it out.
