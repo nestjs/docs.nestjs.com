@@ -25,6 +25,8 @@ These are the endpoints, and the section that adds each one:
 | `GET /files/:id/content`, `GET /files/:id/link`, `GET /downloads` | [Download files](/tutorials/file-uploads#download-files) |
 | `DELETE /files/:id` | [Delete files](/tutorials/file-uploads#delete-files) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-file-uploads](https://github.com/nestjs/example-file-uploads), with its tests and a CI workflow.
+
 #### Start from the JWT API
 
 Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/storage`:

@@ -24,6 +24,8 @@ These are the endpoints of the orders service, and the section that adds each on
 | `POST /orders`, `GET /orders/:id`, `GET /health/live`, `GET /health/ready`, `GET /docs` | [Build the orders API](/tutorials/microservices-rabbitmq#build-the-orders-api) |
 | `GET /orders/:id/shipment` | [Ask another service with request-response](/tutorials/microservices-rabbitmq#ask-another-service-with-request-response) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-microservices-rabbitmq](https://github.com/nestjs/example-microservices-rabbitmq), with its tests and a CI workflow.
+
 And these are the messages between the services:
 
 | Message | Style | Queue | Section |

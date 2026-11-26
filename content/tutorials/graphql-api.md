@@ -24,6 +24,8 @@ These are the operations, and the section that adds each one:
 | `signUp`, `signIn`, `refreshToken` | [Sign users in with mutations](/tutorials/graphql-api#sign-users-in-with-mutations) |
 | `commentAdded` | [Push new comments with subscriptions](/tutorials/graphql-api#push-new-comments-with-subscriptions) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-graphql-api](https://github.com/nestjs/example-graphql-api), with its tests and a CI workflow.
+
 You need Node.js 22.18 or later, which runs the subscription script's TypeScript directly and has a WebSocket client built in, and Docker to run PostgreSQL locally.
 
 #### Create the project

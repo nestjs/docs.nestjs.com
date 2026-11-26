@@ -23,6 +23,8 @@ These are the endpoints, and the section that adds each one:
 | `POST /orders/:id/payment` | [Create the payment](/tutorials/payments-webhooks#create-the-payment) |
 | `POST /webhooks/payments` | [Receive the provider's webhooks](/tutorials/payments-webhooks#receive-the-providers-webhooks) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-payments-webhooks](https://github.com/nestjs/example-payments-webhooks), with its tests and a CI workflow.
+
 #### Start from the e-commerce backend
 
 Start from the finished application of [Build an e-commerce backend](/tutorials/ecommerce-backend), all of it: `src/`, `test/`, the `drizzle/` folder with its migration, and its database. This tutorial changes a few of its files and adds a second migration. Install the three packages it adds:

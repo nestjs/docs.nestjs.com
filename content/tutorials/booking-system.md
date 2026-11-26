@@ -24,6 +24,8 @@ These are the endpoints, and the section that adds each one:
 | `GET /resources/:id/availability` | [List the free slots of a day](/tutorials/booking-system#list-the-free-slots-of-a-day) |
 | `POST /bookings/:id/cancel` | [Cancel before the cutoff](/tutorials/booking-system#cancel-before-the-cutoff) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-booking-system](https://github.com/nestjs/example-booking-system), with its tests and a CI workflow.
+
 #### Start from the JWT API
 
 Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`:

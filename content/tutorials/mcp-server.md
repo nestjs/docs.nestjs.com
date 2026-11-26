@@ -26,6 +26,8 @@ The server exposes these, and this is the section that adds each one:
 | `POST /mcp`, `GET /.well-known/oauth-protected-resource/mcp` | [Verify OAuth access tokens](/tutorials/mcp-server#verify-oauth-access-tokens) |
 | `node dist/stdio.js` | [Serve the same tools over stdio](/tutorials/mcp-server#serve-the-same-tools-over-stdio) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-mcp-server](https://github.com/nestjs/example-mcp-server), with its tests and a CI workflow.
+
 You need Node.js 22.18 or later (the development token script runs TypeScript directly), and Docker to run PostgreSQL locally.
 
 #### Create the project

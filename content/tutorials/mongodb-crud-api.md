@@ -24,6 +24,8 @@ These are the endpoints, and the section that adds each one:
 | `GET /health/live`, `GET /health/ready` | [Add health checks](/tutorials/mongodb-crud-api#add-health-checks) |
 | `GET /docs` | [Assemble the application](/tutorials/mongodb-crud-api#assemble-the-application) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-mongodb-crud-api](https://github.com/nestjs/example-mongodb-crud-api), with its tests and a CI workflow.
+
 You need Node.js 22 or later, and Docker to run MongoDB locally. The API has no sign-in, so that the MongoDB parts stay in focus; [What's next](/tutorials/mongodb-crud-api#whats-next) links the tutorial that adds it.
 
 #### Create the project

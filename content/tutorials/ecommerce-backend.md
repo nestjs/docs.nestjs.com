@@ -24,6 +24,8 @@ These are the endpoints, and the section that adds each one:
 | `POST /orders`, `GET /orders`, `GET /orders/:id` | [Check out without overselling](/tutorials/ecommerce-backend#check-out-without-overselling) |
 | `POST /orders/:id/cancel`, `POST /orders/:id/ship` | [Cancel and ship orders](/tutorials/ecommerce-backend#cancel-and-ship-orders) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-ecommerce-backend](https://github.com/nestjs/example-ecommerce-backend), with its tests and a CI workflow.
+
 #### Start from the JWT API
 
 Create the project, and install everything this tutorial uses. These are the JWT tutorial's packages plus `@nestjs/authorization`. `nest new` also installs the [NestJS Observe SDK](/observability/sdk), `@nestjs/observe`, and wires it in; the application's own files keep it:

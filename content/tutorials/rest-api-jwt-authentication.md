@@ -26,6 +26,8 @@ These are the endpoints, and the section that adds each one:
 | `GET /docs` | [Describe the API with OpenAPI](/tutorials/rest-api-jwt-authentication#describe-the-api-with-openapi) |
 | `GET /health/live`, `GET /health/ready` | [Add health checks](/tutorials/rest-api-jwt-authentication#add-health-checks) |
 
+> info **Hint** The finished application is on GitHub as [nestjs/example-rest-api-jwt-authentication](https://github.com/nestjs/example-rest-api-jwt-authentication), with its tests and a CI workflow.
+
 You need Node.js 22 or later, and a PostgreSQL server for the second section onwards.
 
 #### Start with one file
