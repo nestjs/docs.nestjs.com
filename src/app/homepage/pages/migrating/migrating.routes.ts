@@ -3,6 +3,7 @@ import { ExpressMigrationComponent } from './express/express.component';
 import { FastifyMigrationComponent } from './fastify/fastify.component';
 import { SpringBootComponent } from './spring-boot/spring-boot.component';
 import { AspnetCoreComponent } from './aspnet-core/aspnet-core.component';
+import { DjangoComponent } from './django/django.component';
 
 export const MIGRATING_ROUTES: Routes = [
   {
@@ -24,5 +25,10 @@ export const MIGRATING_ROUTES: Routes = [
     path: 'aspnet-core',
     component: AspnetCoreComponent,
     data: { title: 'Coming from ASP.NET Core' },
+  },
+  {
+    path: 'django',
+    component: DjangoComponent,
+    data: { title: 'Coming from Django' },
   },
 ];
