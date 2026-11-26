@@ -1,8 +1,8 @@
 ### Build a GraphQL API in Node.js
 
-Build a GraphQL API in Node.js and TypeScript with NestJS, Apollo and PostgreSQL: batched resolvers, query cost limits, auth and subscriptions.
+Build a GraphQL API in Node.js and TypeScript with NestJS, Apollo and PostgreSQL: batched resolvers, sign-in, error codes and subscriptions.
 
-The API serves a blog: users write posts, keep them as drafts until they publish them, and comment on each other's posts. A GraphQL server for that takes minutes to start, and most examples stop there. This tutorial spends its time on what they leave out: the N+1 queries that nested fields cause, a query that asks for a hundred thousand rows, a draft that leaks through a field nobody thought of, errors a client can't tell apart, and a WebSocket that skips the checks every HTTP request gets.
+The API serves a blog: users write posts, keep them as drafts until they publish them, and comment on each other's posts. A GraphQL server for that takes minutes to start, and most examples stop there. This tutorial spends its time on what they leave out: the N+1 queries that nested fields cause, a draft that leaks through a field nobody thought of, errors a client can't tell apart, and a WebSocket that skips the checks every HTTP request gets.
 
 By the end, the API will:
 
@@ -12,7 +12,6 @@ By the end, the API will:
 - Sign users in with mutations and [`@nestjs/authentication`](/security/authentication): access tokens, and refresh tokens that rotate.
 - Show a draft to its author only, through every path, and an email address to its owner only.
 - Answer with codes a client can act on (`UNAUTHENTICATED`, `FORBIDDEN`, `BAD_USER_INPUT`, `NOT_FOUND`), and hide unexpected errors in production.
-- Refuse a query that would cost too much, before any resolver runs.
 - Push new comments to signed-in subscribers over `graphql-ws`.
 - Prove it in tests against PostgreSQL, over HTTP and a real WebSocket.
 
@@ -41,7 +40,7 @@ Install the [Node adapter](/http/performance#node-adapter) in place of Express, 
 
 ```bash
 $ npm uninstall @nestjs/platform-express @types/express
-$ npm i --save @nestjs/platform-node @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/express5 graphql graphql-ws graphql-subscriptions graphql-query-complexity dataloader class-validator class-transformer zod @nestjs/config @nestjs/drizzle drizzle-orm@rc pg @nestjs/authentication @nestjs/throttler
+$ npm i --save @nestjs/platform-node @nestjs/graphql @nestjs/apollo @apollo/server @as-integrations/express5 graphql graphql-ws graphql-subscriptions dataloader class-validator class-transformer zod @nestjs/config @nestjs/drizzle drizzle-orm@rc pg @nestjs/authentication @nestjs/throttler
 $ npm i --save-dev drizzle-kit@rc @types/pg @nestjs/testing vitest vite
 ```
 
@@ -563,9 +562,8 @@ The resolver maps the queries, mutations and fields of `Post` to the service (se
 ```typescript
 @@filename(src/posts/posts.resolver)
 import { Authenticate, CurrentUser } from '@nestjs/authentication';
-import { Args, Context, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import type { Loaders } from '../graphql/loaders.js';
-import { perItem } from '../graphql/query-cost.js';
+import { Args, Mutation, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Loaders } from '../graphql/loaders.js';
 import { User } from '../users/user.model.js';
 import { Comment } from './comment.model.js';
 import { Post, PostConnection } from './post.model.js';
@@ -576,9 +574,12 @@ import { PostsService } from './posts.service.js';
 @Authenticate({ optional: true })
 @Resolver(() => Post)
 export class PostsResolver {
-  constructor(private readonly postsService: PostsService) {}
+  constructor(
+    private readonly postsService: PostsService,
+    private readonly loaders: Loaders,
+  ) {}
 
-  @Query(() => PostConnection, { complexity: perItem })
+  @Query(() => PostConnection)
   posts(@Args() args: PostsArgs) {
     return this.postsService.list(args);
   }
@@ -589,13 +590,13 @@ export class PostsResolver {
   }
 
   @ResolveField(() => User)
-  author(@Parent() post: Post, @Context('loaders') loaders: Loaders) {
-    return loaders.user(post.authorId);
+  author(@Parent() post: Post) {
+    return this.loaders.user(post.authorId);
   }
 
-  @ResolveField(() => [Comment], { complexity: perItem })
-  comments(@Parent() post: Post, @Args() { first }: FirstArgs, @Context('loaders') loaders: Loaders) {
-    return loaders.comments(post.id, first);
+  @ResolveField(() => [Comment])
+  comments(@Parent() post: Post, @Args() { first }: FirstArgs) {
+    return this.loaders.comments(post.id, first);
   }
 
   @Authenticate({ optional: false })
@@ -620,7 +621,7 @@ export class PostsResolver {
 
 - **Reads are open to everyone.** `@nestjs/authentication`'s global guard requires a user on every operation, unless it says otherwise. With `optional`, anonymous readers get through, and `@CurrentUser()` still gets the user when the request has a valid token, so authors see their drafts. A `@Public()` operation runs no authentication, and `@CurrentUser()` is always `null` there.
 - **Mutations require a user again**, with `optional` set to `false`: method options are merged over the class's.
-- **`author` and `comments` read `loaders` from the context**, which the next section writes. `complexity` is for the [cost limit](/tutorials/graphql-api#limit-the-cost-of-a-query).
+- **`author` and `comments` load through `Loaders`**, which the next section writes.
 
 #### Batch nested fields with DataLoader
 
@@ -628,6 +629,8 @@ A query for 50 posts with their authors runs the `author` resolver 50 times, and
 
 ```typescript
 @@filename(src/graphql/loaders)
+import { Injectable, Scope } from '@nestjs/common';
+import { InjectDrizzle } from '@nestjs/drizzle';
 import DataLoader from 'dataloader';
 import { and, getColumns, inArray, lte, sql } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
@@ -638,13 +641,14 @@ import type { User } from '../users/user.model.js';
 const { passwordHash: _, ...userColumns } = getColumns(users);
 
 /**
- * Batches the nested fields of one operation: `author` for 50 posts is one query, not 50.
- * A new instance for every operation, so no batch mixes two requests or two users.
+ * Batches the nested fields of one request: `author` for 50 posts is one query, not 50.
+ * Request-scoped: a new instance for every request, so no batch mixes two requests or two users.
  */
+@Injectable({ scope: Scope.REQUEST })
 export class Loaders {
   private readonly loaders = new Map<string, DataLoader<string, unknown>>();
 
-  constructor(private readonly db: NodePgDatabase) {}
+  constructor(@InjectDrizzle() private readonly db: NodePgDatabase) {}
 
   user(id: string): Promise<User | undefined> {
     return this.load('users', id, async (ids) => {
@@ -690,8 +694,8 @@ export class Loaders {
   private load<V>(kind: string, key: string, batch: (keys: string[]) => Promise<V[]>): Promise<V> {
     let loader = this.loaders.get(kind) as DataLoader<string, V> | undefined;
     if (!loader) {
-      // Batching without a cache: a subscription keeps its context, and these loaders, for
-      // as long as it runs, and every event must see the rows as they are now.
+      // Batching without a cache: a subscription is one request, which keeps these loaders
+      // for as long as it runs, and every event must see the rows as they are now.
       loader = new DataLoader<string, V>((keys) => batch([...keys]), { cache: false });
       this.loaders.set(kind, loader);
     }
@@ -700,18 +704,31 @@ export class Loaders {
 }
 ```
 
-- **A new instance per operation.** The [GraphQL context](/tutorials/graphql-api#configure-the-graphql-module) creates one, so no batch mixes two users.
-- **No cache.** A subscription keeps its context as long as it runs. With DataLoader's cache on, a comment that arrives after the author publishes a post would still list the author's posts as they were when the subscription started.
+- **Request-scoped.** Nest creates a new instance for every request (see [Injection scopes](/fundamentals/provider-scopes)), so a request's batches never mix with another viewer's, and nothing it loaded outlives it. The scope bubbles up: the resolvers that inject `Loaders` are request-scoped too. In GraphQL, a request is one operation, and a subscription is one request for as long as it runs, whatever else its socket carries.
+- **No cache.** With DataLoader's cache on, the subscription's later events would be served the rows its first event loaded: a comment that arrives after its author publishes a post would still list the author's posts as they were.
 - **One query for every post's first comments.** `row_number()` numbers the comments of each post separately; a `LIMIT` would apply to all of them together. `first` and the viewer are part of the kind of batch, since they change the query.
+
+A module provides it to the posts and users modules:
+
+```typescript
+@@filename(src/graphql/loaders.module)
+import { Module } from '@nestjs/common';
+import { Loaders } from './loaders.js';
+
+@Module({
+  providers: [Loaders],
+  exports: [Loaders],
+})
+export class LoadersModule {}
+```
 
 The user resolver has `me` and the fields of `User`:
 
 ```typescript
 @@filename(src/users/users.resolver)
 import { Authenticate, CurrentUser } from '@nestjs/authentication';
-import { Args, Context, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
-import type { Loaders } from '../graphql/loaders.js';
-import { perItem } from '../graphql/query-cost.js';
+import { Args, Parent, Query, ResolveField, Resolver } from '@nestjs/graphql';
+import { Loaders } from '../graphql/loaders.js';
 import { Post } from '../posts/post.model.js';
 import { FirstArgs } from '../posts/posts.inputs.js';
 import { User } from './user.model.js';
@@ -719,6 +736,8 @@ import { User } from './user.model.js';
 @Authenticate({ optional: true })
 @Resolver(() => User)
 export class UsersResolver {
+  constructor(private readonly loaders: Loaders) {}
+
   @Authenticate({ optional: false })
   @Query(() => User)
   me(@CurrentUser() user: User) {
@@ -731,14 +750,13 @@ export class UsersResolver {
     return user.id === viewerId ? user.email : null;
   }
 
-  @ResolveField(() => [Post], { complexity: perItem })
+  @ResolveField(() => [Post])
   posts(
     @Parent() user: User,
     @Args() { first }: FirstArgs,
     @CurrentUser('id') viewerId: string | null,
-    @Context('loaders') loaders: Loaders,
   ) {
-    return loaders.posts(user.id, first, viewerId ?? null);
+    return this.loaders.posts(user.id, first, viewerId ?? null);
   }
 }
 ```
@@ -800,10 +818,12 @@ The users module provides it to the authentication code:
 ```typescript
 @@filename(src/users/users.module)
 import { Module } from '@nestjs/common';
+import { LoadersModule } from '../graphql/loaders.module.js';
 import { UsersRepository } from './users.repository.js';
 import { UsersResolver } from './users.resolver.js';
 
 @Module({
+  imports: [LoadersModule],
   providers: [UsersRepository, UsersResolver],
   exports: [UsersRepository],
 })
@@ -1026,24 +1046,16 @@ import type { IncomingMessage } from 'node:http';
 import type { ApolloDriverConfig } from '@nestjs/apollo';
 import { Injectable } from '@nestjs/common';
 import { WsAuthenticator } from '@nestjs/authentication';
-import { InjectDrizzle } from '@nestjs/drizzle';
-import { GraphQLSchemaHost, type GqlOptionsFactory } from '@nestjs/graphql';
-import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
-import { GraphQLError, getOperationAST, parse, validate } from 'graphql';
+import type { GqlOptionsFactory } from '@nestjs/graphql';
+import { GraphQLError, getOperationAST, parse } from 'graphql';
 import type { Context, SubscribePayload } from 'graphql-ws';
 import type { Extra } from 'graphql-ws/use/ws';
-import { Loaders } from './loaders.js';
-import { queryCostError } from './query-cost.js';
 
 type SocketContext = Context<Record<string, unknown> | undefined, Extra>;
 
 @Injectable()
 export class GraphqlConfig implements GqlOptionsFactory<ApolloDriverConfig> {
-  constructor(
-    @InjectDrizzle() private readonly db: NodePgDatabase,
-    private readonly wsAuthenticator: WsAuthenticator,
-    private readonly schemaHost: GraphQLSchemaHost,
-  ) {}
+  constructor(private readonly wsAuthenticator: WsAuthenticator) {}
 
   createGqlOptions(): ApolloDriverConfig {
     const production = process.env.NODE_ENV === 'production';
@@ -1060,7 +1072,6 @@ export class GraphqlConfig implements GqlOptionsFactory<ApolloDriverConfig> {
       context: ({ req, res, extra }: { req?: IncomingMessage; res?: unknown; extra?: Extra }) => ({
         req: req ?? extra?.request,
         res,
-        loaders: new Loaders(this.db),
       }),
       fieldResolverEnhancers: ['guards', 'interceptors', 'filters'],
       formatError: (error) =>
@@ -1082,108 +1093,61 @@ export class GraphqlConfig implements GqlOptionsFactory<ApolloDriverConfig> {
     return result !== null;
   }
 
-  /** graphql-ws runs operations outside Apollo Server and its plugins: the socket gets its own checks. */
-  private checkSocketOperation({ query, variables, operationName }: SubscribePayload) {
-    const { schema } = this.schemaHost;
+  /**
+   * graphql-ws runs operations outside Apollo Server: its `introspection` setting and its
+   * plugins don't apply. The socket serves subscriptions only; queries and mutations go over HTTP.
+   */
+  private checkSocketOperation({ query, operationName }: SubscribePayload) {
     let document;
     try {
       document = parse(query);
     } catch (error) {
       return [error as GraphQLError];
     }
-    const errors = validate(schema, document);
-    if (errors.length > 0) {
-      return errors;
-    }
     if (getOperationAST(document, operationName)?.operation !== 'subscription') {
       return [new GraphQLError('Only subscriptions are served over WebSocket: send queries and mutations over HTTP')];
     }
-    const costError = queryCostError(schema, document, variables ?? undefined, operationName);
-    return costError ? [costError] : undefined;
+    return undefined;
   }
 }
 ```
 
-- **`context` is a function**, as [GraphQL and WebSockets](/security/authentication#graphql-and-websockets) requires: the guard reads the headers of the context's `req`. Each operation also gets its own `Loaders`.
+- **`context` is a function**, as [GraphQL and WebSockets](/security/authentication#graphql-and-websockets) requires: the guard reads the headers of the context's `req`.
 - **`fieldResolverEnhancers`** makes Nest run guards, interceptors and filters on field resolvers too (see [Execute enhancers at the field resolver level](/graphql/other-features#execute-enhancers-at-the-field-resolver-level)). The guard gives them `@CurrentUser()`. The filters log what they throw: without them, an error in `Post.author` reaches the client without a line in the logs.
 - **`formatError` hides unexpected errors in production.** Apollo Server leaves out the stack trace there, but keeps the message, such as a database error naming a host.
 - **The socket is authenticated once, when it opens.** A browser can't set headers on a WebSocket, so clients send the token in `connectionParams`. `authenticateSocket()` copies it to the upgrade request, and checks it with `WsAuthenticator`, which runs the guard's providers. `false` closes the socket with 4403 before any operation.
-- **The socket serves subscriptions only.** `graphql-ws` executes what it receives itself: Apollo Server's plugins never see it, the cost limit included, and neither does its `introspection` setting. With `NODE_ENV=production` and no `onSubscribe`, an introspection query, a mutation and an over-limit query all run over the socket.
-
-#### Limit the cost of a query
-
-GraphQL lets a client ask for 50 posts, 50 comments of each, and 50 posts of each comment's author: 125,000 posts in one request, which a depth limit doesn't stop. A cost limit does: each field costs 1, and a list costs its `first` times one item, as in [Complexity](/graphql/complexity):
-
-```typescript
-@@filename(src/graphql/query-cost)
-import type { ApolloServerPlugin, GraphQLRequestListener } from '@apollo/server';
-import { Plugin } from '@nestjs/apollo';
-import { GraphQLSchemaHost, type ComplexityEstimator } from '@nestjs/graphql';
-import { GraphQLError, type DocumentNode, type GraphQLSchema } from 'graphql';
-import { fieldExtensionsEstimator, getComplexity, simpleEstimator } from 'graphql-query-complexity';
-
-export const MAX_QUERY_COST = 1_000;
-
-/** A list costs its size times the cost of one item. */
-export const perItem: ComplexityEstimator = ({ args, childComplexity }) => args.first * childComplexity;
-
-/** The error that refuses an operation that would cost too much, or undefined. */
-export function queryCostError(
-  schema: GraphQLSchema,
-  query: DocumentNode,
-  variables?: Record<string, unknown>,
-  operationName?: string | null,
-): GraphQLError | undefined {
-  const estimators = [fieldExtensionsEstimator(), simpleEstimator({ defaultComplexity: 1 })];
-  const cost = getComplexity({ schema, query, variables, operationName: operationName ?? undefined, estimators });
-  if (cost <= MAX_QUERY_COST) {
-    return undefined;
-  }
-  return new GraphQLError(`Query is too expensive: its cost is ${cost}, the maximum is ${MAX_QUERY_COST}`, {
-    // Apollo Server answers with this status, rather than a 500, and leaves `http` out of the body.
-    extensions: { code: 'QUERY_TOO_EXPENSIVE', cost, maxCost: MAX_QUERY_COST, http: { status: 400 } },
-  });
-}
-
-/** Checks every operation that arrives over HTTP, once it's parsed and validated. */
-@Plugin()
-export class QueryCostPlugin implements ApolloServerPlugin {
-  constructor(private readonly schemaHost: GraphQLSchemaHost) {}
-
-  async requestDidStart(): Promise<GraphQLRequestListener<object>> {
-    const { schema } = this.schemaHost;
-    return {
-      async didResolveOperation({ request, document }) {
-        const error = queryCostError(schema, document, request.variables, request.operationName);
-        if (error) {
-          throw error;
-        }
-      },
-    };
-  }
-}
-```
-
-The limit is 1,000: ten posts with their authors and ten comments each, with theirs, cost 350. The plugin runs once the operation is parsed and validated, before any resolver, for every request over HTTP (see [Plugins](/graphql/plugins)). An error thrown there is a 500, unless it sets `http`.
+- **The socket serves subscriptions only.** `graphql-ws` executes what it receives itself: Apollo Server's plugins never see it, and neither does its `introspection` setting. With `NODE_ENV=production` and no `onSubscribe`, an introspection query and a mutation both run over the socket. `checkSocketOperation()` refuses everything but subscriptions, so the only way to send a query or a mutation is HTTP, with Apollo Server's checks.
 
 #### Push new comments with subscriptions
 
-The comment resolver has the `author` field, the `addComment` mutation, and the `commentAdded` subscription (see [Subscriptions](/graphql/subscriptions)):
+Two resolvers serve comments: one for the `author` field, which injects `Loaders`, and one for the `addComment` mutation and the `commentAdded` subscription (see [Subscriptions](/graphql/subscriptions)). Nest requires a resolver with a `@Subscription()` to be a singleton, so it can't inject a request-scoped provider:
 
 ```typescript
 @@filename(src/posts/comments.resolver)
 import { Inject } from '@nestjs/common';
 import { Authenticate, CurrentUser } from '@nestjs/authentication';
-import { Args, Context, Mutation, Parent, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
+import { Args, Mutation, Parent, ResolveField, Resolver, Subscription } from '@nestjs/graphql';
 import { PubSub } from 'graphql-subscriptions';
 import { notFound } from '../graphql/errors.js';
-import type { Loaders } from '../graphql/loaders.js';
+import { Loaders } from '../graphql/loaders.js';
 import { User } from '../users/user.model.js';
 import { Comment } from './comment.model.js';
 import { AddCommentInput, CommentAddedArgs } from './posts.inputs.js';
 import { PostsService, PUB_SUB, commentAddedTopic } from './posts.service.js';
 
+// Request-scoped, since it injects Loaders.
 @Authenticate({ optional: true })
+@Resolver(() => Comment)
+export class CommentAuthorResolver {
+  constructor(private readonly loaders: Loaders) {}
+
+  @ResolveField(() => User)
+  author(@Parent() comment: Comment) {
+    return this.loaders.user(comment.authorId);
+  }
+}
+
+// A singleton: Nest requires one for a resolver with a @Subscription().
 @Resolver(() => Comment)
 export class CommentsResolver {
   constructor(
@@ -1191,18 +1155,11 @@ export class CommentsResolver {
     @Inject(PUB_SUB) private readonly pubSub: PubSub,
   ) {}
 
-  @ResolveField(() => User)
-  author(@Parent() comment: Comment, @Context('loaders') loaders: Loaders) {
-    return loaders.user(comment.authorId);
-  }
-
-  @Authenticate({ optional: false })
   @Mutation(() => Comment)
   addComment(@CurrentUser('id') userId: string, @Args('input') input: AddCommentInput) {
     return this.postsService.addComment(userId, input);
   }
 
-  @Authenticate({ optional: false })
   @Subscription(() => Comment)
   async commentAdded(@Args() { postId }: CommentAddedArgs, @CurrentUser('id') userId: string) {
     // Subscribing to someone else's draft is the same as to a post that doesn't exist.
@@ -1219,20 +1176,23 @@ export class CommentsResolver {
 - **Someone else's draft is `NOT_FOUND`.** Drafts take no comments, but any other answer would tell the client the draft exists.
 - **One topic per post**, rather than one topic and a [`filter`](/graphql/subscriptions#filtering-subscriptions), which would run for every subscriber of every post on every comment.
 
-The posts module provides both resolvers, the service and the `PubSub`:
+The posts module provides the three resolvers, the service and the `PubSub`, and imports `LoadersModule`:
 
 ```typescript
 @@filename(src/posts/posts.module)
 import { Module } from '@nestjs/common';
 import { PubSub } from 'graphql-subscriptions';
-import { CommentsResolver } from './comments.resolver.js';
+import { LoadersModule } from '../graphql/loaders.module.js';
+import { CommentAuthorResolver, CommentsResolver } from './comments.resolver.js';
 import { PostsResolver } from './posts.resolver.js';
 import { PostsService, PUB_SUB } from './posts.service.js';
 
 @Module({
+  imports: [LoadersModule],
   providers: [
     PostsResolver,
     CommentsResolver,
+    CommentAuthorResolver,
     PostsService,
     // In memory, in this process: see the production checklist.
     { provide: PUB_SUB, useValue: new PubSub() },
@@ -1243,7 +1203,7 @@ export class PostsModule {}
 
 #### Assemble the application
 
-The root module registers the configuration, the database, authentication, GraphQL and the rate limits, and the pipe, filter and plugin that apply to every operation:
+The root module registers the configuration, the database, authentication, GraphQL and the rate limits, and the pipe and filter that apply to every operation:
 
 ```typescript
 @@filename(src/app.module)
@@ -1262,7 +1222,6 @@ import { accountEmail } from './auth/gql-throttler.guard.js';
 import { envSchema, type Env } from './config.js';
 import { badUserInput, GraphQLErrorFilter } from './graphql/errors.js';
 import { GraphqlConfig } from './graphql/graphql.config.js';
-import { QueryCostPlugin } from './graphql/query-cost.js';
 import { PostsModule } from './posts/posts.module.js';
 import { UsersModule } from './users/users.module.js';
 
@@ -1320,7 +1279,6 @@ export const { ObserveModule, ObserveInstrument } = createObserveModule();
   providers: [
     { provide: APP_PIPE, useValue: new ValidationPipe({ transform: true, exceptionFactory: badUserInput }) },
     { provide: APP_FILTER, useClass: GraphQLErrorFilter },
-    QueryCostPlugin,
   ],
 })
 export class AppModule {}
@@ -1328,7 +1286,7 @@ export class AppModule {}
 
 - **`ObserveModule` comes first** in `imports`, as the [SDK's quick start](/observability/sdk#quick-start) does: modules shut down in reverse order, so it stops last, and sends what the others recorded (see [Shutdown](/observability/sdk#shutdown)). `createObserveModule()` returns it with `ObserveInstrument`, which `main.ts` passes to Nest.
 - **The key pair is empty until you link the project.** Without one, the SDK sends nothing, and says so at startup. `npx @nestjs/observe link` writes `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` into `.env`, and adds `--env-file .env` to the `start` script, so they're in the environment before `AppModule` is imported, when the SDK reads them (see [Linking from the terminal](/observability/sdk#linking-from-the-terminal)).
-- **`transform: true`** makes the arguments instances of their classes, which class-validator needs. The pipe, the filter and the plugin are providers of `AppModule`, so the tests get them too.
+- **`transform: true`** makes the arguments instances of their classes, which class-validator needs. The pipe and the filter are providers of `AppModule`, so the tests get them too.
 
 `main.ts` creates the application on the Node adapter, with the options, `instrument` among them, as the third argument:
 
@@ -1446,7 +1404,7 @@ In development, GraphiQL is at `http://localhost:3000/graphql`, the API's own UR
 
 ```bash
 $ curl localhost:3000/graphql --json '{"query":"mutation ($input: SignInInput!) { signIn(input: $input) { accessToken refreshToken expiresIn } }","variables":{"input":{"email":"ada@example.com","password":"correct horse battery"}}}'
-{"data":{"signIn":{"accessToken":"eyJhbGciOiJIUzI1NiIs...","refreshToken":"bhKkq6RpQHcKdq4-...","expiresIn":900}}}
+{"data":{"signIn":{"accessToken":"eyJhbGciOiJIUzI1NiIs...","refreshToken":"i-HFe17EwUU3ufp7...","expiresIn":900}}}
 $ ADA=eyJhbGciOiJIUzI1NiIs...
 $ BOB=eyJhbGciOiJIUzI1NiIs... # the same, with bob@example.com
 ```
@@ -1455,8 +1413,8 @@ The first page of published posts, then the next one, which starts after `endCur
 
 ```bash
 $ curl localhost:3000/graphql --json '{"query":"{ posts(first: 2) { edges { node { title author { name email } comments(first: 1) { body } } } pageInfo { hasNextPage endCursor } } }"}'
-{"data":{"posts":{"edges":[{"node":{"title":"Post 12","author":{"name":"Bob","email":null},"comments":[{"body":"About Post 12"}]}},...],"pageInfo":{"hasNextPage":true,"endCursor":"MTc5NTY3MzU3NTY2OTozZWZlMTYzNC1kZDJiLTQwZjMtYWI1ZS1lMjVlMzNhM2I0Mzg"}}}}
-$ curl localhost:3000/graphql --json '{"query":"query ($after: String) { posts(first: 2, after: $after) { edges { node { title } } } }","variables":{"after":"MTc5NTY3MzU3NTY2OTozZWZlMTYzNC1kZDJiLTQwZjMtYWI1ZS1lMjVlMzNhM2I0Mzg"}}'
+{"data":{"posts":{"edges":[{"node":{"title":"Post 12","author":{"name":"Bob","email":null},"comments":[{"body":"About Post 12"}]}},...],"pageInfo":{"hasNextPage":true,"endCursor":"MTc5NTY3NjA3NTQxNTo1MTg1NzZlZC1iYTY4LTRmNzItYjNmOC0xNTg5NTM4Mjk1Y2Y"}}}}
+$ curl localhost:3000/graphql --json '{"query":"query ($after: String) { posts(first: 2, after: $after) { edges { node { title } } } }","variables":{"after":"MTc5NTY3NjA3NTQxNTo1MTg1NzZlZC1iYTY4LTRmNzItYjNmOC0xNTg5NTM4Mjk1Y2Y"}}'
 {"data":{"posts":{"edges":[{"node":{"title":"Post 10"}},{"node":{"title":"Post 9"}}]}}}
 ```
 
@@ -1464,27 +1422,18 @@ Ada's own list starts with her draft. Bob gets `null` for it, as for an id that 
 
 ```bash
 $ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"{ me { posts(first: 2) { id title publishedAt } } }"}'
-{"data":{"me":{"posts":[{"id":"f99066b4-9dc1-4e3a-9f2d-d16f76276bc4","title":"Ada's draft","publishedAt":null},{"id":"3efe1634-dd2b-40f3-ab5e-e25e33a3b438","title":"Post 11",...}]}}}
-$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"query ($id: ID!) { post(id: $id) { title } }","variables":{"id":"f99066b4-9dc1-4e3a-9f2d-d16f76276bc4"}}'
+{"data":{"me":{"posts":[{"id":"2add117c-7a0f-4d28-a47e-4a0246e8e0f4","title":"Ada's draft","publishedAt":null},{"id":"518576ed-ba68-4f72-b3f8-1589538295cf","title":"Post 11",...}]}}}
+$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"query ($id: ID!) { post(id: $id) { title } }","variables":{"id":"2add117c-7a0f-4d28-a47e-4a0246e8e0f4"}}'
 {"data":{"post":null}}
 ```
 
 Errors carry a code: Bob can't change Ada's post, and a title can't be `null`. In development, `extensions` also has a stack trace:
 
 ```bash
-$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: \"Mine now\" }) { title } }","variables":{"id":"3efe1634-dd2b-40f3-ab5e-e25e33a3b438"}}'
+$ curl localhost:3000/graphql -H "Authorization: Bearer $BOB" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: \"Mine now\" }) { title } }","variables":{"id":"518576ed-ba68-4f72-b3f8-1589538295cf"}}'
 {"errors":[{"message":"Only the author can change this post",...,"extensions":{"code":"FORBIDDEN",...}}],"data":null}
-$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: null }) { title } }","variables":{"id":"3efe1634-dd2b-40f3-ab5e-e25e33a3b438"}}'
+$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($id: ID!) { updatePost(input: { id: $id, title: null }) { title } }","variables":{"id":"518576ed-ba68-4f72-b3f8-1589538295cf"}}'
 {"errors":[{"message":"title must be longer than or equal to 1 characters; title must be a string",...,"extensions":{"code":"BAD_USER_INPUT","fields":{"title":[...]},...}}],"data":null}
-```
-
-A query that asks for too much is refused before it runs:
-
-```bash
-$ curl -i localhost:3000/graphql --json '{"query":"{ posts(first: 50) { edges { node { comments(first: 50) { author { posts(first: 50) { title } } } } } } }"}'
-HTTP/1.1 400 Bad Request
-...
-{"errors":[{"message":"Query is too expensive: its cost is 127600, the maximum is 1000","extensions":{"code":"QUERY_TOO_EXPENSIVE","cost":127600,"maxCost":1000,...}}]}
 ```
 
 A short script watches the comments of a post, with the token you give it:
@@ -1520,17 +1469,17 @@ try {
 Run it in a second terminal, with the id of Ada's `Post 11` and Bob's token, and add a comment as Ada in the first. The script prints it, and with a wrong token the server closes the socket before any subscription:
 
 ```bash
-$ node scripts/watch-comments.ts 3efe1634-dd2b-40f3-ab5e-e25e33a3b438 $BOB
+$ node scripts/watch-comments.ts 518576ed-ba68-4f72-b3f8-1589538295cf $BOB
 {"data":{"commentAdded":{"body":"Thanks for reading!","author":{"name":"Ada"}}}}
-$ node scripts/watch-comments.ts 3efe1634-dd2b-40f3-ab5e-e25e33a3b438 not-a-token
+$ node scripts/watch-comments.ts 518576ed-ba68-4f72-b3f8-1589538295cf not-a-token
 Closed: 4403 Forbidden
 ```
 
 The comment, added as Ada from the first terminal:
 
 ```bash
-$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($input: AddCommentInput!) { addComment(input: $input) { id } }","variables":{"input":{"postId":"3efe1634-dd2b-40f3-ab5e-e25e33a3b438","body":"Thanks for reading!"}}}'
-{"data":{"addComment":{"id":"3f5537b1-4b9d-4f34-bc05-f21a9cb2f627"}}}
+$ curl localhost:3000/graphql -H "Authorization: Bearer $ADA" --json '{"query":"mutation ($input: AddCommentInput!) { addComment(input: $input) { id } }","variables":{"input":{"postId":"518576ed-ba68-4f72-b3f8-1589538295cf","body":"Thanks for reading!"}}}'
+{"data":{"addComment":{"id":"72b3cb4f-92ec-48f7-9862-1cfd5a8cabcd"}}}
 ```
 
 #### Test it
@@ -1747,8 +1696,8 @@ describe.skipIf(!process.env.TEST_DATABASE_URL)('Blog API (e2e)', () => {
 
 Three more files, in the [example repository](https://github.com/nestjs/example-graphql-api) with the rest of the application, prove the other guarantees:
 
-- `test/errors.e2e-spec.ts`: an anonymous mutation is `UNAUTHENTICATED` and a non-author's update `FORBIDDEN`, an email reaches its owner only, invalid arguments are `BAD_USER_INPUT` with readable messages, an over-limit query runs no resolver and no SQL, and a reused refresh token is refused, with its successor.
-- `test/subscriptions.e2e-spec.ts`: a subscriber gets its post's comments and no other's, another user's draft is `NOT_FOUND`, and the socket refuses introspection, mutations and an over-limit subscription.
+- `test/errors.e2e-spec.ts`: an anonymous mutation is `UNAUTHENTICATED` and a non-author's update `FORBIDDEN`, an email reaches its owner only, invalid arguments are `BAD_USER_INPUT` with readable messages, and a reused refresh token is refused, with its successor.
+- `test/subscriptions.e2e-spec.ts`: a subscriber gets its post's comments and no other's, another user's draft is `NOT_FOUND`, and the socket refuses introspection and mutations.
 - `test/production.e2e-spec.ts`: with `NODE_ENV` set to `production` before `AppModule` is imported, an unexpected error is masked, and one thrown on purpose keeps its message without a stack trace.
 
 Add a script to `package.json`:
@@ -1764,7 +1713,7 @@ $ docker exec blog-db psql -U postgres -c "CREATE DATABASE blog_test"
 $ TEST_DATABASE_URL=postgres://postgres:blog@localhost:5432/blog_test npm run test:e2e
 
  Test Files  4 passed (4)
-      Tests  13 passed (13)
+      Tests  12 passed (12)
 ```
 
 Each test fails without the code it protects. Without the DataLoader in `Loaders.user()`, the SQL count grows with the posts. Without `onConnect`, a socket without a token opens. Without `onSubscribe`, an introspection query and a mutation run over the socket.
@@ -1779,7 +1728,6 @@ Each test fails without the code it protects. Without the DataLoader in `Loaders
 - **Replace the in-memory `PubSub` before you run a second instance**: a comment added on one instance never reaches a subscriber connected to another. Use one backed by Redis or another broker (see the [`PubSub` implementations](https://github.com/apollographql/graphql-subscriptions#pubsub-implementations)), give the throttler shared [storage](/security/rate-limiting#storages), and make sure the load balancer forwards WebSocket upgrades on `/graphql`.
 - **Behind a load balancer, pass `trustProxy` to `NodeAdapter`** (see [Node adapter options](/http/performance#node-adapter-options)), so the throttler sees the client's address.
 - **Set `CORS_ORIGINS` to your web app's origins**, or leave it empty if no browser calls the API.
-- **Tune `MAX_QUERY_COST`** from the operations your clients send, and keep the `first` maximums, which the cost of a list depends on.
 - **Collect the JSON logs from stdout** with your platform's log driver.
 - **Give production its own Observe key pair**, from the project's **API Keys** page, as `OBSERVE_APP_KEY` and `OBSERVE_APP_SECRET` in the platform's environment: `start:prod` doesn't load `.env`. [NestJS Observe](/observability/overview) then shows GraphQL requests broken down by operation (see [Telemetry views](/observability/dashboard#telemetry-views)), records each resolver, and captures the errors that propagate out of one (see [Error monitoring](/observability/error-monitoring)). It needs `@nestjs/graphql` 13.4.4 or later, and its `graphql` options tag, ignore or name the user of operations (see [Shaping what is recorded](/observability/sdk#shaping-what-is-recorded)).
 

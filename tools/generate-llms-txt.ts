@@ -147,7 +147,7 @@ Where to start, by what you're building:
 - A production REST API built end to end, with sign-up, JWT access and refresh tokens, PostgreSQL, rate limiting, OpenAPI, health checks and tests: [Build a REST API with JWT authentication](${SITE}/tutorials/rest-api-jwt-authentication.md).
 - Sign in with Google for an API with JWTs, from web and mobile apps, with safe account linking: [Add Google login to a Node.js API](${SITE}/tutorials/google-login.md).
 - A CRUD REST API on MongoDB with Mongoose, with validation, pagination and no lost updates: [Build a CRUD REST API with Node.js and MongoDB](${SITE}/tutorials/mongodb-crud-api.md).
-- A GraphQL API with queries, mutations and subscriptions, batched nested fields, query cost limits and per-field authorization: [Build a GraphQL API in Node.js](${SITE}/tutorials/graphql-api.md).
+- A GraphQL API with queries, mutations and subscriptions, batched nested fields and per-field authorization: [Build a GraphQL API in Node.js](${SITE}/tutorials/graphql-api.md).
 - An e-commerce backend, with a product catalog, carts, and a checkout that never oversells: [Build an e-commerce backend](${SITE}/tutorials/ecommerce-backend.md).
 - A multi-tenant SaaS backend, with organizations, roles, invitations and tenant-scoped queries: [Build a multi-tenant SaaS backend](${SITE}/tutorials/multi-tenant-saas.md).
 - A project-management API, with projects, tasks, comments, per-record permissions and live updates: [Build a project-management API](${SITE}/tutorials/project-management-api.md).
