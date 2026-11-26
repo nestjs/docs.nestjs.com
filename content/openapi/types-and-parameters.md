@@ -370,3 +370,28 @@ schemas:
     type: object
     description: Description of the CreateCatDto schema
 ```
+
+`@ApiSchema()` also takes the keywords that apply to a schema as a whole (in `@nestjs/swagger` 12.1.3 and later): `title`, `deprecated`, `example`, `examples`, `externalDocs`, `xml`, `discriminator`, `readOnly`, `writeOnly`, `nullable`, `additionalProperties`, `patternProperties`, `minProperties` and `maxProperties`. They are copied into the generated schema as they are. For example, to mark a model as deprecated, and to say that it accepts no properties beyond the ones it declares:
+
+```typescript
+@ApiSchema({ deprecated: true, additionalProperties: false })
+class LegacyCatDto {
+  @ApiProperty()
+  name: string;
+}
+```
+
+The generated schema then carries both keywords:
+
+```yaml
+schemas:
+  LegacyCatDto:
+    type: object
+    properties:
+      name:
+        type: string
+    deprecated: true
+    additionalProperties: false
+    required:
+      - name
+```
