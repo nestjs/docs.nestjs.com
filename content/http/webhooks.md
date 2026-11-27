@@ -1142,7 +1142,7 @@ export class CarrierWebhooksController {
 
 #### Other senders
 
-GitHub's webhooks take `scheme: 'github'`: `X-Hub-Signature-256`, the hex HMAC-SHA256 of the body keyed with the secret's text.
+GitHub's webhooks take `scheme: 'github'`: `X-Hub-Signature-256`, the hex HMAC-SHA256 of the body keyed with the secret's text. Set the hook's **Content type** to `application/json` in GitHub: its default, `application/x-www-form-urlencoded`, sends the payload as a form field, and the receiver answers every delivery with a 400 because the body isn't JSON.
 
 > warning **Warning** GitHub signs neither a timestamp nor an id. A captured request verifies forever, and deduplication keys by default on the `X-GitHub-Delivery` header, which isn't signed: the same request replayed with a new value in that header runs the handler again.
 
