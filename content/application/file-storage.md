@@ -19,6 +19,7 @@ In this tutorial, you'll:
 - store invoices privately and hand out download links that expire after five minutes,
 - let the mobile app upload photos directly to storage, with a signed upload URL,
 - switch from local disks to S3 or R2 with configuration alone,
+- upload large videos to S3 in parts, which survive a dropped connection,
 - test all of it against in-memory disks.
 
 #### Installation
@@ -629,6 +630,227 @@ Uploads stream to S3 too. A file up to 8 MiB goes up in one request; a longer on
 
 > info **Hint** Every S3 request is signed with Signature Version 4, implemented on `node:crypto`. It is checked against the AWS Signature Version 4 test suite and the examples in the Amazon S3 API reference, so there is no AWS SDK to install.
 
+#### Upload large videos in parts
+
+The warehouse team also films short product videos, often a few hundred megabytes. One signed upload would take them, but a phone that loses its connection halfway through has to send the whole video again. A **multipart upload** sends the video in parts instead: a part that fails is sent again on its own, and an app that was closed mid-upload asks which parts already arrived and carries on from there.
+
+Multipart uploads are S3's, so these methods are on `S3Disk` only. A local disk has nothing like them, so to try this section in development, run MinIO and start the app with `STORAGE_DRIVER=s3` and `S3_ENDPOINT` pointing at it.
+
+The rules for a video sit next to the photo rules. Every part but the last has the same size: S3 needs at least 5 MiB for each of them, and Cloudflare R2 also needs them to be the same size:
+
+```typescript
+@@filename(products/video-rules)
+export const VIDEO_TYPES = ['video/mp4', 'video/quicktime'];
+/** The size of every part but the last, which may be smaller. */
+export const VIDEO_PART_SIZE = 16 * 1024 * 1024; // 16 MiB
+/** 128 parts of 16 MiB: a video of up to 2 GiB. */
+export const MAX_VIDEO_PARTS = 128;
+```
+
+The upload goes through five endpoints. The app starts an upload, asks for a signed URL for each part and sends the part there, then completes the upload with the `ETag` each part was answered with. In between, it can list the parts that arrived, or abort:
+
+```typescript
+@@filename(products/videos.service)
+import { BadRequestException, HttpException, Injectable, NotImplementedException, UnsupportedMediaTypeException } from '@nestjs/common';
+import { InjectDisk, S3Disk, StorageDisk, StorageMultipartUploadError, type StorageUploadedPart } from '@nestjs/storage';
+import { randomUUID } from 'node:crypto';
+import { ProductsService } from './products.service.js';
+import { MAX_VIDEO_PARTS, VIDEO_PART_SIZE, VIDEO_TYPES } from './video-rules.js';
+
+@Injectable()
+export class VideosService {
+  constructor(
+    private readonly productsService: ProductsService,
+    @InjectDisk('private') private readonly uploads: StorageDisk,
+  ) {}
+
+  async createUpload(productId: string, contentType: string) {
+    this.productsService.findOne(productId);
+    if (!VIDEO_TYPES.includes(contentType)) {
+      throw new UnsupportedMediaTypeException(`A video must be one of: ${VIDEO_TYPES.join(', ')}`);
+    }
+    const key = `videos/${productId}/${randomUUID()}`;
+    const { uploadId } = await this.s3().createMultipartUpload(key, { contentType });
+    return { key, uploadId, partSize: VIDEO_PART_SIZE };
+  }
+
+  signPart(productId: string, key: string, uploadId: string, partNumber: number, size: number) {
+    this.checkUpload(productId, key);
+    if (!Number.isInteger(partNumber) || partNumber < 1 || partNumber > MAX_VIDEO_PARTS) {
+      throw new BadRequestException(`partNumber must be between 1 and ${MAX_VIDEO_PARTS}`);
+    }
+    if (!Number.isSafeInteger(size) || size < 1 || size > VIDEO_PART_SIZE) {
+      throw new BadRequestException(`size must be between 1 and ${VIDEO_PART_SIZE} bytes`);
+    }
+    return this.s3().signedUploadPart(key, uploadId, partNumber, { contentLength: size, expiresIn: '15m' });
+  }
+
+  uploadedParts(productId: string, key: string, uploadId: string) {
+    this.checkUpload(productId, key);
+    return this.s3().listUploadedParts(key, uploadId).catch(toHttpError);
+  }
+
+  async completeUpload(productId: string, key: string, uploadId: string, parts: StorageUploadedPart[]) {
+    const previous = this.checkUpload(productId, key).videoKey;
+    const video = await this.s3().completeMultipartUpload(key, uploadId, parts).catch(toHttpError);
+    this.productsService.setVideo(productId, key);
+    if (previous) {
+      await this.uploads.delete(previous);
+    }
+    return { id: productId, videoKey: key, size: video.size };
+  }
+
+  async abortUpload(productId: string, key: string, uploadId: string) {
+    this.checkUpload(productId, key);
+    await this.s3().abortMultipartUpload(key, uploadId).catch(toHttpError);
+  }
+
+  /** Only keys createUpload() handed out for this product. */
+  private checkUpload(productId: string, key: string) {
+    const product = this.productsService.findOne(productId);
+    const prefix = `videos/${productId}/`;
+    if (typeof key !== 'string' || !key.startsWith(prefix) || !/^[0-9a-f-]{36}$/.test(key.slice(prefix.length))) {
+      throw new BadRequestException('Unknown upload');
+    }
+    return product;
+  }
+
+  /** The local disks of development have no multipart uploads. */
+  private s3(): S3Disk {
+    if (!(this.uploads instanceof S3Disk)) {
+      throw new NotImplementedException('Video uploads need the S3 disks (STORAGE_DRIVER=s3)');
+    }
+    return this.uploads;
+  }
+}
+
+/** An upload that is gone, or parts that don't match the uploaded ones, are the client's mistake. */
+function toHttpError(error: unknown): never {
+  if (error instanceof StorageMultipartUploadError) {
+    throw new HttpException(error.message, error.status);
+  }
+  throw error;
+}
+```
+
+- **`createMultipartUpload(key, options)`** starts the upload and returns its `uploadId`. It takes the options `put()` does, such as `contentType`, `cacheControl` and `metadata`, and they apply to the file once the upload completes. Until then, there is no file at `key`.
+- **`signedUploadPart(key, uploadId, partNumber, options)`** signs a URL the app sends one part to with `PUT`, like `signedUpload()`. With `contentLength`, the part must be exactly that many bytes; without it, the part's size isn't limited. Here, every part is at most `VIDEO_PART_SIZE`, and there are at most `MAX_VIDEO_PARTS`, so no video can grow beyond 2 GiB. Signing makes no request, so the app asks for each URL as it needs it, and again for a part whose URL has expired.
+- **`listUploadedParts(key, uploadId)`** returns the parts that arrived, with their `partNumber`, `etag` and `size`, in order. An app that resumes skips those.
+- **`completeMultipartUpload(key, uploadId, parts)`** joins the parts into one file, in any order they are listed, and resolves to the file's `key`, `size`, `contentType` and `etag`, as `put()` does. S3 checks every part against its `ETag`.
+- **`abortMultipartUpload(key, uploadId)`** discards the upload and its parts. An upload that is already gone is not an error.
+
+What the client gets wrong comes back as a `StorageMultipartUploadError` with a `status`: `404` for an upload that no longer exists (completed, aborted or expired), `400` for a part that is missing, listed with the wrong `ETag`, or smaller than 5 MiB without being the last. `toHttpError()` turns it into the matching `HttpException`; anything else is the store's or the configuration's problem, and stays a `500`. S3 also checks that the `uploadId` belongs to the key, so an id from another upload is a `404` too.
+
+Once S3 has joined the parts, `completeMultipartUpload()` reads the file's size and type with one more request. If that request fails, the call rejects with a plain `StorageError` whose `cause` is the failure: the file is written, so don't complete the upload again.
+
+> warning **Warning** The content type is the one the app declared when it started the upload. Unlike a photo, the video's bytes aren't checked, so it stays on the private disk: transcode it, or check it, before you show it to anyone.
+
+The controller passes the requests on. `Product` gets a `videoKey`, and `ProductsService` a `setVideo(id, key)` like `setPhoto()`:
+
+```typescript
+@@filename(products/videos.controller)
+import { Body, Controller, Delete, Get, HttpCode, Param, Post, Put, Query } from '@nestjs/common';
+import type { StorageUploadedPart } from '@nestjs/storage';
+import { VideosService } from './videos.service.js';
+
+@Controller('products/:id/video')
+export class VideosController {
+  constructor(private readonly videosService: VideosService) {}
+
+  @Post('uploads')
+  createUpload(@Param('id') id: string, @Body('contentType') contentType: string) {
+    return this.videosService.createUpload(id, contentType);
+  }
+
+  @Post('uploads/parts')
+  signPart(@Param('id') id: string, @Body() body: { key: string; uploadId: string; partNumber: number; size: number }) {
+    return this.videosService.signPart(id, body.key, body.uploadId, body.partNumber, body.size);
+  }
+
+  @Get('uploads/parts')
+  uploadedParts(@Param('id') id: string, @Query('key') key: string, @Query('uploadId') uploadId: string) {
+    return this.videosService.uploadedParts(id, key, uploadId);
+  }
+
+  @Put()
+  completeUpload(
+    @Param('id') id: string,
+    @Body() body: { key: string; uploadId: string; parts: StorageUploadedPart[] },
+  ) {
+    return this.videosService.completeUpload(id, body.key, body.uploadId, body.parts);
+  }
+
+  @Delete('uploads')
+  @HttpCode(204)
+  abortUpload(@Param('id') id: string, @Query('key') key: string, @Query('uploadId') uploadId: string) {
+    return this.videosService.abortUpload(id, key, uploadId);
+  }
+}
+```
+
+`completeMultipartUpload()` checks the `parts` it is given and throws a `TypeError` for a list that is empty, names a part twice, or lacks an `ETag`. Since the list comes from the client, validate the body before it gets there, for instance with a DTO and the [`ValidationPipe`](/application/validation).
+
+On the app's side, an upload is a loop over the parts. The app keeps `key`, `uploadId` and `partSize` until the upload completes, so that it can resume after a restart:
+
+```typescript
+@@filename(upload-video)
+interface VideoUpload {
+  key: string;
+  uploadId: string;
+  partSize: number;
+}
+
+interface UploadedPart {
+  partNumber: number;
+  etag: string;
+}
+
+/** Sends a video in parts. Pass the upload an earlier attempt saved, to send only what's missing. */
+export async function uploadVideo(api: string, productId: string, video: Blob, saved?: VideoUpload) {
+  const base = `${api}/products/${productId}/video`;
+  const call = async <T>(method: string, path: string, body?: unknown): Promise<T> => {
+    const res = await fetch(base + path, {
+      method,
+      headers: { 'content-type': 'application/json' },
+      body: body === undefined ? undefined : JSON.stringify(body),
+    });
+    if (!res.ok) {
+      throw new Error(`${method} ${path} failed with ${res.status}`);
+    }
+    return res.json() as Promise<T>;
+  };
+
+  const upload = saved ?? (await call<VideoUpload>('POST', '/uploads', { contentType: video.type }));
+  // ... save `upload` with the video, to resume after a restart
+  const { key, uploadId, partSize } = upload;
+  const query = new URLSearchParams({ key, uploadId });
+  const parts = saved ? await call<UploadedPart[]>('GET', `/uploads/parts?${query}`) : [];
+
+  for (let partNumber = 1; (partNumber - 1) * partSize < video.size; partNumber++) {
+    if (parts.some((part) => part.partNumber === partNumber)) {
+      continue;
+    }
+    const body = video.slice((partNumber - 1) * partSize, partNumber * partSize);
+    const part = { key, uploadId, partNumber, size: body.size };
+    const { url } = await call<{ url: string }>('POST', '/uploads/parts', part);
+    // The URL is signed for this part's length, which fetch sends as Content-Length
+    const res = await fetch(url, { method: 'PUT', body });
+    if (!res.ok) {
+      throw new Error(`Part ${partNumber} failed with ${res.status}`);
+    }
+    parts.push({ partNumber, etag: res.headers.get('etag')! });
+  }
+
+  return call<{ id: string; videoKey: string; size: number }>('PUT', '', { key, uploadId, parts });
+}
+```
+
+The parts go one after the other here; an app on a good connection can send a few at once, as long as it collects every `ETag`. A part that fails can be sent again with a newly signed URL, and the app can resume an upload as long as it hasn't been completed or aborted.
+
+An upload that nobody completes or aborts keeps its parts in the bucket, and S3 bills for them, though they never show up in `list()`. The lifecycle rule in the [production checklist](/application/file-storage#production-checklist) aborts them after a day. In a browser, the page can read each part's `ETag` only if the bucket's CORS rules expose it.
+
+> info **Hint** Uppy's `@uppy/aws-s3` plugin, from version 6, sends every multipart request to S3 itself, with URLs the server presigns for each of them. These endpoints run the upload on the server instead, and presign only the parts, so they don't plug into it.
+
 #### Try it
 
 Start the app with a signing key, in a directory with a `kibble.png`, a `scratching-post.jpg` and a `notes.txt`:
@@ -761,8 +983,8 @@ To test what reaches a real file system, use a `LocalDisk` on a temporary direct
 
 - **Keep public and private files in separate buckets.** Give the photos bucket public read access, or put a CDN in front of it and point `publicUrl` at the CDN. Keep the private bucket fully private: invoices and uploads are only reachable through signed URLs. There is no per-file public flag, because new S3 buckets have object ACLs disabled, and a flag on one file is easy to get wrong.
 - **Expire abandoned uploads.** Add a lifecycle rule to the private bucket that deletes objects under `incoming/` after a day, and one that aborts incomplete multipart uploads after a day.
-- **Allow direct uploads from browsers with CORS.** The mobile app doesn't need it, but a web page that sends a `PUT` to a presigned URL does: allow `PUT` from your site's origin, with the `Content-Type` header.
-- **Grant the app only what it uses.** An IAM policy with `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject` and `s3:ListBucket` on the two buckets is enough. Keep `s3:ListBucket`: without it, S3 answers a request for a missing file with `403` instead of `404`, and `exists()` fails instead of returning `false`. For short-lived credentials, pass a `credentials` function that returns them.
+- **Allow direct uploads from browsers with CORS.** The mobile app doesn't need it, but a web page that sends a `PUT` to a presigned URL does: allow `PUT` from your site's origin, with the `Content-Type` header. For [multipart uploads](/application/file-storage#upload-large-videos-in-parts), also list `ETag` in `ExposeHeaders`: without it, the page can't read the `ETag` of the parts it sent, and can't complete the upload.
+- **Grant the app only what it uses.** An IAM policy with `s3:GetObject`, `s3:PutObject`, `s3:DeleteObject`, `s3:ListBucket` and `s3:AbortMultipartUpload` on the two buckets is enough, plus `s3:ListMultipartUploadParts` for `listUploadedParts()`. Keep `s3:ListBucket`: without it, S3 answers a request for a missing file with `403` instead of `404`, and `exists()` fails instead of returning `false`. For short-lived credentials, pass a `credentials` function that returns them.
 - **Encrypt at rest.** S3 encrypts new objects by default; for a KMS key of your own, set `serverSideEncryption: 'aws:kms'` and `kmsKeyId` on the disk. R2 always encrypts.
 - **Keep links short-lived.** Five minutes is plenty for a link a user clicks right away. A signed URL can't be revoked: it stays valid until it expires (or, on S3, until the credentials that signed it expire or lose access), so whoever it leaks to can use it until then.
 - **Set a signing key per environment** for local disks (development and CI), from a secret, with at least 32 characters, and rotate it by putting the new key first in `keys`.
@@ -809,6 +1031,20 @@ Every disk has the same methods, key rules and errors. Every method that does I/
 
 `signedUrls` takes `baseUrl`, the route that serves the URLs, and `keys`, signing keys of at least 32 characters. The first key signs, and all of them verify. `S3Disk` defaults: `region` from `AWS_REGION`, then `AWS_DEFAULT_REGION`, then `us-east-1`; credentials from `AWS_ACCESS_KEY_ID`, `AWS_SECRET_ACCESS_KEY` and `AWS_SESSION_TOKEN`; `multipart` with a `partSize` of 8 MiB and a `concurrency` of 4; `retry: 3`, with backoff from 100 ms doubling to 20 seconds, with full jitter; no `timeout`; `batchDelete: true`.
 
+##### S3 multipart uploads
+
+`S3Disk` also has these methods, for uploads a client sends in parts. Other disks don't have them. Every method that does I/O takes an optional `signal`. See [Upload large videos in parts](/application/file-storage#upload-large-videos-in-parts).
+
+| Method | Description |
+| --- | --- |
+| `createMultipartUpload(key, options)` | Starts an upload and resolves to `key` and `uploadId`. Options: `contentType`, `cacheControl`, `contentDisposition`, `metadata` and `signal`, applied to the file when the upload completes. |
+| `signedUploadPart(key, uploadId, partNumber, options)` | `url`, `method` (`PUT`), `headers` and `expiresAt` for one part, numbered from 1 to 10,000. Options: `contentLength` (from 1 byte to 5 GiB; without it, the part's size isn't limited), `expiresIn`. Makes no request. |
+| `listUploadedParts(key, uploadId, options)` | The parts uploaded so far, in order: `partNumber`, `etag` and `size`. |
+| `completeMultipartUpload(key, uploadId, parts, options)` | Joins the parts, given as `partNumber` and `etag` in any order, into the file at `key`. Resolves like `put()`. |
+| `abortMultipartUpload(key, uploadId, options)` | Discards the upload and its parts. An upload that is already gone is not an error. |
+
+Every part but the last must be at least 5 MiB, and on Cloudflare R2, every part but the last must be the same size.
+
 ##### HTTP helpers
 
 | Helper | Options | Description |
@@ -831,4 +1067,5 @@ Every error extends `StorageError`. Outside the HTTP helpers, they aren't `HttpE
 | `StorageRangeNotSatisfiableError` | 416 | A range that starts past the end of the file. Has `size`. |
 | `StorageKeyConflictError` | 409 | A local disk can't hold both `a` and `a/b`. |
 | `StorageSignedUrlError` | 403 | A signed URL failed verification. `reason` is `missing`, `invalid`, `expired` or `method`. |
+| `StorageMultipartUploadError` | 404 or 400 | `S3Disk` refused what the client sent for a multipart upload: 404 for an upload that no longer exists (`NoSuchUpload`), 400 for parts that don't match the uploaded ones (`InvalidPart`, `InvalidPartOrder`, `EntityTooSmall`). Has `code` and `uploadId`. |
 | `StorageServiceError` | none | The object store refused or failed. Has `code` (such as `AccessDenied` or `SlowDown`), `upstreamStatus`, `requestId` and `operation`. |
