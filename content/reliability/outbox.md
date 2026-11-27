@@ -225,7 +225,7 @@ import { OrdersService } from './orders.service.js';
 export class AppModule {}
 ```
 
-`fromMysql2(pool)`, `fromTypeOrm(dataSource)` for a data source of type `mysql`, `fromPrisma(prisma)` with the `@prisma/adapter-mariadb` driver adapter (the one that serves MySQL), and `fromKysely(db)` serve the other clients. What differs from PostgreSQL:
+`fromMysql2(pool)`, `fromTypeOrm(dataSource)` for a data source of type `mysql` or `mariadb`, `fromPrisma(prisma)` with the `@prisma/adapter-mariadb` driver adapter (the one that serves MySQL), and `fromKysely(db)` serve the other clients. What differs from PostgreSQL:
 
 - **Tables, not a schema.** A MySQL database has no schemas, so the store keeps its tables in the connection's database, the one the URL's path names, and the `schema` option is their prefix: `nest_outbox_messages`, `nest_outbox_dead_letters` and `nest_outbox_inbox`, next to `nest_outbox_migrations` and `nest_outbox_locks`. It takes lowercase letters, digits and underscores, up to 40 characters. A connection without a database fails the startup.
 - **Bounded keys.** Ids, topics, keys and consumer names are indexed columns of at most 255 characters, compared byte for byte: `order-1` and `Order-1` are two keys. A longer one is refused with a `RangeError`, before any statement: by `add()`, and by the inbox before it runs a handler.
@@ -1295,7 +1295,7 @@ Each executor takes your database client, and its own kind of transaction object
 | Executor | Takes | Transaction object |
 | --- | --- | --- |
 | `fromDrizzle(db)` | A Drizzle database: on PostgreSQL, whichever its driver; on MySQL, `mysql2` | The `tx` that `db.transaction()` hands its callback |
-| `fromTypeOrm(dataSource)` | A `DataSource` of type `postgres` or `mysql` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
+| `fromTypeOrm(dataSource)` | A `DataSource` of type `postgres`, `mysql` or `mariadb` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
 | `fromPrisma(prisma, options)` | A Prisma client, through a driver adapter such as `@prisma/adapter-pg`, or `@prisma/adapter-mariadb` for MySQL. `maxWait` (default `'10s'`) and `timeout` (default `'1m'`) limit the store's own transactions | The transaction client that `prisma.$transaction()` hands its callback |
 | `fromKysely(db)` | A `Kysely` instance with a PostgreSQL or MySQL dialect | The transaction that `db.transaction().execute()` hands its callback |
 | `fromPg(pool)` | PostgreSQL: a node-postgres `Pool`, or a connected `Client` | A client, such as one from `pool.connect()`, after `BEGIN` |
@@ -1311,7 +1311,7 @@ The command line, `npx @nestjs/outbox`, takes `--url` (default `DATABASE_URL`) a
 | `status` | Prints the schema's version and the one the package needs, and exits with 1 while the schema is behind |
 | `sql` | Prints the SQL of `migrationSql()`, from `--from` to `--to`, without a database: PostgreSQL's, or MySQL's with `--dialect mysql`. `--statement-breakpoints` separates the statements for a drizzle-kit custom migration |
 
-On MySQL, the store needs MySQL 8.4 LTS or 9.x with a strict `sql_mode`, MySQL's default: a lax `sql_mode`, or MariaDB, fails the startup.
+On MySQL, the store needs MySQL 8.4 LTS or 9.x, or MariaDB 11.4.7 and later, or 11.8.2 and later, with a strict `sql_mode`, MySQL's default: a lax `sql_mode`, or an earlier MariaDB, fails the startup.
 
 ##### Messages and handlers
 
