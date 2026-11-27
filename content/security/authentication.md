@@ -1923,7 +1923,7 @@ import { TokensController } from './tokens.controller.js';
 export class AuthModule {}
 ```
 
-Rotate the session whenever privileges change, for example after a password change or when a customer becomes staff: `SignInService.rotateSession()` gives this browser's session a new id, and sets the new cookie; `completeMfa()` already does this. It resolves `null`, and sets no cookie, when the browser has no session or lost it meanwhile: a sign-out everywhere, a password reset, or another request that rotated it first.
+Rotate the session whenever privileges change, for example after a password change or when a customer becomes staff: `SignInService.rotateSession()` gives this browser's session a new id, and sets the new cookie; `completeMfa()` already does this. It resolves `null`, and sets no cookie, when the browser has no session or lost it meanwhile: a sign-out everywhere, a password reset, or another request that rotated it first. The new session keeps the old one's metadata. `rotateSession({ metadata })` stores `metadata` in its place, for example a credential version that `validate()` checks. Spread the current session's `metadata`, from `@CurrentSession()`, into it to keep the rest, such as the user agent.
 
 #### Rate-limit sign-in
 
