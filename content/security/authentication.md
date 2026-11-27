@@ -2243,7 +2243,7 @@ import {
   type TotpRecord,
 } from '@nestjs/authentication';
 import { InjectDrizzle } from '@nestjs/drizzle';
-import { and, desc, eq, gt, isNull, lt, lte, or, sql } from 'drizzle-orm';
+import { and, desc, eq, gt, inArray, isNull, lt, lte, or, sql, type SQL } from 'drizzle-orm';
 import type { NodePgDatabase } from 'drizzle-orm/node-postgres';
 import {
   emailTokens,
@@ -2331,7 +2331,15 @@ export class DrizzleAuthenticationStore
 
   async saveRefreshToken(record: RefreshTokenRecord): Promise<void> {
     await this.db.insert(refreshTokens).values(record);
-    await this.db.delete(refreshTokens).where(lte(refreshTokens.familyExpiresAt, record.createdAt));
+    // Locked in id order, like the revocations: otherwise revoking an expired family, which
+    // this deletes, can deadlock with it.
+    const expired = this.db
+      .select({ id: refreshTokens.id })
+      .from(refreshTokens)
+      .where(lte(refreshTokens.familyExpiresAt, record.createdAt))
+      .orderBy(refreshTokens.id)
+      .for('update');
+    await this.db.delete(refreshTokens).where(inArray(refreshTokens.id, expired));
   }
 
   async markRefreshTokenUsed(id: string, at: Date): Promise<boolean> {
@@ -2345,7 +2353,7 @@ export class DrizzleAuthenticationStore
   }
 
   async revokeRefreshTokenFamily(familyId: string): Promise<void> {
-    await this.db.update(refreshTokens).set({ revoked: true }).where(eq(refreshTokens.familyId, familyId));
+    await this.revokeRefreshTokens(eq(refreshTokens.familyId, familyId));
   }
 
   async isRefreshTokenFamilyRevoked(familyId: string): Promise<boolean> {
@@ -2358,7 +2366,17 @@ export class DrizzleAuthenticationStore
   }
 
   async revokeUserRefreshTokens(userId: string): Promise<void> {
-    await this.db.update(refreshTokens).set({ revoked: true }).where(eq(refreshTokens.userId, userId));
+    await this.revokeRefreshTokens(eq(refreshTokens.userId, userId));
+  }
+
+  /**
+   * Locks the rows in id order before updating them. Parallel refreshes of a reused token each
+   * revoke the family, and two multi-row UPDATEs that lock the same rows in different orders
+   * deadlock: the loser would answer with a 500 instead of a 401.
+   */
+  private async revokeRefreshTokens(rows: SQL): Promise<void> {
+    const locked = this.db.select({ id: refreshTokens.id }).from(refreshTokens).where(rows).orderBy(refreshTokens.id).for('update');
+    await this.db.update(refreshTokens).set({ revoked: true }).where(inArray(refreshTokens.id, locked));
   }
 
   // Authenticators, recovery codes and failed attempts
@@ -3018,7 +3036,20 @@ export class TypeOrmAuthenticationStore
   async saveRefreshToken(record: RefreshTokenRecord): Promise<void> {
     const claims = (record.claims ?? null) as Record<string, Json> | null;
     await this.manager.insert(RefreshTokenEntity, { ...record, usedAt: record.usedAt ?? null, claims });
-    await this.manager.delete(RefreshTokenEntity, { familyExpiresAt: LessThanOrEqual(record.createdAt) });
+    // Locked in id order, like the revocations: otherwise revoking an expired family, which
+    // this deletes, can deadlock with it.
+    const expired = this.manager
+      .createQueryBuilder(RefreshTokenEntity, 'expired')
+      .select('expired.id')
+      .where('expired.familyExpiresAt <= :at', { at: record.createdAt })
+      .orderBy('expired.id')
+      .setLock('pessimistic_write');
+    await this.manager
+      .createQueryBuilder()
+      .delete()
+      .from(RefreshTokenEntity)
+      .where(`id IN (${expired.getQuery()})`, expired.getParameters())
+      .execute();
   }
 
   async markRefreshTokenUsed(id: string, at: Date): Promise<boolean> {
@@ -3028,7 +3059,7 @@ export class TypeOrmAuthenticationStore
   }
 
   async revokeRefreshTokenFamily(familyId: string): Promise<void> {
-    await this.manager.update(RefreshTokenEntity, { familyId }, { revoked: true });
+    await this.revokeRefreshTokens('familyId', familyId);
   }
 
   isRefreshTokenFamilyRevoked(familyId: string): Promise<boolean> {
@@ -3036,7 +3067,27 @@ export class TypeOrmAuthenticationStore
   }
 
   async revokeUserRefreshTokens(userId: string): Promise<void> {
-    await this.manager.update(RefreshTokenEntity, { userId }, { revoked: true });
+    await this.revokeRefreshTokens('userId', userId);
+  }
+
+  /**
+   * Locks the rows in id order before updating them. Parallel refreshes of a reused token each
+   * revoke the family, and two multi-row UPDATEs that lock the same rows in different orders
+   * deadlock: the loser would answer with a 500 instead of a 401.
+   */
+  private async revokeRefreshTokens(column: 'familyId' | 'userId', value: string): Promise<void> {
+    const locked = this.manager
+      .createQueryBuilder(RefreshTokenEntity, 'locked')
+      .select('locked.id')
+      .where(`locked.${column} = :value`, { value })
+      .orderBy('locked.id')
+      .setLock('pessimistic_write');
+    await this.manager
+      .createQueryBuilder()
+      .update(RefreshTokenEntity)
+      .set({ revoked: true })
+      .where(`id IN (${locked.getQuery()})`, locked.getParameters())
+      .execute();
   }
 
   // Authenticators, recovery codes and failed attempts
@@ -3910,7 +3961,7 @@ The tutorial [wrote the authentication store with Drizzle](/security/authenticat
 
 Two-factor authentication is off without `mfa`: sign-ins don't read the `mfa` contract. Refresh tokens exist only with `accessToken`, so without it, or with `refreshToken` set to `false`, signing out everywhere and resetting a password end sessions alone. A contract that none of your configured features uses fails at its first read instead of running in memory. `allowInMemoryStorage: true` in the module options accepts the in-memory stores anyway, but then every restart or deploy signs everyone out and forgets enrolled authenticators, and instances don't share any of it.
 
-**The methods that must be atomic.** Whatever decides that something works only once is one conditional statement, never a read followed by a write. The other methods are plain reads, inserts and deletes. None takes your transaction: authentication state is written on its own, never as part of a business transaction.
+**The methods that must be atomic.** Whatever decides that something works only once is one conditional statement, never a read followed by a write. The other methods are plain reads, inserts and deletes. The refresh-token revocations, and the sweep of expired families in `saveRefreshToken()`, lock their rows in id order first: two statements that lock the same rows in different orders deadlock. None takes your transaction: authentication state is written on its own, never as part of a business transaction.
 
 | Contract | Method | Must be | Why |
 | --- | --- | --- | --- |
@@ -3930,6 +3981,7 @@ A family of refresh tokens counts as revoked when any of its tokens is, so a suc
 **With Prisma.** The tutorial has the store with Drizzle and with TypeORM, on the same tables. A Prisma store follows the same rules:
 
 - **Conditional updates and deletes** (`touchSession()`, `deleteSession()`, `markRefreshTokenUsed()`, `claimTotpStep()`, `consumeRecoveryCode()`) are `updateMany()` or `deleteMany()` with the condition in `where`, and their `count`: `deleteSession()` resolves `count > 0`. Never `upsert()` for `touchSession()`: it can write back a session that was just deleted.
+- **The refresh-token revocations** (`revokeRefreshTokenFamily()`, `revokeUserRefreshTokens()`) and the sweep in `saveRefreshToken()` lock their rows in id order first. `updateMany()` and `deleteMany()` can't, so they are raw SQL, with `$executeRaw`: `... WHERE id IN (SELECT id ... ORDER BY id FOR UPDATE)`.
 - **`saveTotp()`** needs `GREATEST(..., excluded.last_used_step)` in its upsert. Prisma's upsert API doesn't take an expression from the conflicting row, so it is raw SQL, with `$executeRaw`.
 - **The `consume` methods** are `delete()` with every condition in `where` (the id and, for `consumeEmailToken()`, the purpose), which throws `P2025` when nothing matched: turn that into `undefined`.
 - **`recordMfaFailure()`** is two statements on their own: a `create()`, then a `count()`. Not `prisma.$transaction([create, count])`, which runs the two in one transaction that commits after the count.
