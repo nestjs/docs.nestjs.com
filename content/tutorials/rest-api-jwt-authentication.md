@@ -918,7 +918,15 @@ export class DrizzleRefreshTokenStore implements RefreshTokenStore {
   async saveRefreshToken(record: RefreshTokenRecord): Promise<void> {
     await this.db.insert(refreshTokens).values(record);
     // Families past their absolute lifetime can go.
-    await this.db.delete(refreshTokens).where(lte(refreshTokens.familyExpiresAt, record.createdAt));
+    // Locked in id order, like the revocations: otherwise revoking an expired family, which
+    // this deletes, can deadlock with it.
+    const expired = this.db
+      .select({ id: refreshTokens.id })
+      .from(refreshTokens)
+      .where(lte(refreshTokens.familyExpiresAt, record.createdAt))
+      .orderBy(refreshTokens.id)
+      .for('update');
+    await this.db.delete(refreshTokens).where(inArray(refreshTokens.id, expired));
   }
 
   async markRefreshTokenUsed(id: string, at: Date): Promise<boolean> {
