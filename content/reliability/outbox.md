@@ -189,7 +189,7 @@ export class OrdersService {
 
 **With Prisma.** Pass your `PrismaService` to `fromPrisma()` in the factory, and to `outbox.add()` the transaction client that `prisma.$transaction()` hands its callback. Only that interactive form has one to pass: the array form, `prisma.$transaction([query1, query2])`, can't include an `outbox.add()`. The store refuses the client itself, whose statements would commit on their own. Its own transactions wait up to 10 seconds for a connection and run for up to a minute, longer than Prisma's defaults: the second argument of `fromPrisma()` changes that, with `maxWait` and `timeout`.
 
-**With MySQL.** For MySQL 8.4 LTS and 9.x, `@nestjs/outbox/mysql` has `MySqlOutboxStore`. Import the store and its executor from there: the provider is the same, and so are the options and the executors' names. This is the order API on MySQL, with Drizzle on the `mysql2` driver:
+**With MySQL.** For MySQL 8.4 LTS and 9.x, and MariaDB 11.4.7 and later or 11.8.2 and later, `@nestjs/outbox/mysql` has `MySqlOutboxStore`. Import the store and its executor from there: the provider is the same, and so are the options and the executors' names. This is the order API on MySQL, with Drizzle on the `mysql2` driver:
 
 ```typescript
 @@filename(mysql/app.module)
@@ -225,13 +225,14 @@ import { OrdersService } from './orders.service.js';
 export class AppModule {}
 ```
 
-`fromMysql2(pool)`, `fromTypeOrm(dataSource)` for a data source of type `mysql`, `fromPrisma(prisma)` with the `@prisma/adapter-mariadb` driver adapter (the one that serves MySQL), and `fromKysely(db)` serve the other clients. What differs from PostgreSQL:
+`fromMysql2(pool)`, `fromTypeOrm(dataSource)` for a data source of type `mysql` or `mariadb`, `fromPrisma(prisma)` with the `@prisma/adapter-mariadb` driver adapter (the one that serves MySQL), and `fromKysely(db)` serve the other clients. What differs from PostgreSQL:
 
 - **Tables, not a schema.** A MySQL database has no schemas, so the store keeps its tables in the connection's database, the one the URL's path names, and the `schema` option is their prefix: `nest_outbox_messages`, `nest_outbox_dead_letters` and `nest_outbox_inbox`, next to `nest_outbox_migrations` and `nest_outbox_locks`. It takes lowercase letters, digits and underscores, up to 40 characters. A connection without a database fails the startup.
 - **Bounded keys.** Ids, topics, keys and consumer names are indexed columns of at most 255 characters, compared byte for byte: `order-1` and `Order-1` are two keys. A longer one is refused with a `RangeError`, before any statement: by `add()`, and by the inbox before it runs a handler.
 - **Your isolation level.** Your transactions may run at REPEATABLE READ, MySQL's default, or at READ COMMITTED. A delivery that races another to `processInTransaction()` waits for it, then skips the handler as a duplicate, at either level.
 - **Deadlocks reach your transaction.** `add()` locks a row per key in your transaction, one of 16,384 that the keys share, which the store creates when it starts: producers of two keys that share a row take turns, as producers of one key do, which slows an unrelated producer only rarely. When MySQL breaks a deadlock in your transaction (error 1213), it rolls the whole transaction back, and the store can't run your work again: the error reaches your code as your client's error, so run the transaction again. With those rows in place, two things can still cause one: three deliveries of one message that race to `processInTransaction()` while the first rolls back, and transactions of yours that take the same locks in different orders. The store's own transactions retry on deadlock by themselves.
 - **Migrations that aren't transactional.** MySQL commits each DDL statement on its own, so `migrate` and `npx @nestjs/outbox migrate --url mysql://...` apply the statements one at a time under a lock, and a run that stopped halfway resumes where it stopped. Your own tool must send one statement per call too, as the TypeORM migration in **Migrations** above does, and a drizzle-kit custom migration takes `npx @nestjs/outbox sql --dialect mysql --statement-breakpoints`, since its MySQL migrator sends one statement per breakpoint.
+- **MariaDB.** The command line reaches MariaDB through a `mysql://` URL. From MariaDB 11.6.2, whose `innodb_snapshot_isolation` is on by default, `add()` in a REPEATABLE READ transaction can fail with error 1020 when it locks a key that another transaction wrote after your transaction took its snapshot: run the transaction again, as for error 1213, or run it at READ COMMITTED. MariaDB nests JSON at most 32 levels deep, so a payload can nest at most 30 levels there, and a deeper one fails `add()` with error 4040.
 
 #### Register the outbox
 
@@ -1295,7 +1296,7 @@ Each executor takes your database client, and its own kind of transaction object
 | Executor | Takes | Transaction object |
 | --- | --- | --- |
 | `fromDrizzle(db)` | A Drizzle database: on PostgreSQL, whichever its driver; on MySQL, `mysql2` | The `tx` that `db.transaction()` hands its callback |
-| `fromTypeOrm(dataSource)` | A `DataSource` of type `postgres` or `mysql` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
+| `fromTypeOrm(dataSource)` | A `DataSource` of type `postgres`, `mysql` or `mariadb` | The `EntityManager` that `dataSource.transaction()` hands its callback, or a `QueryRunner` after `startTransaction()` |
 | `fromPrisma(prisma, options)` | A Prisma client, through a driver adapter such as `@prisma/adapter-pg`, or `@prisma/adapter-mariadb` for MySQL. `maxWait` (default `'10s'`) and `timeout` (default `'1m'`) limit the store's own transactions | The transaction client that `prisma.$transaction()` hands its callback |
 | `fromKysely(db)` | A `Kysely` instance with a PostgreSQL or MySQL dialect | The transaction that `db.transaction().execute()` hands its callback |
 | `fromPg(pool)` | PostgreSQL: a node-postgres `Pool`, or a connected `Client` | A client, such as one from `pool.connect()`, after `BEGIN` |
@@ -1311,7 +1312,7 @@ The command line, `npx @nestjs/outbox`, takes `--url` (default `DATABASE_URL`) a
 | `status` | Prints the schema's version and the one the package needs, and exits with 1 while the schema is behind |
 | `sql` | Prints the SQL of `migrationSql()`, from `--from` to `--to`, without a database: PostgreSQL's, or MySQL's with `--dialect mysql`. `--statement-breakpoints` separates the statements for a drizzle-kit custom migration |
 
-On MySQL, the store needs MySQL 8.4 LTS or 9.x with a strict `sql_mode`, MySQL's default: a lax `sql_mode`, or MariaDB, fails the startup.
+On MySQL, the store needs MySQL 8.4 LTS or 9.x, or MariaDB 11.4.7 and later, or 11.8.2 and later, with a strict `sql_mode`, MySQL's default: a lax `sql_mode`, or an earlier MariaDB, fails the startup.
 
 ##### Messages and handlers
 
